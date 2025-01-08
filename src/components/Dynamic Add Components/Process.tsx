@@ -52,6 +52,7 @@ const Process: React.FC<ProcessProps> = ({ inputs, setInputs }) => {
                 onChange={(e) => onChangeHandler(e.target.value, index)}
                 type="text"
                 name="process"
+                backgroundColor={"white"}
                 value={input}
                 placeholder={`Enter Process ${index + 1}`}
               />

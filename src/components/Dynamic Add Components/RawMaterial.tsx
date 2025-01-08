@@ -202,6 +202,7 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
                       type="number"
                       name="quantity"
                       value={input.quantity}
+                      backgroundColor={"white"}
                     />
                   </FormControl>
                 </Td>
@@ -243,6 +244,7 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
                       type="text"
                       name="comments"
                       value={input.comments}
+                      backgroundColor={"white"}
                     />
                   </FormControl>
                 </Td>

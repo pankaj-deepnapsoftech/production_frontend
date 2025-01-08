@@ -133,7 +133,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
               <option value={100000}>All</option>
             </Select>
           </div>
-          <TableContainer maxHeight="600px" overflowY="auto">
+          <TableContainer maxHeight="600px" className="py-1" overflowY="auto">
             <Table variant="simple" {...getTableProps()}>
               <Thead className="text-sm font-semibold">
                 {headerGroups.map(
@@ -211,7 +211,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                     >
                       {row.cells.map((cell: Cell) => {
                         return (
-                          <Td  className={
+                          <Td   className={
                             cell.column.Header === "First Name"
                               ? "sticky top-0 left-[-2px] bg-[#f9fafc]"
                               : ""
@@ -261,7 +261,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                           </Td>
                         );
                       })}
-                      <Td className="flex gap-x-2">
+                      <Td  className="flex gap-x-2">
                         {openEmployeeDetailsDrawerHandler && (
                           <MdOutlineVisibility
                             className="hover:scale-110"

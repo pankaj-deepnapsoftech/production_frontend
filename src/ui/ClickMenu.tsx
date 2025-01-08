@@ -52,7 +52,7 @@ const ClickMenu: React.FC<ClickMenuProps> = ({
 
       document.removeEventListener("touchstart", (e: TouchEvent) => {
         const target = e.target as Node;
-        if (containerRef.current && !containerRef.current.contains(target)) {
+        if (containerRef?.current && !containerRef?.current.contains(target)) {
           closeContextMenuHandler();
         }
       });

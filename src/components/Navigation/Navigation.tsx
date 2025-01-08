@@ -2,7 +2,7 @@ import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import routes from "../../routes/routes";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 const Navigation: React.FC = () => {
   const { allowedroutes, isSuper } = useSelector((state: any) => state.auth);
@@ -27,13 +27,13 @@ const Navigation: React.FC = () => {
 
           if (route.isSublink) {
             return (
-              <div key={ind}>
+              <Fragment key={ind} >
+              <div >
                 <li
-                  key={ind}
                   className="flex border-b  gap-x-2 pl-3 pr-9 py-5 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
                   onClick={() => toggleSubMenusHandler(route.path)}
                   style={{
-                    cursor: isAllowed ? "pointer" : "not-allowed",
+                    cursor: isAllowed  ? "pointer" : "not-allowed",
                     opacity: isAllowed ? 1 : 0.5,
                     pointerEvents: isAllowed ? "auto" : "none", // Disable click interaction
                   }}
@@ -48,6 +48,7 @@ const Navigation: React.FC = () => {
                   route.sublink &&
                   route.sublink.map((sublink, index) => (
                     <NavLink
+                    key={index}
                       style={{
                         cursor: isAllowed ? "pointer" : "not-allowed",
                         opacity: isAllowed ? 1 : 0.5,
@@ -56,26 +57,29 @@ const Navigation: React.FC = () => {
                       to={route.path + "/" + sublink.path}
                     >
                       <li
-                        key={index}
+                        
                         className="flex gap-x-2 pl-5 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
                       >
                         <span>{sublink.icon}</span>
-                        <span>{sublink.name}</span>
+                        <span className=" hidden sm:inline-block">{sublink.name}</span>
                       </li>
                     </NavLink>
                   ))}
               </div>
+              </Fragment>
             );
           }
           else if(route.name === "Approval" && isSuper){
             return (
-              <NavLink style={{
-                cursor: isAllowed ? "pointer" : "not-allowed",
+              <NavLink  key={ind} 
+              style={{
+                cursor: isAllowed  ? "pointer" : "not-allowed",
                 opacity: isAllowed ? 1 : 0.5,
                 pointerEvents: isAllowed ? "auto" : "none",
-              }} to={route.path || ""}>
+              }} 
+              to={route.path || ""}>
                 <li
-                  key={ind}
+                 
                   className="flex border-b gap-x-2 pl-3 pr-9 py-5 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
                 >
                   <span >{route.icon}</span>
@@ -86,13 +90,15 @@ const Navigation: React.FC = () => {
           }
           else if(route.name !== "Approval") {
             return (
-              <NavLink style={{
-                cursor: isAllowed ? "pointer" : "not-allowed",
-                opacity: isAllowed ? 1 : 0.5,
-                pointerEvents: isAllowed ? "auto" : "none", // Disable click interaction
-              }} to={route.path || ""}>
+              <NavLink key={ind} 
+              style={{
+                cursor: ind === 0 || isAllowed ? "pointer" : "not-allowed",
+                opacity: ind === 0 || isAllowed ? 1 : 0.5,
+                pointerEvents: ind === 0 || isAllowed ? "auto" : "none", // Disable click interaction
+              }} 
+              to={route.path || ""}>
                 <li
-                  key={ind}
+                  
                   className="flex border-b gap-x-2 pl-3 pr-9 py-5 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
                 >
                   <span className="text-xl">{route.icon}</span>

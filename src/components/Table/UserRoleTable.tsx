@@ -142,9 +142,10 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
                   ) => {
                     return (
                       <Tr {...hg.getHeaderGroupProps()}>
-                        {hg.headers.map((column: any) => {
+                        {hg.headers.map((column: any,index:number) => {
                           return (
                             <Th
+                            key={index}
                               textTransform="capitalize"
                               fontSize="12px"
                               fontWeight="700"
@@ -188,11 +189,12 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
                 )}
               </Thead>
               <Tbody {...getTableBodyProps()}>
-                {page.map((row: any) => {
+                {page.map((row: any,index:number) => {
                   prepareRow(row);
 
                   return (
                     <Tr
+                    key={index}
                       className="relative hover:bg-[#e4e4e4] hover:cursor-pointer text-base lg:text-sm"
                       {...row.getRowProps()}
                     >

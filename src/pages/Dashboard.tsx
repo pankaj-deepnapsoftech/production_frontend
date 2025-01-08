@@ -168,13 +168,13 @@ const Dashboard: React.FC = () => {
     fetchSummaryHandler();
   }, []);
 
-  if (!isAllowed) {
-    return (
-      <div className="text-center text-red-500">
-        You are not allowed to access this route.
-      </div>
-    );
-  }
+  // if (!isAllowed) {
+  //   return (
+  //     <div className="text-center text-red-500">
+  //       You are not allowed to access this route.
+  //     </div>
+  //   );
+  // }
 
   return (
     <div>

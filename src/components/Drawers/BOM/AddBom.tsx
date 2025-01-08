@@ -22,6 +22,7 @@ import RawMaterial from "../../Dynamic Add Components/RawMaterial";
 import Process from "../../Dynamic Add Components/Process";
 import { useCookies } from "react-cookie";
 import ScrapMaterial from "../../Dynamic Add Components/ScrapMaterial";
+import { MainColor } from "../../../constants/constants";
 
 interface AddBomProps {
   closeDrawerHandler: () => void;
@@ -703,7 +704,7 @@ const AddBom: React.FC<AddBomProps> = ({
               type="submit"
               className="mt-1"
               color="white"
-              backgroundColor="#1640d6"
+              backgroundColor={MainColor}
             >
               Submit
             </Button>

@@ -155,6 +155,7 @@ const ScrapMaterial: React.FC<ScrapMaterialProps> = ({
                         type="text"
                         name="description"
                         value={input.description}
+                        backgroundColor={"white"}
                       ></Input>
                     </FormControl>
                   </Td>
@@ -170,6 +171,7 @@ const ScrapMaterial: React.FC<ScrapMaterialProps> = ({
                         type="number"
                         name="estimated_quantity"
                         value={input.estimated_quantity}
+                        backgroundColor={"white"}
                       ></Input>
                     </FormControl>
                   </Td>
@@ -185,6 +187,7 @@ const ScrapMaterial: React.FC<ScrapMaterialProps> = ({
                         type="number"
                         name="produced_quantity"
                         value={input.produced_quantity}
+                        backgroundColor={"white"}
                       ></Input>
                     </FormControl>
                   </Td>
