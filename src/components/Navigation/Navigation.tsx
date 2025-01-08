@@ -19,7 +19,7 @@ const Navigation: React.FC = () => {
   };
 
   return (
-    <div className="h-[inherit] px-3 py-3 overflow-auto bg-[#fbfbfb]">
+    <div className="h-[inherit] px-3 py-3  bg-[#fbfbfb]">
       <ul>
         {routes.map((route, ind) => {
           const isAllowed =
