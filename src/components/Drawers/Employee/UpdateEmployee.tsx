@@ -1,4 +1,4 @@
-import { Button, FormControl, FormLabel } from "@chakra-ui/react";
+import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import Drawer from "../../../ui/Drawer";
 import { BiX } from "react-icons/bi";
 import { useEffect, useState } from "react";
@@ -29,6 +29,7 @@ const UpdateEmployee: React.FC<UpdateEmployeeProps> = ({
   const [role, setRole] = useState<any | undefined>();
   const [isSuper, setIsSuper] = useState<boolean | undefined>();
   const [isVerified, setIsVerified] = useState<string | undefined>();
+
 
   const [roleOptions, setRoleOptions] = useState<
     { value: string; label: string }[] | []
@@ -102,13 +103,13 @@ const UpdateEmployee: React.FC<UpdateEmployeeProps> = ({
       );
       const data = await response.json();
       if (!data.success) {
-          throw new Error(data.message);
-        }
-        const roles = data.roles;
-        const modifiedRoles = roles.map((role: any) => ({
-            value: role._id,
-            label: role.role,
-        }));
+        throw new Error(data.message);
+      }
+      const roles = data.roles;
+      const modifiedRoles = roles.map((role: any) => ({
+        value: role._id,
+        label: role.role,
+      }));
       setRoleOptions(modifiedRoles);
     } catch (error: any) {
       toast.error(error?.message || "Something went wrong");
@@ -143,27 +144,51 @@ const UpdateEmployee: React.FC<UpdateEmployeeProps> = ({
 
           {isLoadingEmployee && <Loading />}
           {!isLoadingEmployee && (
-            <form onSubmit={updateEmployeeHandler}
-            className="max-w-4xl mx-auto p-8 bg-white space-y-5">
+            <form
+              onSubmit={updateEmployeeHandler}
+              className="max-w-4xl mx-auto p-8 bg-white space-y-5"
+            >
               <FormControl className="mt-3 mb-5">
                 <FormLabel fontWeight="bold">First Name</FormLabel>
-                <p>{firstname}</p>
+                <Input
+                  value={firstname}
+                  onChange={(e) => setFirstname(e.target.value)}
+                  type="text"
+                  placeholder="State"
+                />
               </FormControl>
               <FormControl className="mt-3 mb-5">
                 <FormLabel fontWeight="bold">Last Name</FormLabel>
-                <p>{lastname}</p>
+                <Input
+                  value={lastname}
+                  onChange={(e) => setLastname(e.target.value)}
+                  type="text"
+                  placeholder="State"
+                />
               </FormControl>
               <FormControl className="mt-3 mb-5">
                 <FormLabel fontWeight="bold">Email</FormLabel>
-                <p>{email}</p>
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  placeholder="State"
+                />
               </FormControl>
               <FormControl className="mt-3 mb-5">
                 <FormLabel fontWeight="bold">Phone</FormLabel>
-                <p>{phone}</p>
+                <Input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  type="text"
+                  placeholder="State"
+                />
               </FormControl>
               <FormControl className="mt-3 mb-5">
                 <FormLabel fontWeight="bold">Is Verified</FormLabel>
-                <p className={isVerified ? 'text-green-600' : 'text-red-500'}>{isVerified ? 'Verified' : 'Not Verified'}</p>
+                <p className={isVerified ? "text-green-600" : "text-red-600"}>{isVerified ? "Verified" : "Not Verified"}</p>
+                 
+               
               </FormControl>
               <FormControl className="mt-3 mb-5" isRequired>
                 <FormLabel fontWeight="bold">Role</FormLabel>
@@ -179,7 +204,7 @@ const UpdateEmployee: React.FC<UpdateEmployeeProps> = ({
                 backgroundColor="#0d9488"
                 color="#ffffff"
                 type="submit"
-                _hover={{backgroundColor:"#14b8a6"}}
+                _hover={{ backgroundColor: "#14b8a6" }}
                 className="mt-5 w-full py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
               >
                 Submit

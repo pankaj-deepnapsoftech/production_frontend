@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Drawer from "../../../ui/Drawer";
 import { BiX } from "react-icons/bi";
-import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { Button, FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
 import { toast } from "react-toastify";
 import { useUpdateAgentMutation } from "../../../redux/api/api";
 import { useCookies } from "react-cookie";
