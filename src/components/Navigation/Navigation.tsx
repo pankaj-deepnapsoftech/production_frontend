@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Fragment, useState } from "react";
 
-const Navigation: React.FC = () => {
+const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
   const { allowedroutes, isSuper } = useSelector((state: any) => state.auth);
 
   const [openSubMenus, setOpenSubMenus] = useState<{ [key: string]: boolean }>(
@@ -28,7 +28,7 @@ const Navigation: React.FC = () => {
           if (route.isSublink) {
             return (
               <Fragment key={ind} >
-              <div >
+              <div  >
                 <li
                   className="flex border-b  gap-x-2 pl-3 pr-9 py-5 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
                   onClick={() => toggleSubMenusHandler(route.path)}
@@ -48,6 +48,7 @@ const Navigation: React.FC = () => {
                   route.sublink &&
                   route.sublink.map((sublink, index) => (
                     <NavLink
+                    onClick={setShowSideBar}
                     key={index}
                       style={{
                         cursor: isAllowed ? "pointer" : "not-allowed",
@@ -61,7 +62,7 @@ const Navigation: React.FC = () => {
                         className="flex gap-x-2 pl-5 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
                       >
                         <span>{sublink.icon}</span>
-                        <span className=" hidden sm:inline-block">{sublink.name}</span>
+                        <span className="">{sublink.name}</span>
                       </li>
                     </NavLink>
                   ))}
@@ -77,6 +78,7 @@ const Navigation: React.FC = () => {
                 opacity: isAllowed ? 1 : 0.5,
                 pointerEvents: isAllowed ? "auto" : "none",
               }} 
+              onClick={setShowSideBar}
               to={route.path || ""}>
                 <li
                  
@@ -91,6 +93,7 @@ const Navigation: React.FC = () => {
           else if(route.name !== "Approval") {
             return (
               <NavLink key={ind} 
+              onClick={setShowSideBar}
               style={{
                 cursor: ind === 0 || isAllowed ? "pointer" : "not-allowed",
                 opacity: ind === 0 || isAllowed ? 1 : 0.5,

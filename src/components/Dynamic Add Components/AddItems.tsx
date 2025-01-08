@@ -88,7 +88,7 @@ const AddItems: React.FC<AddItemsProps> = ({inputs, setInputs}) => {
             </FormControl>
             <FormControl>
               <FormLabel>Quantity</FormLabel>
-              <Input value={input.quantity} onChange={(e)=>onChangeHandler(ind, "quantity", e.target.value)} type="number" />
+              <Input  value={input.quantity} onChange={(e)=>onChangeHandler(ind, "quantity", e.target.value)} type="number" />
             </FormControl>
             <FormControl>
               <FormLabel>Price</FormLabel>
@@ -103,14 +103,21 @@ const AddItems: React.FC<AddItemsProps> = ({inputs, setInputs}) => {
             onClick={() => deleteInputHandler()}
             leftIcon={<BiMinus />}
             variant="outline"
+            color="#ffffff"
+            backgroundColor="#ef4444"
             className="mr-1"
+            _hover={{backgroundColor: "#dc2626"}}
           >
             Remove
           </Button>
         )}
         <Button
+         
           onClick={addInputHandler}
+          backgroundColor="#22c55e"
+          _hover= {{backgroundColor: "#16a34a"}}
           leftIcon={<IoIosAdd />}
+          color="#ffffff"
           variant="outline"
         >
           Add

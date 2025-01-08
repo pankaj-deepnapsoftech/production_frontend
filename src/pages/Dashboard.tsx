@@ -7,8 +7,9 @@ import Loading from "../ui/Loading";
 import { IoIosDocument, IoMdCart } from "react-icons/io";
 import { FaRupeeSign, FaStoreAlt, FaUser } from "react-icons/fa";
 import { AiFillProduct } from "react-icons/ai";
-import { IoPeople } from "react-icons/io5";
+import { IoPeople, IoPeopleCircle } from "react-icons/io5";
 import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import Card2 from "../components/Dashboard/Card2";
 
 const Dashboard: React.FC = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
@@ -178,15 +179,15 @@ const Dashboard: React.FC = () => {
 
   return (
     <div>
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between flex-wrap">
         <div className="text-3xl font-bold text-[#22075e]">
           Hi {firstname || ""},
         </div>
 
-        <div>
+        <div >
           <form
             onSubmit={applyFilterHandler}
-            className="flex items-end justify-between gap-2"
+            className="flex items-end justify-between gap-2 flex-wrap lg:flex-nowrap"
           >
             <FormControl>
               <FormLabel>From</FormLabel>
@@ -213,7 +214,8 @@ const Dashboard: React.FC = () => {
               paddingY={{ base: "0", md: "3px" }}
               width={{ base: "-webkit-fill-available", md: 150 }}
               color="white"
-              backgroundColor="#319795"
+              backgroundColor="#e67e22"
+              _hover={{backgroundColor:"#e67e22"}}
             >
               Apply
             </Button>
@@ -235,202 +237,204 @@ const Dashboard: React.FC = () => {
 
       {isLoading && <Loading />}
       {!isLoading && (
-        <div>
-          <div className="mb-2 mt-6 font-semibold text-xl">
+        <div className="mt-6">
+          <div className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
             Employee Insights
           </div>
           {employees && employees.length === 0 && (
             <div className="text-center mb-2">No data found.</div>
           )}
           {employees && (
-            <div className="grid grid-cols-4 gap-2">
+            <div  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
               {employees.map((emp, ind) => {
+                 const colors = ["#16a085", "#3498db", "#A948E7", "#16a085", "#FFD700", "#e67e22"];
+                 const primaryColor = colors[ind % colors.length];
                 return (
                   <Card
-                    primaryColor="#A83D9B"
+                    primaryColor={primaryColor}
                     secondaryColor="#A82298"
                     textColor="white"
                     title={emp?._id}
                     content={emp?.total_employee_count}
                     link="employee"
-                    icon={<IoPeople color="#ffffff" size={28} />}
+                    icon={<IoPeopleCircle color="#ffffff" size={28} />}
                   />
                 );
               })}
             </div>
           )}
-          <div className="mb-2 mt-6 font-semibold text-xl">
+          <div  className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
             Sales & Purchase Insights
           </div>
           {approvalsPending && (
-            <div className="grid grid-cols-4 gap-2">
-              <Card
-                primaryColor="#A948E7"
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-center">
+              <Card2
+                primaryColor="#e67e22"
                 secondaryColor="#1E387B"
                 textColor="white"
                 title="Proforma Invoices"
                 content={totalProformaInvoices}
-                link="approval"
+                link="sales-purchase/proforma-invoice"
                 icon={<IoMdCart color="#ffffff" size={28} />}
               />
-              <Card
-                primaryColor="#A948E7"
+              <Card2
+                primaryColor="#16a085"
                 secondaryColor="#1E387B"
                 textColor="white"
                 title="Invoices"
                 content={totalInvoices}
-                link="approval"
+                link="sales-purchase/invoice"
                 icon={<FaStoreAlt color="#ffffff" size={28} />}
               />
-              <Card
+              <Card2
                 primaryColor="#A948E7"
                 secondaryColor="#1E387B"
                 textColor="white"
                 title="Payments"
                 content={totalPayments}
-                link="approval"
+                link="sales-purchase/payment"
                 icon={<FaUser color="#ffffff" size={28} />}
               />
             </div>
           )}
-          <div className="mb-2 mt-6 font-semibold text-xl">
+          <div className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
             Approvals Pending
           </div>
           {approvalsPending && (
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
               <Card
-                primaryColor="#273F7C"
+                primaryColor="#16a085"
                 secondaryColor="#1E387B"
                 textColor="white"
                 title="Inventory"
                 content={approvalsPending?.unapproved_product_count}
-                link="approval"
+                // link="approval"
                 icon={<IoMdCart color="#ffffff" size={28} />}
               />
               <Card
-                primaryColor="#273F7C"
+                primaryColor="#e67e22"
                 secondaryColor="#1E387B"
                 textColor="white"
                 title="Stores"
                 content={approvalsPending?.unapproved_store_count}
-                link="approval"
+                // link="approval"
                 icon={<FaStoreAlt color="#ffffff" size={28} />}
               />
               <Card
-                primaryColor="#273F7C"
+                primaryColor="#2980b9"
                 secondaryColor="#1E387B"
                 textColor="white"
                 title="Merchants"
                 content={approvalsPending?.unapproved_merchant_count}
-                link="approval"
+                // link="approval"
                 icon={<FaUser color="#ffffff" size={28} />}
               />
               <Card
-                primaryColor="#273F7C"
+                primaryColor="#9b59b6"
                 secondaryColor="#1E387B"
                 textColor="white"
                 title="BOMs"
                 content={approvalsPending?.unapproved_bom_count}
-                link="approval"
+                // link="approval"
                 icon={<IoIosDocument color="#ffffff" size={28} />}
               />
             </div>
           )}
-          <div className="mb-2 mt-5 font-semibold text-xl">
+          <div  className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
             Inventory Insights
           </div>
           {directInventory && (
-            <div className="grid grid-cols-4 gap-2 mt-4 mb-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:mt-4 mb-2">
               <Card
-                primaryColor="#4CAAE4"
+                primaryColor="#16a085"
                 secondaryColor="#32A1E7"
                 textColor="white"
                 title="Direct Inventory"
                 content={directInventory?.total_product_count}
-                link="product"
+                link="inventory/direct"
                 icon={<IoMdCart color="#ffffff" size={28} />}
               />
               <Card
-                primaryColor="#4CAAE4"
+                primaryColor="#e67e22"
                 secondaryColor="#32A1E7"
                 textColor="white"
                 title="Stock Value"
                 content={"₹ " + directInventory?.total_stock_price + "/-"}
                 icon={<FaRupeeSign color="#ffffff" size={24} />}
-                link="product"
+                // link="product"
               />
               <Card
-                primaryColor="#4CAAE4"
+                primaryColor="#2980b9"
                 secondaryColor="#32A1E7"
                 textColor="white"
                 title="Excess Stock"
                 content={directInventory?.total_excess_stock}
-                link="product"
+                // link="product"
                 icon={<AiFillProduct color="#ffffff" size={28} />}
               />
               <Card
-                primaryColor="#4CAAE4"
+                primaryColor="#9b59b6"
                 secondaryColor="#32A1E7"
                 textColor="white"
                 title="Low Stock"
                 content={directInventory?.total_low_stock}
-                link="product"
+                // link="product"
                 icon={<AiFillProduct color="#ffffff" size={28} />}
               />
             </div>
           )}
           {indirectInventory && (
-            <div className="grid grid-cols-4 gap-2 mt-4 mb-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-4 mb-2">
               <Card
-                primaryColor="#4CAAE4"
+                primaryColor="#e67e22"
                 secondaryColor="#32A1E7"
                 textColor="white"
                 title="Indirect Inventory"
                 content={indirectInventory?.total_product_count}
-                link="product"
+                link="/inventory/indirect"
                 icon={<IoMdCart color="#ffffff" size={28} />}
               />
               <Card
-                primaryColor="#4CAAE4"
+                primaryColor="#9b59b6"
                 secondaryColor="#32A1E7"
                 textColor="white"
                 title="Stock Value"
                 content={"₹ " + indirectInventory?.total_stock_price + "/-"}
                 icon={<FaRupeeSign color="#ffffff" size={24} />}
-                link="product"
+                // link="product"
               />
               <Card
-                primaryColor="#4CAAE4"
+                primaryColor="#16a085"
                 secondaryColor="#32A1E7"
                 textColor="white"
                 title="Excess Stock"
                 content={indirectInventory?.total_excess_stock}
-                link="product"
+                // link="product"
                 icon={<AiFillProduct color="#ffffff" size={28} />}
               />
               <Card
-                primaryColor="#4CAAE4"
+                primaryColor="#2980b9"
                 secondaryColor="#32A1E7"
                 textColor="white"
                 title="Low Stock"
                 content={indirectInventory?.total_low_stock}
-                link="product"
+                // link="product"
                 icon={<AiFillProduct color="#ffffff" size={28} />}
               />
             </div>
           )}
-          <div className="grid grid-cols-4 gap-2 mt-4 mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-4 mb-2">
             <Card
-              primaryColor="#4CAAE4"
+              primaryColor="#9b59b6"
               secondaryColor="#32A1E7"
               textColor="white"
               title="Scrap Materials"
               content={scrap?.total_product_count?.toString() || ""}
-              link="product"
+              link="/scrap"
               icon={<IoMdCart color="#ffffff" size={28} />}
             />
             <Card
-              primaryColor="#4CAAE4"
+              primaryColor="#2980b9"
               secondaryColor="#32A1E7"
               textColor="white"
               title="Scrap Value"
@@ -439,7 +443,7 @@ const Dashboard: React.FC = () => {
               link="product"
             />
             <Card
-              primaryColor="#4CAAE4"
+              primaryColor="#e67e22"
               secondaryColor="#32A1E7"
               textColor="white"
               title="WIP Inventory"
@@ -457,51 +461,51 @@ const Dashboard: React.FC = () => {
               link="product"
             />
           </div>
-          <div className="mb-2 mt-5 font-semibold text-xl">
+          <div  className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
             Store & Merchant Insights
           </div>
-          <div className="grid grid-cols-4 gap-2 mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-2">
             {stores && (
               <div>
-                <Card
+                <Card2
                   primaryColor="#E57E3D"
                   secondaryColor="#E56F27"
                   textColor="white"
                   title="Stores"
                   content={stores?.total_store_count}
-                  link="store"
+                  link="/store"
                   icon={<FaStoreAlt color="#ffffff" size={28} />}
                 />
               </div>
             )}
             {merchants && (
-              <Card
+              <Card2
                 primaryColor="#A948E7"
                 secondaryColor="#A231E8"
                 textColor="white"
                 title="Buyers"
                 content={merchants?.total_buyer_count}
-                link="merchant/buyer"
+                link="/merchant/buyer"
                 icon={<FaUser color="#ffffff" size={24} />}
               />
             )}
             {merchants && (
-              <Card
+              <Card2
                 primaryColor="#A948E7"
                 secondaryColor="#A231E8"
                 textColor="white"
                 title="Suppliers"
                 content={merchants?.total_supplier_count}
-                link="merchant/supplier"
+                link="/merchant/supplier"
                 icon={<FaUser color="#ffffff" size={24} />}
               />
             )}
           </div>
 
-          <div className="mb-2 mt-5 font-semibold text-xl">
+          <div  className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
             Production Insights
           </div>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {boms && (
               <Card
                 primaryColor="#37A775"
@@ -509,7 +513,7 @@ const Dashboard: React.FC = () => {
                 textColor="white"
                 title="BOMs"
                 content={boms?.total_bom_count}
-                link="bom"
+                link="/production/bom"
                 icon={<IoIosDocument color="#ffffff" size={28} />}
               />
             )}
@@ -519,7 +523,7 @@ const Dashboard: React.FC = () => {
               textColor="white"
               title="Inventory Approval Pending"
               content={processes?.["raw material approval pending"] || 0}
-              link="production/production-process"
+              link="/inventory/approval"
               icon={<FaStoreAlt color="#ffffff" size={28} />}
             />
             <Card
@@ -528,7 +532,7 @@ const Dashboard: React.FC = () => {
               textColor="white"
               title="Inventory Approved"
               content={processes?.["raw materials approved"] || 0}
-              link="production/production-process"
+              link="/inventory/approval"
               icon={<FaStoreAlt color="#ffffff" size={28} />}
             />
             <Card
@@ -537,7 +541,7 @@ const Dashboard: React.FC = () => {
               textColor="white"
               title="Work In Progress"
               content={processes?.["work in progress"] || 0}
-              link="production/production-process"
+              link="/inventory/wip"
               icon={<FaStoreAlt color="#ffffff" size={28} />}
             />
             <Card

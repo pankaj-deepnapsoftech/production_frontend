@@ -8,8 +8,9 @@ import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import UserDetailsMenu from "../../ui/UserDetailsMenu";
+import { IoReorderThreeOutline } from "react-icons/io5";
 
-const Header: React.FC = () => {
+const Header: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
   const navigate = useNavigate();
   const [cookie, _, removeCookie] = useCookies();
   const [showUserDetails, setShowUserDetails] = useState<boolean>(false);
@@ -29,7 +30,14 @@ const Header: React.FC = () => {
 
   return (
     <div className="relative flex justify-between items-center py-2 px-3">
-      <img src={logo} className="w-[150px]"></img>
+
+      <div className="flex items-center justify-center gap-2">
+        <span onClick={setShowSideBar} className="flex rounded-full px-1 hover:bg-gray-200 cursor-pointer md:hidden">
+          <IoReorderThreeOutline className="h-10 w-8" />
+        </span>
+        <img src={logo} className="w-[150px]"></img>
+
+      </div>
 
       <div className="flex gap-x-5 items-center">
         <IoIosNotifications size={40} />

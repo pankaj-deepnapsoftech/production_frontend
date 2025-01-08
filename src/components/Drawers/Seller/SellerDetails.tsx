@@ -66,7 +66,7 @@ const SellerDetails: React.FC<SellerDetailsProps> = ({sellerId, closeDrawerHandl
   }, []);
     return <Drawer closeDrawerHandler={closeDrawerHandler}>
     <div
-      className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[450px] bg-white right-0 top-0 z-10 py-3"
+      className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[50vw] bg-white right-0 top-0 z-10 py-3"
       style={{
         boxShadow:
           "rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px",
@@ -78,62 +78,65 @@ const SellerDetails: React.FC<SellerDetailsProps> = ({sellerId, closeDrawerHandl
       </h1>
 
       <div className="mt-8 px-5">
-        <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
+        <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
           Supplier Details
         </h2>
 
         {isLoadingSeller && <Loading />}
         {!isLoadingSeller && (
-          <div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">Name</p>
-              <p>{name}</p>
-            </div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">Email</p>
-              <p>{email}</p>
-            </div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">Phone</p>
-              <p>{phone}</p>
-            </div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">GST Number</p>
-              <p>{gst}</p>
-            </div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">Company Name</p>
-              <p>{companyName}</p>
-            </div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">Company Email</p>
-              <p>{companyEmail}</p>
-            </div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">Company Phone</p>
-              <p>{companyPhone}</p>
-            </div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">Address Line 1</p>
-              <p>{addressLine1}</p>
-            </div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">Address Line 2</p>
-              <p>{addressLine2}</p>
-            </div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">Pincode</p>
-              <p>{pincode}</p>
-            </div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">City</p>
-              <p>{city}</p>
-            </div>
-            <div className="mt-3 mb-5">
-              <p className="font-semibold">State</p>
-              <p>{state}</p>
-            </div>
-          </div>
+         <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div>
+             <p className="text-lg font-semibold text-gray-700">Name</p>
+             <p className="text-gray-500">{name}</p>
+           </div>
+           <div>
+             <p className="text-lg font-semibold text-gray-700">Email</p>
+             <p className="text-gray-500">{email}</p>
+           </div>
+           <div>
+             <p className="text-lg font-semibold text-gray-700">Phone</p>
+             <p className="text-gray-500">{phone}</p>
+           </div>
+           <div>
+             <p className="text-lg font-semibold text-gray-700">GST Number</p>
+             <p className="text-gray-500">{gst}</p>
+           </div>
+           <div>
+             <p className="text-lg font-semibold text-gray-700">Company Name</p>
+             <p className="text-gray-500">{companyName}</p>
+           </div>
+           <div>
+             <p className="text-lg font-semibold text-gray-700">Company Email</p>
+             <p className="text-gray-500">{companyEmail}</p>
+           </div>
+           <div>
+             <p className="text-lg font-semibold text-gray-700">Company Phone</p>
+             <p className="text-gray-500">{companyPhone}</p>
+           </div>
+           <div>
+             <p className="text-lg font-semibold text-gray-700">Address Line 1</p>
+             <p className="text-gray-500">{addressLine1}</p>
+           </div>
+           <div>
+             <p className="text-lg font-semibold text-gray-700">Address Line 2</p>
+             <p className="text-gray-500">{addressLine2}</p>
+           </div>
+           <div>
+             <p className="text-lg font-semibold text-gray-700">Pincode</p>
+             <p className="text-gray-500">{pincode}</p>
+           </div>
+           <div>
+             <p className="text-lg font-semibold text-gray-700">City</p>
+             <p className="text-gray-500">{city}</p>
+           </div>
+           <div>
+             <p className="text-lg font-semibold text-gray-700">State</p>
+             <p className="text-gray-500">{state}</p>
+           </div>
+         </div>
+       </div>
+       
         )}
       </div>
     </div>

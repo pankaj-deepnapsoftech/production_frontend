@@ -1,4 +1,6 @@
 import React from "react";
+import { IoIosArrowForward} from "react-icons/io";
+import { NavLink } from "react-router-dom";
 
 interface CardProps {
   title: string;
@@ -13,22 +15,24 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({
   title,
   content,
-  primaryColor
+  primaryColor,
+  link
 }) => {
   return (
-    <div
+    <NavLink to={{pathname : link}}
       style={{ boxShadow: "0 0 20px 3px #96beee26" }}
-      className="bg-white rounded-md text-center py-7"
+      className="bg-white rounded-md my-5 text-center w-full px-2 py-7  transition-all hover:scale-105"
     >
-      <h1 className="text-xl border-b border-b-[#a9a9a9] pb-4 font-bold text-[#22075e]">
-        {title}
+      <h1 className="text-xl border-b border-gray-300 flex items-center justify-around pb-4 font-bold text-[#22075e]">
+        {title} <IoIosArrowForward />
       </h1>
-      <div className="mt-4 font-bold text-[#595959]">
-        <span style={{backgroundColor: primaryColor}} className="text-[#ffffff] rounded px-2 ml-1 py-1">
+      <div className=" flex items-center justify-center gap-1 mt-4 font-bold text-[#595959]">
+      <p>All Time</p>
+        <span style={{backgroundColor: primaryColor}} className="text-[#ffffff] rounded px-3 ml-1 py-1">
           {content}
         </span>
       </div>
-    </div>
+    </NavLink>
   );
 };
 

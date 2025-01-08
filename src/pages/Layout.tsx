@@ -1,6 +1,6 @@
 import { useCookies } from "react-cookie";
 import Header from "../components/Header/Header";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,6 +12,7 @@ const Layout: React.FC = () => {
   const [cookies, setCookie] = useCookies();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [showSideBar,setShowSideBar] = useState<boolean>(false)
 
   const loginWithTokenHandler = async (token: string) => {
     try {
@@ -46,14 +47,14 @@ const Layout: React.FC = () => {
 
   return (
     <div>
-      <Header />
+      <Header setShowSideBar={()=>setShowSideBar(!showSideBar)} />
 
       <div className="h-[90vh] overflow-hidden flex gap-x-5">
         <div
-          className="h-[inherit] border overflow-x-hidden  w-[280px]"
+          className={`h-[inherit] border overflow-x-hidden absolute  ${showSideBar ? "left-0" :"-left-72" }  md:static z-10  w-[260px] bg-white transition-all duration-500 `}
           style={{ boxShadow: "0 0 20px 3px #96beee26" }}
         >
-          <Navigation />
+          <Navigation setShowSideBar={()=>setShowSideBar(!showSideBar)} />
         </div>
         <div className="flex-1 pr-5 w-[80%] overflow-auto">
           <Container>
