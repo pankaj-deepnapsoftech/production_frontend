@@ -1,14 +1,13 @@
-import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import {Box,  Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { useState } from "react";
-import { BiMinus } from "react-icons/bi";
-import { IoIosAdd } from "react-icons/io";
+import { IoIosRemoveCircleOutline, IoMdAddCircleOutline } from "react-icons/io";
 
-interface ProcessProps{
-  inputs: any[],
-  setInputs: (input: any)=>void
+interface ProcessProps {
+  inputs: any[];
+  setInputs: (input: any) => void;
 }
 
-const Process: React.FC<ProcessProps> = ({inputs, setInputs}) => {
+const Process: React.FC<ProcessProps> = ({ inputs, setInputs }) => {
   // const [inputs, setInputs] = useState<string[]>([""]);
 
   const addInputHandler = () => {
@@ -30,39 +29,59 @@ const Process: React.FC<ProcessProps> = ({inputs, setInputs}) => {
   return (
     <div>
       <FormLabel fontWeight="bold">Processes</FormLabel>
-      <div className="grid grid-cols-4 gap-2">
-        {inputs.map((input, ind) => (
-          <FormControl key={ind} isRequired>
-            <FormLabel>Process</FormLabel>
-            <Input
-              border="1px"
-              borderColor="#a9a9a9"
-              onChange={(e) => {
-                onChangeHandler(e.target.value, ind);
-              }}
-              type="text"
-              name="process"
-              value={input}
-            ></Input>
-          </FormControl>
+      <div className="grid grid-cols-4 gap-4 items-center">
+        {inputs.map((input, index) => (
+          <Box
+            key={index}          
+            border="1px"
+            className="bg-gray-50"
+            borderColor="#e2e8f0"
+            borderRadius="8px"
+            padding="4"
+            boxShadow="md"
+            backgroundColor="#f9fafb"
+          >
+            <FormControl isRequired>
+              <FormLabel htmlFor={`process-${index}`} fontWeight="bold">
+                Process {index + 1}
+              </FormLabel>
+              <Input
+                id={`process-${index}`}
+                border="1px"
+                borderColor="#a9a9a9"
+                onChange={(e) => onChangeHandler(e.target.value, index)}
+                type="text"
+                name="process"
+                value={input}
+                placeholder={`Enter Process ${index + 1}`}
+              />
+            </FormControl>
+          </Box>
         ))}
       </div>
-      <div className="text-end mt-1">
+      <div className="text-end mt-4">
         {inputs.length > 1 && (
           <Button
             onClick={() => deleteInputHandler(inputs.length - 1)}
-            leftIcon={<BiMinus />}
+            leftIcon={<IoIosRemoveCircleOutline />}
             variant="outline"
-            className="mr-1 bg-[#a9a9a9]"
+            color={"#ef4444"}
+            borderColor={"#ef4444"}
+            backgroundColor={"#ffffff"}
+            _hover={{ backgroundColor: "#ef4444", color: "#ffffff" }}
+            className="mr-3"
           >
             Remove
           </Button>
         )}
         <Button
           onClick={addInputHandler}
-          leftIcon={<IoIosAdd />}
+          leftIcon={<IoMdAddCircleOutline />}
           variant="outline"
-          className="bg-[#a9a9a9]"
+          color={"#16a34a"}
+          borderColor={"#16a34a"}
+          backgroundColor={"#ffffff"}
+          _hover={{ backgroundColor: "#16a34a", color: "#ffffff" }}
         >
           Add
         </Button>

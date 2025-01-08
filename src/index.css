@@ -46,6 +46,16 @@ input[type=number] {
     -moz-appearance: textfield; /* Firefox */
 }
 
+.finished-goods-header {
+    background-color: #38b2ac; /* teal.500 color */
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    padding: 1rem; /* Equivalent to p={4} in Chakra UI */
+  }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

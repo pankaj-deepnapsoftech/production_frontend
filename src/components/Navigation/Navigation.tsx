@@ -30,7 +30,7 @@ const Navigation: React.FC = () => {
               <div key={ind}>
                 <li
                   key={ind}
-                  className="flex gap-x-2 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
+                  className="flex border-b  gap-x-2 pl-3 pr-9 py-5 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
                   onClick={() => toggleSubMenusHandler(route.path)}
                   style={{
                     cursor: isAllowed ? "pointer" : "not-allowed",
@@ -76,10 +76,10 @@ const Navigation: React.FC = () => {
               }} to={route.path || ""}>
                 <li
                   key={ind}
-                  className="flex gap-x-2 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
+                  className="flex border-b gap-x-2 pl-3 pr-9 py-5 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
                 >
-                  <span>{route.icon}</span>
-                  <span>{route.name}</span>
+                  <span >{route.icon}</span>
+                  <span >{route.name}</span>
                 </li>
               </NavLink>
             );
@@ -93,10 +93,10 @@ const Navigation: React.FC = () => {
               }} to={route.path || ""}>
                 <li
                   key={ind}
-                  className="flex gap-x-2 pl-3 pr-9 py-3 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
+                  className="flex border-b gap-x-2 pl-3 pr-9 py-5 rounded-lg hover:bg-[#e6efff] hover:text-[#1640d6] hover:cursor-pointer text-[15px] font-semibold"
                 >
-                  <span>{route.icon}</span>
-                  <span>{route.name}</span>
+                  <span className="text-xl">{route.icon}</span>
+                  <span className="tezt-xl">{route.name}</span>
                 </li>
               </NavLink>
             );

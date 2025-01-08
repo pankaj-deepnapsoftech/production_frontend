@@ -1,11 +1,22 @@
-import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Grid,
+  Input,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import Drawer from "../../../ui/Drawer";
 import { BiX } from "react-icons/bi";
 import React, { useEffect, useRef, useState } from "react";
 import Select from "react-select";
-import {
-  useAddBomMutation
-} from "../../../redux/api/api";
+import { useAddBomMutation } from "../../../redux/api/api";
 import { toast } from "react-toastify";
 import RawMaterial from "../../Dynamic Add Components/RawMaterial";
 import Process from "../../Dynamic Add Components/Process";
@@ -179,7 +190,7 @@ const AddBom: React.FC<AddBomProps> = ({
       fetchBomsHandler();
       closeDrawerHandler();
     } catch (error: any) {
-      if (error?.data?.message?.includes('Insufficient stock')) {
+      if (error?.data?.message?.includes("Insufficient stock")) {
         fetchBomsHandler();
         closeDrawerHandler();
       }
@@ -281,111 +292,232 @@ const AddBom: React.FC<AddBomProps> = ({
               inputs={rawMaterials}
               setInputs={setRawMaterials}
             />
+
+            <hr className="my-5" />
+
             <Process inputs={processes} setInputs={setProcesses} />
-            <div>
-              <FormLabel fontWeight="bold">Finished Good</FormLabel>
-              <div className="grid grid-cols-4 gap-2">
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">Finished Good</FormLabel>
-                  <Select
-                    className="rounded mt-2 border border-[#a9a9a9]"
-                    options={productOptions}
-                    placeholder="Select"
-                    value={finishedGood}
-                    name="assembly_phase"
-                    onChange={onFinishedGoodChangeHandler}
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5">
-                  <FormLabel fontWeight="bold">Description</FormLabel>
-                  <Input
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    type="text"
-                    placeholder="Description"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">Quantity</FormLabel>
-                  <Input
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={quantity}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      onFinishedGoodQntyChangeHandler(+e.target.value)
-                    }
-                    type="number"
-                    placeholder="Quantity"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">
-                    Unit Of Measurement (UOM)
-                  </FormLabel>
-                  <Input
-                    isDisabled={true}
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={uom}
-                    type="text"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">Category</FormLabel>
-                  <Input
-                    isDisabled={true}
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={category}
-                    type="text"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5">
-                  <FormLabel fontWeight="bold">Supporting Doc</FormLabel>
-                  <input
-                    ref={supportingDoc}
-                    type="file"
-                    placeholder="Choose a file"
-                    accept=".pdf"
-                    className="p-1 border border-[#a9a9a9] w-[267px] rounded"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5">
-                  <FormLabel fontWeight="bold">Comments</FormLabel>
-                  <Input
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={comments}
-                    onChange={(e) => setComments(e.target.value)}
-                    type="text"
-                    placeholder="Comments"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">Unit Cost</FormLabel>
-                  <Input
-                    isDisabled={true}
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={unitCost}
-                    type="number"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">Cost</FormLabel>
-                  <Input
-                    isDisabled={true}
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={cost}
-                    type="number"
-                    placeholder="Cost"
-                  />
-                </FormControl>
-              </div>
+
+            <hr className="my-5" />
+
+            <div className="py-3">
+              <FormControl isRequired>
+                <FormLabel fontWeight="bold">Finished Good</FormLabel>
+                <Table
+                  variant="simple"
+                  size="sm"
+                  mt={4}
+                  sx={{ tableLayout: "auto" }}
+                >
+                  <Thead>
+                    <Tr>
+                      <Th
+                        bg="teal.500"
+                        color="white"
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        textAlign="center"
+                        whiteSpace="nowrap"
+                        p={4}
+                      >
+                        Finished Goods
+                      </Th>
+                      <Th
+                        bg="teal.500"
+                        color="white"
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        textAlign="center"
+                        p={4}
+                      >
+                        Description
+                      </Th>
+                      <Th
+                        bg="teal.500"
+                        color="white"
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        textAlign="center"
+                        p={4}
+                      >
+                        Quantity
+                      </Th>
+                      <Th
+                        bg="teal.500"
+                        color="white"
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        textAlign="center"
+                        p={4}
+                      >
+                        UOM
+                      </Th>
+                      <Th
+                        bg="teal.500"
+                        color="white"
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        textAlign="center"
+                        p={4}
+                      >
+                        Category
+                      </Th>
+                      <Th
+                        bg="teal.500"
+                        color="white"
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        textAlign="center"
+                        p={4}
+                      >
+                        Supporting Doc
+                      </Th>
+                      <Th
+                        bg="teal.500"
+                        color="white"
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        textAlign="center"
+                        p={4}
+                      >
+                        Comments
+                      </Th>
+                      <Th
+                        bg="teal.500"
+                        color="white"
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        textAlign="center"
+                        p={4}
+                      >
+                        Unit Cost
+                      </Th>
+                      <Th
+                        bg="teal.500"
+                        color="white"
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        textAlign="center"
+                        p={4}
+                      >
+                        Cost
+                      </Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    <Td>
+                      <FormControl isRequired>
+                        <Select
+                          className="rounded mt-2 border border-[#a9a9a9]"
+                          options={productOptions}
+                          placeholder="Select"
+                          value={finishedGood}
+                          name="assembly_phase"
+                          onChange={onFinishedGoodChangeHandler}
+                        />
+                      </FormControl>
+                    </Td>
+                    <Td>
+                      <FormControl isRequired>
+                        <Input
+                          border="1px"
+                          borderColor="#a9a9a9"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          type="text"
+                          placeholder="Description"
+                        />
+                      </FormControl>
+                    </Td>
+                    <Td>
+                      <FormControl isRequired>
+                        <Input
+                          border="1px"
+                          borderColor="#a9a9a9"
+                          value={quantity}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            onFinishedGoodQntyChangeHandler(+e.target.value)
+                          }
+                          type="number"
+                          placeholder="Quantity"
+                        />
+                      </FormControl>
+                    </Td>
+                    <Td>
+                      <FormControl isRequired>
+                        <Input
+                          isDisabled={true}
+                          border="1px"
+                          borderColor="#a9a9a9"
+                          value={uom}
+                          type="text"
+                        />
+                      </FormControl>
+                    </Td>
+                    <Td>
+                      <FormControl isRequired>
+                        <Input
+                          isDisabled={true}
+                          border="1px"
+                          borderColor="#a9a9a9"
+                          value={category}
+                          type="text"
+                        />
+                      </FormControl>
+                    </Td>
+                    <Td>
+                      <FormControl isRequired>
+                        <input
+                          type="file"
+                          placeholder="Choose a file"
+                          accept=".pdf"
+                          className="p-1 border border-[#a9a9a9] w-[267px] rounded"
+                          ref={supportingDoc}
+                        />
+                      </FormControl>
+                    </Td>
+                    <Td>
+                      <FormControl isRequired>
+                        <Input
+                          border="1px"
+                          borderColor="#a9a9a9"
+                          value={comments}
+                          onChange={(e) => setComments(e.target.value)}
+                          type="text"
+                          placeholder="Comments"
+                        />
+                      </FormControl>
+                    </Td>
+                    <Td>
+                      <FormControl isRequired>
+                        <Input
+                          isDisabled={true}
+                          border="1px"
+                          borderColor="#a9a9a9"
+                          value={unitCost}
+                          type="number"
+                        />
+                      </FormControl>
+                    </Td>
+                    <Td>
+                      <FormControl isRequired>
+                        <Input
+                          isDisabled={true}
+                          border="1px"
+                          borderColor="#a9a9a9"
+                          value={cost}
+                          onChange={(e) => setCost(+e.target.value)}
+                          type="number"
+                          placeholder="Cost"
+                        />
+                      </FormControl>
+                    </Td>
+                  </Tbody>
+                </Table>
+              </FormControl>
             </div>
+
+            <hr className="my-5" />
+
             <div>
               <ScrapMaterial
                 products={products}
@@ -394,88 +526,178 @@ const AddBom: React.FC<AddBomProps> = ({
                 setInputs={setScrapMaterials}
               />
             </div>
-            <div>
-              <h2 className="text-lg font-semibold mt-4 mb-2">Other Charges</h2>
-              <div className="grid grid-cols-4 gap-2">
-                <FormControl>
-                  <FormLabel fontWeight="bold">Labour Charges</FormLabel>
-                  <Input
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={labourCharges}
-                    onChange={(e) => setLabourCharges(+e.target.value)}
-                    type="number"
-                    placeholder="Labour Charges"
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel fontWeight="bold">Machinery Charges</FormLabel>
-                  <Input
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={machineryCharges}
-                    onChange={(e) => setMachineryCharges(+e.target.value)}
-                    type="number"
-                    placeholder="Machinery Charges"
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel fontWeight="bold">Electricity Charges</FormLabel>
-                  <Input
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={electricityCharges}
-                    onChange={(e) => setElectricityCharges(+e.target.value)}
-                    type="number"
-                    placeholder="Electricity Charges"
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel fontWeight="bold">Other Charges</FormLabel>
-                  <Input
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={otherCharges}
-                    onChange={(e) => setOtherCharges(+e.target.value)}
-                    type="number"
-                    placeholder="Other Charges"
-                  />
-                </FormControl>
-              </div>
-            </div>
-            <div className="grid grid-cols-4 gap-2">
+
+            <hr className="my-5" />
+
+            <Table variant="simple" size="md">
+              <Thead>
+                <Tr>
+                  <Th>
+                    <Text
+                      bg="teal.500"
+                      color="white"
+                      fontWeight="bold"
+                      textTransform="uppercase"
+                      textAlign="center"
+                      whiteSpace="nowrap"
+                      fontSize={"sm"}
+                      p={4}
+                    >
+                      Charge Type
+                    </Text>
+                  </Th>
+                  <Th>
+                    {" "}
+                    <Text
+                      bg="teal.500"
+                      color="white"
+                      fontWeight="bold"
+                      textTransform="uppercase"
+                      textAlign="center"
+                      whiteSpace="nowrap"
+                      fontSize={"sm"}
+                      p={4}
+                    >
+                      Amount
+                    </Text>
+                  </Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                <Tr>
+                  <Td>
+                    <FormLabel fontWeight="bold">Labour Charges</FormLabel>
+                  </Td>
+                  <Td>
+                    <FormControl>
+                      <Input
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        value={labourCharges}
+                        onChange={(e) => setLabourCharges(+e.target.value)}
+                        type="number"
+                        placeholder="Labour Charges"
+                      />
+                    </FormControl>
+                  </Td>
+                </Tr>
+
+                <Tr>
+                  <Td>
+                    <FormLabel fontWeight="bold">Machinery Charges</FormLabel>
+                  </Td>
+                  <Td>
+                    <FormControl>
+                      <Input
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        value={machineryCharges}
+                        onChange={(e) => setMachineryCharges(+e.target.value)}
+                        type="number"
+                        placeholder="Machinery Charges"
+                      />
+                    </FormControl>
+                  </Td>
+                </Tr>
+
+                <Tr>
+                  <Td>
+                    <FormLabel fontWeight="bold">Electricity Charges</FormLabel>
+                  </Td>
+                  <Td>
+                    <FormControl>
+                      <Input
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        value={electricityCharges}
+                        onChange={(e) => setElectricityCharges(+e.target.value)}
+                        type="number"
+                        placeholder="Electricity Charges"
+                      />
+                    </FormControl>
+                  </Td>
+                </Tr>
+
+                <Tr>
+                  <Td>
+                    <FormLabel fontWeight="bold">Other Charges</FormLabel>
+                  </Td>
+                  <Td>
+                    <FormControl>
+                      <Input
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        value={otherCharges}
+                        onChange={(e) => setOtherCharges(+e.target.value)}
+                        type="number"
+                        placeholder="Other Charges"
+                      />
+                    </FormControl>
+                  </Td>
+                </Tr>
+              </Tbody>
+            </Table>
+
+            <hr className="my-5" />
+
+            <Grid templateColumns="repeat(4, 1fr)" gap={4} mb={5}>
               <FormControl className="mt-3 mb-5" isRequired>
-                <FormLabel fontWeight="bold">BOM Name</FormLabel>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  BOM Name
+                </FormLabel>
                 <Input
                   border="1px"
-                  borderColor="#a9a9a9"
+                  borderColor="gray.300"
+                  borderRadius="lg"
+                  focusBorderColor="teal.500"
                   value={bomName}
                   onChange={(e) => setBomName(e.target.value)}
                   type="text"
-                  placeholder="BOM Name"
+                  placeholder="Enter BOM Name"
+                  _hover={{ borderColor: "teal.400" }}
+                  _focus={{ borderColor: "teal.500" }}
+                  transition="all 0.2s"
                 />
               </FormControl>
+
               <FormControl className="mt-3 mb-5" isRequired>
-                <FormLabel fontWeight="bold">Parts Count</FormLabel>
-                <input
-                  disabled={true}
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Parts Count
+                </FormLabel>
+                <Input
+                  isReadOnly
                   value={partsCount}
                   type="number"
                   placeholder="Parts Count"
-                  className="rounded px-2 py-[6px] w-[267px] border-[1px] border-[#a9a9a9] disabled:cursor-not-allowed disabled:bg-white"
+                  border="1px"
+                  borderColor="gray.300"
+                  borderRadius="lg"
+                  _focus={{ borderColor: "teal.500" }}
+                  _hover={{ borderColor: "teal.400" }}
+                  transition="all 0.2s"
+                  bg="gray.50"
                 />
               </FormControl>
+
               <FormControl className="mt-3 mb-5" isRequired>
-                <FormLabel fontWeight="bold">Total Parts Cost</FormLabel>
-                <input
-                  disabled={true}
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Total Parts Cost
+                </FormLabel>
+                <Input
+                  isReadOnly
                   value={totalPartsCost}
                   type="number"
                   placeholder="Total Parts Cost"
-                  className="rounded px-2 py-[6px] w-[267px] border-[1px] border-[#a9a9a9] disabled:cursor-not-allowed disabled:bg-white"
+                  border="1px"
+                  borderColor="gray.300"
+                  borderRadius="lg"
+                  _focus={{ borderColor: "teal.500" }}
+                  _hover={{ borderColor: "teal.400" }}
+                  transition="all 0.2s"
+                  bg="gray.50"
                 />
               </FormControl>
-            </div>
+            </Grid>
 
             <Button
               type="submit"
