@@ -71,7 +71,7 @@ const AddUserRole: React.FC<AddUserRoleProps> = ({
   return (
     <Drawer closeDrawerHandler={closeDrawerHandler}>
       <div
-        className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[450px] bg-white right-0 top-0 z-10 py-3"
+        className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[60vw] bg-white right-0 top-0 z-10 py-3"
         style={{
           boxShadow:
             "rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px",
@@ -83,11 +83,12 @@ const AddUserRole: React.FC<AddUserRoleProps> = ({
         </h1>
 
         <div className="mt-8 px-5">
-          <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
+          <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
             Add New Role
           </h2>
 
-          <form onSubmit={addRoleHandler}>
+          <form onSubmit={addRoleHandler}
+          className="max-w-4xl mx-auto p-8 bg-white space-y-5">
             <FormControl className="mt-3 mb-5" isRequired>
               <FormLabel fontWeight="bold">Role</FormLabel>
               <Input
@@ -123,10 +124,11 @@ const AddUserRole: React.FC<AddUserRoleProps> = ({
             </FormControl>
             <Button
               isLoading={isAddingRole}
+              backgroundColor="#0d9488"
+              color="#ffffff"
               type="submit"
-              className="mt-1"
-              color="white"
-              backgroundColor="#1640d6"
+              _hover={{backgroundColor:"#14b8a6"}}
+              className="mt-5 w-full py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
             >
               Submit
             </Button>

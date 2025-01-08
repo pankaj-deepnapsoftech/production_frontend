@@ -61,7 +61,7 @@ const EmployeeDetails: React.FC<EmployeeDetailsProps> = ({
   return (
     <Drawer closeDrawerHandler={closeDrawerHandler}>
       <div
-        className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[450px] bg-white right-0 top-0 z-10 py-3"
+        className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[50vw] bg-white right-0 top-0 z-10 py-3"
         style={{
           boxShadow:
             "rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px",
@@ -73,45 +73,57 @@ const EmployeeDetails: React.FC<EmployeeDetailsProps> = ({
         </h1>
 
         <div className="mt-8 px-5">
-          <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
+          <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
             Employee Details
           </h2>
 
           {isLoadingEmployee && <Loading />}
           {!isLoadingEmployee && (
-            <div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">First Name</p>
-                <p>{firstname}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Last Name</p>
-                <p>{lastname}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Email</p>
-                <p>{email}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Phone</p>
-                <p>{phone}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Is Verified</p>
-                <p>{isVerified ? 'Verified' : 'Not Verified'}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Role</p>
-                <p>{(isSuper && 'Super Admin') || role?.role || 'N/A'}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Permissions</p>
-                {!role?.permissions && <p>N/A</p>}
-                {role?.permissions && <ul className="pl-5">
-                    {role.permissions.map((permission: any) => <li>{permission}</li>)}
-                </ul>}
-              </div>
-            </div>
+           <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
+           <div className="space-y-6">
+             <div className="flex justify-between items-center border-b pb-4">
+               <p className="font-semibold text-lg text-gray-700">First Name</p>
+               <p className="text-gray-600">{firstname}</p>
+             </div>
+             <div className="flex justify-between items-center border-b pb-4">
+               <p className="font-semibold text-lg text-gray-700">Last Name</p>
+               <p className="text-gray-600">{lastname}</p>
+             </div>
+             <div className="flex justify-between items-center border-b pb-4">
+               <p className="font-semibold text-lg text-gray-700">Email</p>
+               <p className="text-gray-600">{email}</p>
+             </div>
+             <div className="flex justify-between items-center border-b pb-4">
+               <p className="font-semibold text-lg text-gray-700">Phone</p>
+               <p className="text-gray-600">{phone}</p>
+             </div>
+             <div className="flex justify-between items-center border-b pb-4">
+               <p className="font-semibold text-lg text-gray-700">Is Verified</p>
+               <p className={`text-${isVerified ? 'green' : 'red'}-600`}>
+                 {isVerified ? 'Verified' : 'Not Verified'}
+               </p>
+             </div>
+             <div className="flex justify-between items-center border-b pb-4">
+               <p className="font-semibold text-lg text-gray-700">Role</p>
+               <p className="text-gray-600">{(isSuper && 'Super Admin') || role?.role || 'N/A'}</p>
+             </div>
+             <div className="flex justify-between items-start border-b pb-4">
+               <p className="font-semibold text-lg text-gray-700">Permissions</p>
+               <div>
+                 {!role?.permissions ? (
+                   <p className="text-gray-600">N/A</p>
+                 ) : (
+                   <ul className="pl-5 text-gray-600">
+                     {role.permissions.map((permission: any, index: number) => (
+                       <li key={index} className="list-disc">{permission}</li>
+                     ))}
+                   </ul>
+                 )}
+               </div>
+             </div>
+           </div>
+         </div>
+         
           )}
         </div>
       </div>

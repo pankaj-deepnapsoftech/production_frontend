@@ -53,7 +53,7 @@ const UserRoleDetails: React.FC<UserRoleDetailsProps> = ({
   return (
     <Drawer closeDrawerHandler={closeDrawerHandler}>
       <div
-        className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[450px] bg-white right-0 top-0 z-10 py-3"
+        className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[50vw] bg-white right-0 top-0 z-10 py-3"
         style={{
           boxShadow:
             "rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px",
@@ -65,28 +65,31 @@ const UserRoleDetails: React.FC<UserRoleDetailsProps> = ({
         </h1>
 
         <div className="mt-8 px-5">
-          <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
+          <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
             User Role Details
           </h2>
 
           {isLoadinRole && <Loading />}
           {!isLoadinRole && (
-            <div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Role</p>
-                <p>{role}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Description</p>
-                <p>{description}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Permissions</p>
-                <ul className="pl-5 list-decimal">
-                    {permissions.map(permission => <li>{permission}</li>)}
-                </ul>
-              </div>
-            </div>
+           <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
+           <div className="mt-3 mb-5">
+             <p className="font-semibold text-lg text-gray-800">Role</p>
+             <p className="text-gray-600 text-base">{role}</p>
+           </div>
+           <div className="mt-3 mb-5">
+             <p className="font-semibold text-lg text-gray-800">Description</p>
+             <p className="text-gray-600 text-base">{description}</p>
+           </div>
+           <div className="mt-3 mb-5">
+             <p className="font-semibold text-lg text-gray-800">Permissions</p>
+             <ul className="pl-5 list-decimal text-gray-600 space-y-2">
+               {permissions.map((permission, index) => (
+                 <li key={index} className="transition-transform hover:translate-x-2 cursor-pointer">{permission}</li>
+               ))}
+             </ul>
+           </div>
+         </div>
+         
           )}
         </div>
       </div>

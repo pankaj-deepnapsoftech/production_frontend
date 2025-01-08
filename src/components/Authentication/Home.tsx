@@ -7,7 +7,7 @@ const Home: FC = (): ReactElement => {
     return (
         <>
             {/* hero */}
-            <div className="relative h-[60vh]">
+            <div className="relative h-[70vh] ">
                 <video  className="absolute -z-10 -top-20  w-full hidden md:block" autoPlay muted loop>
                     <source src="/video/small.mp4" type="video/mp4" />
                 </video>
