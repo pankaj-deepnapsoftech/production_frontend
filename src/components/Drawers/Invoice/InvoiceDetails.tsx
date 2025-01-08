@@ -19,9 +19,7 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [buyer, setBuyer] = useState<string | undefined>();
   const [supplier, setSupplier] = useState<string | undefined>();
-  const [invoiceNo, setInvoiceNo] = useState<
-    string | undefined
-  >();
+  const [invoiceNo, setInvoiceNo] = useState<string | undefined>();
   const [documentDate, setDocumentDate] = useState<string | undefined>();
   const [category, setCategory] = useState<string | undefined>();
   const [salesOrderDate, setSalesOrderDate] = useState<string | undefined>();
@@ -91,76 +89,122 @@ const InvoiceDetails: React.FC<InvoiceDetailsProps> = ({
         </h1>
 
         <div className="mt-8 px-5">
-          <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
+          <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
             Invoice Details
           </h2>
 
           {isLoading && <Loading />}
           {!isLoading && (
-            <div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Created By</p>
-                <p>{creator?.first_name + ' ' + creator?.last_name}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Category</p>
-                <p>{category?.toUpperCase()}</p>
-              </div>
-              {buyer && <div className="mt-3 mb-5">
-                <p className="font-semibold">Buyer</p>
-                <p>{buyer}</p>
-              </div>}
-              {supplier && <div className="mt-3 mb-5">
-                <p className="font-semibold">Supplier</p>
-                <p>{supplier}</p>
-              </div>}
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Invoice No.</p>
-                <p>{invoiceNo}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Document Date</p>
-                <p>{moment(documentDate).format('DD/MM/YYYY')}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Sales Order Date</p>
-                <p>{moment(salesOrderDate).format('DD/MM/YYYY')}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Items</p>
-                <ul className="border">
-                  {items?.map((item: any)=>{
-                    return <li className="flex gap-3">
-                      <span className="border-l flex-1 p-1">{item.item.name}</span>
-                      <span className="border-l flex-1 p-1">{item.quantity}</span>
-                      <span className="border-l flex-1 p-1">₹ {item.amount}/-</span>
-                    </li>
-                  })}
-                </ul>
-                <div className="mt-3 mb-5">
-                  <p className="font-semibold">Store</p>
-                  <p>{store}</p>
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">
+                      Created By
+                    </p>
+                    <p className="text-gray-500">
+                      {creator?.first_name + " " + creator?.last_name}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">
+                      Category
+                    </p>
+                    <p className="text-gray-500">{category?.toUpperCase()}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Note</p>
-                <p>{note}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Subtotal</p>
-                <p>₹ {subtotal}/-</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Tax</p>
-                <p>{tax?.tax_name}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Total</p>
-                <p>₹ {total}/-</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Balance</p>
-                <p>₹ {balance}/-</p>
+
+                {buyer && (
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">Buyer</p>
+                    <p className="text-gray-500">{buyer}</p>
+                  </div>
+                )}
+
+                {supplier && (
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">
+                      Supplier
+                    </p>
+                    <p className="text-gray-500">{supplier}</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">
+                      Invoice No.
+                    </p>
+                    <p className="text-gray-500">{invoiceNo}</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">
+                      Document Date
+                    </p>
+                    <p className="text-gray-500">
+                      {moment(documentDate).format("DD/MM/YYYY")}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">
+                      Sales Order Date
+                    </p>
+                    <p className="text-gray-500">
+                      {moment(salesOrderDate).format("DD/MM/YYYY")}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">Store</p>
+                    <p className="text-gray-500">{store}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-lg font-semibold text-gray-700">Items</p>
+                  <ul className="border rounded-lg">
+                    {items?.map((item: any) => (
+                      <li className="flex gap-3 border-b py-3">
+                        <span className="flex-1 p-2">{item.item.name}</span>
+                        <span className="flex-1 p-2">{item.quantity}</span>
+                        <span className="flex-1 p-2">₹ {item.amount}/-</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="mt-3 mb-5">
+                  <p className="text-lg font-semibold text-gray-700">Note</p>
+                  <p className="text-gray-500">{note}</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">
+                      Subtotal
+                    </p>
+                    <p className="text-gray-500">₹ {subtotal}/-</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">Tax</p>
+                    <p className="text-gray-500">{tax?.tax_name}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">Total</p>
+                    <p className="text-gray-500">₹ {total}/-</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-gray-700">
+                      Balance
+                    </p>
+                    <p className="text-gray-500">₹ {balance}/-</p>
+                  </div>
+                </div>
               </div>
             </div>
           )}

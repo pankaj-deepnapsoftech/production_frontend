@@ -2,9 +2,7 @@ import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import Drawer from "../../../ui/Drawer";
 import { BiX } from "react-icons/bi";
 import { useEffect, useState } from "react";
-import {
-  useUpdateStoreMutation,
-} from "../../../redux/api/api";
+import { useUpdateStoreMutation } from "../../../redux/api/api";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
 import Loading from "../../../ui/Loading";
@@ -108,7 +106,7 @@ const UpdateStore: React.FC<UpdateStoreProps> = ({
   return (
     <Drawer closeDrawerHandler={closeDrawerHandler}>
       <div
-        className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[450px] bg-white right-0 top-0 z-10 py-3"
+        className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[60vw] bg-white right-0 top-0 z-10 py-3"
         style={{
           boxShadow:
             "rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px",
@@ -120,88 +118,94 @@ const UpdateStore: React.FC<UpdateStoreProps> = ({
         </h1>
 
         <div className="mt-8 px-5">
-          <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
+          <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
             Update Store
           </h2>
 
           {isLoadingStore && <Loading />}
-          {!isLoadingStore && <form onSubmit={updateStoreHandler}>
-            <FormControl className="mt-3 mb-5" isRequired>
-              <FormLabel fontWeight="bold">Store Name</FormLabel>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                type="text"
-                placeholder="Product Name"
-              />
-            </FormControl>
-            <FormControl className="mt-3 mb-5">
-              <FormLabel fontWeight="bold">GST Number</FormLabel>
-              <Input
-                value={gst}
-                onChange={(e) => setGst(e.target.value)}
-                type="text"
-                placeholder="GST Number"
-              />
-            </FormControl>
-            <FormControl className="mt-3 mb-5" isRequired>
-              <FormLabel fontWeight="bold">Address Line 1</FormLabel>
-              <Input
-                value={addressLine1}
-                className="no-scrollbar"
-                onChange={(e) => setAddressLine1(e.target.value)}
-                type="text"
-                placeholder="Address Line 1"
-              />
-            </FormControl>
-            <FormControl className="mt-3 mb-5">
-              <FormLabel fontWeight="bold">Address Line 2</FormLabel>
-              <Input
-                value={addressLine2}
-                className="no-scrollbar"
-                onChange={(e) => setAddressLine2(e.target.value)}
-                type="text"
-                placeholder="Address Line 2"
-              />
-            </FormControl>
-            <FormControl className="mt-3 mb-5">
-              <FormLabel fontWeight="bold">Pincode</FormLabel>
-              <Input
-                className="no-scrollbar"
-                value={pincode}
-                onChange={(e) => setPincode(+e.target.value)}
-                type="number"
-                placeholder="Pincode"
-              />
-            </FormControl>
-            <FormControl className="mt-3 mb-5" isRequired>
-              <FormLabel fontWeight="bold">City</FormLabel>
-              <Input
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                type="text"
-                placeholder="City"
-              />
-            </FormControl>
-            <FormControl className="mt-3 mb-5" isRequired>
-              <FormLabel fontWeight="bold">State</FormLabel>
-              <Input
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-                type="text"
-                placeholder="State"
-              />
-            </FormControl>
-            <Button
-              isLoading={isUpdatingStore}
-              type="submit"
-              className="mt-1"
-              color="white"
-              backgroundColor="#1640d6"
+          {!isLoadingStore && (
+            <form
+              onSubmit={updateStoreHandler}
+              className="max-w-4xl mx-auto p-8 bg-white space-y-5"
             >
-              Submit
-            </Button>
-          </form>}
+              <FormControl className="mt-3 mb-5" isRequired>
+                <FormLabel fontWeight="bold">Store Name</FormLabel>
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  type="text"
+                  placeholder="Product Name"
+                />
+              </FormControl>
+              <FormControl className="mt-3 mb-5">
+                <FormLabel fontWeight="bold">GST Number</FormLabel>
+                <Input
+                  value={gst}
+                  onChange={(e) => setGst(e.target.value)}
+                  type="text"
+                  placeholder="GST Number"
+                />
+              </FormControl>
+              <FormControl className="mt-3 mb-5" isRequired>
+                <FormLabel fontWeight="bold">Address Line 1</FormLabel>
+                <Input
+                  value={addressLine1}
+                  className="no-scrollbar"
+                  onChange={(e) => setAddressLine1(e.target.value)}
+                  type="text"
+                  placeholder="Address Line 1"
+                />
+              </FormControl>
+              <FormControl className="mt-3 mb-5">
+                <FormLabel fontWeight="bold">Address Line 2</FormLabel>
+                <Input
+                  value={addressLine2}
+                  className="no-scrollbar"
+                  onChange={(e) => setAddressLine2(e.target.value)}
+                  type="text"
+                  placeholder="Address Line 2"
+                />
+              </FormControl>
+              <FormControl className="mt-3 mb-5">
+                <FormLabel fontWeight="bold">Pincode</FormLabel>
+                <Input
+                  className="no-scrollbar"
+                  value={pincode}
+                  onChange={(e) => setPincode(+e.target.value)}
+                  type="number"
+                  placeholder="Pincode"
+                />
+              </FormControl>
+              <FormControl className="mt-3 mb-5" isRequired>
+                <FormLabel fontWeight="bold">City</FormLabel>
+                <Input
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  type="text"
+                  placeholder="City"
+                />
+              </FormControl>
+              <FormControl className="mt-3 mb-5" isRequired>
+                <FormLabel fontWeight="bold">State</FormLabel>
+                <Input
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  type="text"
+                  placeholder="State"
+                />
+              </FormControl>
+              <Button
+                isLoading={isUpdatingStore}
+                backgroundColor="#0d9488"
+                color="#ffffff"
+                type="submit"
+                _hover={{backgroundColor:"#14b8a6"}}
+                className="mt-5 w-full py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+              >
+                Submit
+              </Button>
+            </form>
+          )}
         </div>
       </div>
     </Drawer>

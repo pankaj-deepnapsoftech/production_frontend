@@ -56,7 +56,7 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
     // @ts-ignore
     <Drawer closeDrawerHandler={closeDrawerHandler}>
       <div
-        className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[450px] bg-white right-0 top-0 z-10 py-3"
+        className="absolute overflow-auto h-[100vh] w-[90vw] md:w-[50vw] bg-white right-0 top-0 z-10 py-3"
         style={{
           boxShadow:
             "rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px",
@@ -69,30 +69,38 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
         </h1>
 
         <div className="mt-8 px-5">
-          <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
+          <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
             Payment Details
           </h2>
 
           {isLoading && <Loading />}
           {!isLoading && (
-            <div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Invoice No.</p>
-                <p>{invoiceNo}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Amount</p>
-                <p>₹ {amount}/-</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Mode</p>
-                <p>{mode}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Description</p>
-                <p>{description || 'N/A'}</p>
-              </div>
-            </div>
+           <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
+           <div className="space-y-6">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <div>
+                 <p className="text-lg font-semibold text-gray-700">Invoice No.</p>
+                 <p className="text-gray-500">{invoiceNo}</p>
+               </div>
+               <div>
+                 <p className="text-lg font-semibold text-gray-700">Amount</p>
+                 <p className="text-gray-500">₹ {amount}/-</p>
+               </div>
+             </div>
+         
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <div>
+                 <p className="text-lg font-semibold text-gray-700">Mode</p>
+                 <p className="text-gray-500">{mode}</p>
+               </div>
+               <div>
+                 <p className="text-lg font-semibold text-gray-700">Description</p>
+                 <p className="text-gray-500">{description || 'N/A'}</p>
+               </div>
+             </div>
+           </div>
+         </div>
+         
           )}
         </div>
       </div>
