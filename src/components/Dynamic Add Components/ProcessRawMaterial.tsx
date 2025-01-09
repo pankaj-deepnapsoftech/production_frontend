@@ -26,7 +26,7 @@ const ProcessRawMaterial: React.FC<ProcessRawMaterialProps> = ({
   const [suppliersOptionsList, setSuppliersOptionsList] = useState<any[]>([]);
   const [selectedSupplier, setSelectedSupplier] = useState<any[]>([]);
 
-  const [isTableVisible, setIsTableVisible] = useState(false); 
+  const [isTableVisible, setIsTableVisible] = useState(true); 
 
   const assemblyPhaseOptions = [
     { value: "not started", label: "Not Started" },
@@ -121,17 +121,16 @@ const ProcessRawMaterial: React.FC<ProcessRawMaterialProps> = ({
           <span 
           className="cursor-pointer ml-5"
             style={{ cursor: "pointer", marginLeft: "10px" }}
-            onClick={() => setIsTableVisible(!isTableVisible)} // Toggle visibility
+            onClick={() => setIsTableVisible(!isTableVisible)}
           >
             {isTableVisible ? (
-              <FaChevronUp size={18} color="#111827 " /> // Up arrow when table is visible
+              <FaChevronUp size={18} color="#111827 " /> 
             ) : (
-              <FaChevronDown size={18} color="#111827 " /> // Down arrow when table is hidden
+              <FaChevronDown size={18} color="#111827 " /> 
             )}
           </span>
         </FormLabel>
-
-        {/* Conditionally render the table */}
+        
         {isTableVisible && (
           <div style={{ overflowY: 'auto' }}>
             <Table variant="striped" colorScheme="gray" size="sm" mt={4} sx={{ tableLayout: "auto" }}>

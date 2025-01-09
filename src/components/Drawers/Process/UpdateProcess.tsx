@@ -28,6 +28,7 @@ import Process from "../../Dynamic Add Components/ProductionProcess";
 import RawMaterial from "../../Dynamic Add Components/ProcessRawMaterial";
 import ScrapMaterial from "../../Dynamic Add Components/ScrapMaterial";
 import ProcessScrapMaterial from "../../Dynamic Add Components/ProcessScrapMaterial";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 interface UpdateProcess {
   closeDrawerHandler: () => void;
@@ -104,6 +105,7 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
   const [rawMaterialApprovalPending, setRawMaterialApprovalPending] =
     useState<boolean>(false);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
+  const [isTableVisible, setIsTableVisible] = useState(true); 
 
   const [scrapMaterials, setScrapMaterials] = useState<any[]>([
     {
@@ -485,11 +487,23 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
             <hr className="my-5" />
 
             <div className="mt-4">
-              <FormLabel fontWeight="bold" fontSize="lg" >
-                Finished Good
-              </FormLabel>
-
-              {/* Scrollable Table Container */}
+              <FormLabel fontWeight="bold" display="flex" alignItems="center">
+                      <Text fontWeight="bold" fontSize="lg">
+                        Finished Goods
+                      </Text>
+                      <span
+                        className="cursor-pointer ml-5"
+                        style={{ cursor: "pointer", marginLeft: "10px" }}
+                        onClick={() => setIsTableVisible(!isTableVisible)}
+                      >
+                        {isTableVisible ? (
+                          <FaChevronUp size={18} color="#111827 " />
+                        ) : (
+                          <FaChevronDown size={18} color="#111827 " />
+                        )}
+                      </span>
+                    </FormLabel>
+              {isTableVisible && (
               <div className="overflow-x-auto mt-4">
                 <Table
                   variant="striped"
@@ -671,7 +685,9 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
                   </Tbody>
                 </Table>
               </div>
+                )}
             </div>
+           
 
             <hr className="my-5" />
 

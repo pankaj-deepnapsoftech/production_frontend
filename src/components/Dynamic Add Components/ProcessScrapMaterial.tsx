@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Select from "react-select";
 import { toast } from "react-toastify";
 
@@ -31,6 +32,7 @@ const ProcessScrapMaterial: React.FC<ProcessScrapMaterialProps> = ({
   const [cookies] = useCookies();
   const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(false);
   const [selectedProducts, setSelectedProducts] = useState<any[]>([]);
+  const [isTableVisible, setIsTableVisible] = useState(true); 
 
   const onChangeHandler = (name: string, value: string, ind: number) => {
     const inputsArr: any = [...inputs];
@@ -72,11 +74,24 @@ const ProcessScrapMaterial: React.FC<ProcessScrapMaterialProps> = ({
 
   return (
     <div className="mt-4">
-      <FormLabel fontWeight="bold" fontSize="lg">
-        Scrap Materials
+      <FormLabel fontWeight="bold" display="flex" alignItems="center">
+        <Text fontWeight="bold" fontSize="lg">
+          Scrap Materials
+        </Text>
+        <span
+          className="cursor-pointer ml-5"
+          style={{ cursor: "pointer", marginLeft: "10px" }}
+          onClick={() => setIsTableVisible(!isTableVisible)}
+        >
+          {isTableVisible ? (
+            <FaChevronUp size={18} color="#111827 " />
+          ) : (
+            <FaChevronDown size={18} color="#111827 " />
+          )}
+        </span>
       </FormLabel>
 
-      {/* Scrollable Table Container */}
+      {isTableVisible && (
       <div className="overflow-x-auto mt-4">
         <Table
           variant="striped"
@@ -228,6 +243,7 @@ const ProcessScrapMaterial: React.FC<ProcessScrapMaterialProps> = ({
           </Tbody>
         </Table>
       </div>
+       )}
     </div>
   );
 };

@@ -26,6 +26,7 @@ import Process from "../../Dynamic Add Components/Process";
 import { useCookies } from "react-cookie";
 import FormData from "form-data";
 import ScrapMaterial from "../../Dynamic Add Components/ScrapMaterial";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 interface UpdateBomProps {
   closeDrawerHandler: () => void;
@@ -97,6 +98,7 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
       total_part_cost: "",
     },
   ]);
+  const [isTableVisible, setIsTableVisible] = useState(true);
 
   const categoryOptions = [
     { value: "finished goods", label: "Finished Goods" },
@@ -373,7 +375,7 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
         </h1>
 
         <div className="mt-8 px-5">
-          <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
+          <h2 className="text-2xl font-bold text-white py-5 text-center mb-7 border-y bg-teal-500">
             Update BOM
           </h2>
 
@@ -386,10 +388,29 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
             />
             <hr className="my-5" />
             <Process inputs={processes} setInputs={setProcesses} />
+
             <hr className="my-5" />
+
             <div className="py-3">
               <FormControl isRequired>
-                <FormLabel fontWeight="bold">Finished Good</FormLabel>
+                <FormLabel fontWeight="bold" display="flex" alignItems="center">
+                  <Text fontWeight="bold" fontSize="lg">
+                   Finished Goods
+                  </Text>
+                  <span
+                    className="cursor-pointer ml-5"
+                    style={{ cursor: "pointer", marginLeft: "10px" }}
+                    onClick={() => setIsTableVisible(!isTableVisible)}
+                  >
+                    {isTableVisible ? (
+                      <FaChevronUp size={18} color="#111827 " />
+                    ) : (
+                      <FaChevronDown size={18} color="#111827 " />
+                    )}
+                  </span>
+                </FormLabel>
+
+                {isTableVisible && (
                 <Table
                   variant="simple"
                   size="sm"
@@ -601,6 +622,7 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
                     </Td>
                   </Tbody>
                 </Table>
+                )}
               </FormControl>
             </div>
 
@@ -616,184 +638,138 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
             </div>
 
             <hr className="my-5" />
-            <Table variant="simple" size="md">
-              <Thead>
-                <Tr>
-                  <Th>
-                    <Text
-                      bg="teal.500"
-                      color="white"
-                      fontWeight="bold"
-                      textTransform="uppercase"
-                      textAlign="center"
-                      whiteSpace="nowrap"
-                      fontSize={"sm"}
-                      p={4}
-                    >
-                      Charge Type
-                    </Text>
-                  </Th>
-                  <Th>
-                    {" "}
-                    <Text
-                      bg="teal.500"
-                      color="white"
-                      fontWeight="bold"
-                      textTransform="uppercase"
-                      textAlign="center"
-                      whiteSpace="nowrap"
-                      fontSize={"sm"}
-                      p={4}
-                    >
-                      Amount
-                    </Text>
-                  </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Td>
-                    <FormLabel fontWeight="bold">Labour Charges</FormLabel>
-                  </Td>
-                  <Td>
-                    <FormControl>
-                      <Input
-                        border="1px"
-                        borderColor="#a9a9a9"
-                        value={labourCharges}
-                        onChange={(e) => setLabourCharges(+e.target.value)}
-                        type="number"
-                        placeholder="Labour Charges"
-                      />
-                    </FormControl>
-                  </Td>
-                </Tr>
 
-                <Tr>
-                  <Td>
-                    <FormLabel fontWeight="bold">Machinery Charges</FormLabel>
-                  </Td>
-                  <Td>
-                    <FormControl>
-                      <Input
-                        border="1px"
-                        borderColor="#a9a9a9"
-                        value={machineryCharges}
-                        onChange={(e) => setMachineryCharges(+e.target.value)}
-                        type="number"
-                        placeholder="Machinery Charges"
-                      />
-                    </FormControl>
-                  </Td>
-                </Tr>
+            <FormLabel fontSize="lg" fontWeight="bold">
+              {" "}
+              Charges
+            </FormLabel>
 
-                <Tr>
-                  <Td>
-                    <FormLabel fontWeight="bold">Electricity Charges</FormLabel>
-                  </Td>
-                  <Td>
-                    <FormControl>
-                      <Input
-                        border="1px"
-                        borderColor="#a9a9a9"
-                        value={electricityCharges}
-                        onChange={(e) => setElectricityCharges(+e.target.value)}
-                        type="number"
-                        placeholder="Electricity Charges"
-                      />
-                    </FormControl>
-                  </Td>
-                </Tr>
+            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
+              <FormControl mb={4}>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Labour Charges
+                </FormLabel>
+                <Input
+                  border="1px"
+                  borderColor="#a9a9a9"
+                  value={labourCharges}
+                  onChange={(e) => setLabourCharges(+e.target.value)}
+                  type="number"
+                  placeholder="Labour Charges"
+                />
+              </FormControl>
 
-                <Tr>
-                  <Td>
-                    <FormLabel fontWeight="bold">Other Charges</FormLabel>
-                  </Td>
-                  <Td>
-                    <FormControl>
-                      <Input
-                        border="1px"
-                        borderColor="#a9a9a9"
-                        value={otherCharges}
-                        onChange={(e) => setOtherCharges(+e.target.value)}
-                        type="number"
-                        placeholder="Other Charges"
-                      />
-                    </FormControl>
-                  </Td>
-                </Tr>
-              </Tbody>
-            </Table>
+              <FormControl mb={4}>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Machinery Charges
+                </FormLabel>
+                <Input
+                  border="1px"
+                  borderColor="#a9a9a9"
+                  value={machineryCharges}
+                  onChange={(e) => setMachineryCharges(+e.target.value)}
+                  type="number"
+                  placeholder="Machinery Charges"
+                />
+              </FormControl>
+
+              <FormControl mb={4}>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Electricity Charges
+                </FormLabel>
+                <Input
+                  border="1px"
+                  borderColor="#a9a9a9"
+                  value={electricityCharges}
+                  onChange={(e) => setElectricityCharges(+e.target.value)}
+                  type="number"
+                  placeholder="Electricity Charges"
+                />
+              </FormControl>
+
+              <FormControl mb={4}>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Other Charges
+                </FormLabel>
+                <Input
+                  border="1px"
+                  borderColor="#a9a9a9"
+                  value={otherCharges}
+                  onChange={(e) => setOtherCharges(+e.target.value)}
+                  type="number"
+                  placeholder="Other Charges"
+                />
+              </FormControl>
+            </Grid>
 
             <hr className="my-5" />
-              
-              <Grid templateColumns="repeat(4, 1fr)" gap={4} mb={5}>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold" color="teal.600">
-                    BOM Name
-                  </FormLabel>
-                  <Input
-                    border="1px"
-                    borderColor="gray.300"
-                    borderRadius="lg"
-                    focusBorderColor="teal.500"
-                    value={bomName}
-                    onChange={(e) => setBomName(e.target.value)}
-                    type="text"
-                    placeholder="Enter BOM Name"
-                    _hover={{ borderColor: "teal.400" }}
-                    _focus={{ borderColor: "teal.500" }}
-                    transition="all 0.2s"
-                  />
-                </FormControl>
 
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold" color="teal.600">
-                    Parts Count
-                  </FormLabel>
-                  <Input
-                    isReadOnly
-                    value={partsCount}
-                    type="number"
-                    placeholder="Parts Count"
-                    border="1px"
-                    borderColor="gray.300"
-                    borderRadius="lg"
-                    _focus={{ borderColor: "teal.500" }}
-                    _hover={{ borderColor: "teal.400" }}
-                    transition="all 0.2s"
-                    bg="gray.50"
-                  />
-                </FormControl>
+            <Grid templateColumns="repeat(4, 1fr)" gap={4} mb={5}>
+              <FormControl className="mt-3 mb-5" isRequired>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  BOM Name
+                </FormLabel>
+                <Input
+                  border="1px"
+                  borderColor="gray.300"
+                  borderRadius="lg"
+                  focusBorderColor="teal.500"
+                  value={bomName}
+                  onChange={(e) => setBomName(e.target.value)}
+                  type="text"
+                  placeholder="Enter BOM Name"
+                  _hover={{ borderColor: "teal.400" }}
+                  _focus={{ borderColor: "teal.500" }}
+                  transition="all 0.2s"
+                />
+              </FormControl>
 
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold" color="teal.600">
-                    Total Parts Cost
-                  </FormLabel>
-                  <Input
-                    isReadOnly
-                    value={totalPartsCost}
-                    type="number"
-                    placeholder="Total Parts Cost"
-                    border="1px"
-                    borderColor="gray.300"
-                    borderRadius="lg"
-                    _focus={{ borderColor: "teal.500" }}
-                    _hover={{ borderColor: "teal.400" }}
-                    transition="all 0.2s"
-                    bg="gray.50"
-                  />
-                </FormControl>
-              </Grid>
+              <FormControl className="mt-3 mb-5" isRequired>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Parts Count
+                </FormLabel>
+                <Input
+                  isReadOnly
+                  value={partsCount}
+                  type="number"
+                  placeholder="Parts Count"
+                  border="1px"
+                  borderColor="gray.300"
+                  borderRadius="lg"
+                  _focus={{ borderColor: "teal.500" }}
+                  _hover={{ borderColor: "teal.400" }}
+                  transition="all 0.2s"
+                  bg="gray.50"
+                />
+              </FormControl>
 
+              <FormControl className="mt-3 mb-5" isRequired>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Total Parts Cost
+                </FormLabel>
+                <Input
+                  isReadOnly
+                  value={totalPartsCost}
+                  type="number"
+                  placeholder="Total Parts Cost"
+                  border="1px"
+                  borderColor="gray.300"
+                  borderRadius="lg"
+                  _focus={{ borderColor: "teal.500" }}
+                  _hover={{ borderColor: "teal.400" }}
+                  transition="all 0.2s"
+                  bg="gray.50"
+                />
+              </FormControl>
+            </Grid>
 
             <Button
               type="submit"
               className="mt-1 border"
               color="#1640d6"
-              borderColor='#1640d6'
+              borderColor="#1640d6"
               backgroundColor="#ffffff"
-              _hover={{backgroundColor:'#1640d6', color:'#ffffff'}}
+              _hover={{ backgroundColor: "#1640d6", color: "#ffffff" }}
             >
               Submit
             </Button>

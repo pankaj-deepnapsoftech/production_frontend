@@ -281,7 +281,7 @@ const AddBom: React.FC<AddBomProps> = ({
         </h1>
 
         <div className="mt-8 px-5">
-          <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
+          <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
             Add New BOM
           </h2>
 
