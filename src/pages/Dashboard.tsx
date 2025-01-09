@@ -228,6 +228,7 @@ const Dashboard: React.FC = () => {
               onClick={resetFilterHandler}
               color="white"
               backgroundColor="#319795"
+              _hover={{backgroundColor:"#0d9488"}}
             >
               Reset
             </Button>

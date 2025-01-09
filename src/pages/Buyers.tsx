@@ -224,6 +224,7 @@ const Buyers: React.FC = () => {
             Refresh
           </Button>
           <Button
+           
             fontSize={{ base: "14px", md: "14px" }}
             paddingX={{ base: "10px", md: "12px" }}
             paddingY={{ base: "0", md: "3px" }}
@@ -231,6 +232,7 @@ const Buyers: React.FC = () => {
             onClick={openAddBuyerDrawerHandler}
             color="white"
             backgroundColor={MainColor}
+            _hover={{backgroundColor:"#0d9488"}}
           >
             Add New Buyer
           </Button>
@@ -244,6 +246,7 @@ const Buyers: React.FC = () => {
               color="white"
               backgroundColor={MainColor}
               rightIcon={<AiFillFileExcel size={22} />}
+              _hover={{backgroundColor:"#0d9488"}}
             >
               Bulk Upload
             </Button>

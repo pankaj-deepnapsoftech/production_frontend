@@ -56,90 +56,86 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
   };
 
   return (
-    <div className="w-[80%] md:w-[60%]">
-      <h1 className="text-4xl text-black font-bold border-b pb-5">Sign In</h1>
-
-      <form onSubmit={loginHandler} className="mt-4 w-[100%]">
-        <div className="flex flex-col items-start">
-          <label className="flex gap-x-1 items-center font-bold text-sm text-[rgba(0, 0, 0, 0.88)]">
-            <span>
-              <FaStarOfLife size="6px" color="red" />
-            </span>
-            Email
-          </label>
-          <div className="relative w-[100%]">
-            <div className="absolute top-[18px] left-[7px] text-base">
-              <BiUser />
-            </div>
-            <input
-              value={email}
-              required
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-[100%] outline-none text-base pl-7 pr-2 py-2 border mt-2 border-[#d9d9d9] rounded-[10px] hover:border-[#1640d6] cursor-pointer"
-              type="email"
-              placeholder="Email"
-            />
+    <div className="w-[80%] md:w-[60%] mx-auto bg-white p-6 rounded-lg shadow-2xl shadow-gray-500">
+    <h1 className="text-4xl text-black font-bold border-b pb-5 text-center">Sign In</h1>
+  
+    <form onSubmit={loginHandler} className="mt-6 space-y-6">
+      <div className="flex flex-col items-start space-y-2">
+        <label className="flex gap-x-1 items-center font-semibold text-sm text-gray-800">
+          <FaStarOfLife size="8px" color="red" />
+          Email
+        </label>
+        <div className="relative w-full">
+          <div className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-600">
+            <BiUser size={18} />
           </div>
+          <input
+            value={email}
+            required
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full text-base pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition"
+            type="email"
+            placeholder="Email"
+          />
         </div>
-        <div className="mt-4 flex flex-col items-start text-sm">
-          <label className="flex gap-x-1 items-center font-bold text-sm text-[rgba(0, 0, 0, 0.88)]">
-            <span>
-              <FaStarOfLife size="6px" color="red" />
-            </span>
-            Password
-          </label>
-          <div className="relative w-[100%]">
-            <div className="absolute top-[20px] left-[7px] text-base">
-              <BiLockAlt />
-            </div>
-            <input
-              value={password}
-              required
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-[100%] outline-none text-base pl-7 pr-2 py-2 border mt-2 border-[#d9d9d9] rounded-[10px] hover:border-[#1640d6] cursor-pointer"
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-            />
-            {!showPassword ? (
-              <IoEyeOffOutline
-                onClick={() => setShowPassword(true)}
-                size={20}
-                className="absolute top-[20px] right-3"
-              />
+      </div>
+  
+      <div className="flex flex-col items-start space-y-2">
+        <label className="flex gap-x-1 items-center font-semibold text-sm text-gray-800">
+          <FaStarOfLife size="8px" color="red" />
+          Password
+        </label>
+        <div className="relative w-full">
+          <div className="absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-600">
+            <BiLockAlt size={18} />
+          </div>
+          <input
+            value={password}
+            required
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full text-base pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition"
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+          />
+          <div
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute top-1/2 transform -translate-y-1/2 right-3 cursor-pointer text-gray-600"
+          >
+            {showPassword ? (
+              <IoEyeOutline size={20} />
             ) : (
-              <IoEyeOutline
-                onClick={() => setShowPassword(false)}
-                size={20}
-                className="absolute top-[20px] right-3"
-              />
+              <IoEyeOffOutline size={20} />
             )}
           </div>
         </div>
-        <div className="my-6 flex items-center justify-between font-bold text-sm">
-          <div className="text-[#1640d6]">
-            <Link to="/register">Don't have an account?</Link>
-          </div>
-          <div
-            className="text-[#1640d6] cursor-pointer"
-            onClick={() => {
-              setShowForgetPasswordComponent(true);
-              setShowLoginComponent(false);
-              setShowOTPVerificationComponent(false);
-            }}
-          >
-            Forgot Password
-          </div>
+      </div>
+  
+      <div className="my-6 flex justify-between text-sm">
+        <div className="text-blue-600 hover:text-blue-800 transition">
+          <Link to="/register">Don't have an account?</Link>
         </div>
-
-        <button
-          disabled={isLoginLoading}
-          style={{ boxShadow: "0 2px 0 rgba(5, 95, 255, 0.1)" }}
-          className="w-[100%] rounded-lg bg-[#1640d6] text-white py-2 font-bold disabled:cursor-not-allowed disabled:bg-[#b7b6b6]"
+        <div
+          className="text-blue-600 hover:text-blue-800 cursor-pointer transition"
+          onClick={() => {
+            setShowForgetPasswordComponent(true);
+            setShowLoginComponent(false);
+            setShowOTPVerificationComponent(false);
+          }}
         >
-          {isLoginLoading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-    </div>
+          Forgot Password
+        </div>
+      </div>
+  
+      <button
+        disabled={isLoginLoading}
+        style={{ boxShadow: "0 4px 8px rgba(5, 95, 255, 0.2)" }}
+        className="w-full rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 font-semibold disabled:cursor-not-allowed disabled:bg-gray-400 hover:from-blue-600 hover:to-blue-700 transition"
+      >
+        {isLoginLoading ? 'Logging in...' : 'Login'}
+      </button>
+    </form>
+  </div>
+  
   );
 };
 

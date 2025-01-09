@@ -20,26 +20,34 @@ const ProductionProcess: React.FC<ProductionProcessProps> = ({
   };
 
   return (
-    <div>
-      <FormLabel fontWeight="bold">Processes</FormLabel>
-      <div className="grid grid-cols-4 gap-2">
-        {inputs.map((input, ind) => (
-          <>
-            <FormControl className="flex gap-1 items-center" key={ind}>
-              <Input
-                isDisabled
-                border="1px"
-                borderColor="#a9a9a9"
-                type="text"
-                name="process"
-                value={input.process}
-              ></Input>
-              <input type="checkbox" className="h-[30px] w-[30px]" checked={input.done} onChange={(e)=>onChangeHandler(e.target.checked, ind)} />
-            </FormControl>
-          </>
-        ))}
-      </div>
-    </div>
+    <div className="p-5">
+    <FormLabel fontWeight="bold" fontSize="lg">Processes</FormLabel>
+    <ul className="space-y-2 md:grid md:grid-cols-2 md:gap-4">
+      {inputs.map((input, ind) => (
+        <li key={ind} className="flex items-center gap-2 w-full">
+          <FormControl className="flex gap-1 items-center w-full">
+            <Input
+              isDisabled
+              border="1px"
+              borderColor="#a9a9a9"
+              type="text"
+              name="process"
+              className="text-gray-900 w-full"
+              value={input.process}
+            />
+            <input
+              type="checkbox"
+              className="h-[30px] w-[30px] text-blue-500"                            
+              checked={input.done}
+              onChange={(e) => onChangeHandler(e.target.checked, ind)}
+            />
+          </FormControl>
+        </li>
+      ))}
+    </ul>
+  </div>
+  
+  
   );
 };
 

@@ -69,7 +69,8 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
 
   return (
     <div className="w-[80%] md:w-[60%]">
-      <h1 className="flex gap-x-1 text-4xl text-black font-bold border-b pb-5">
+      <div className="shadow-lg shadow-gray-500 p-5">
+       <h1 className="flex gap-x-1 text-4xl cursor-pointer text-black font-bold border-b pb-5">
         <IoMdArrowBack onClick={() => navigate(0)} />
         Reset Password
       </h1>
@@ -92,7 +93,7 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-[100%] outline-none text-base pl-7 pr-2 py-2 border rounded mt-2 border-[#d9d9d9] rounded-[10px] hover:border-[#1640d6] cursor-pointer"
+              className="w-[100%] outline-none text-base pl-7 pr-2 py-2 border rounded mt-2 border-[#d9d9d9]  hover:border-[#1640d6] cursor-pointer"
               type="email"
               placeholder="Email"
               required
@@ -127,7 +128,7 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
             <input
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              className="w-[100%] outline-none text-base pl-7 pr-2 py-2 border rounded mt-2 border-[#d9d9d9] rounded-[10px] hover:border-[#1640d6] cursor-pointer"
+              className="w-[100%] outline-none text-base pl-7 pr-2 py-2 border rounded mt-2 border-[#d9d9d9]  hover:border-[#1640d6] cursor-pointer"
               type="otp"
               placeholder="OTP"
               required
@@ -148,7 +149,7 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
             <input
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-[100%] outline-none text-base pl-7 pr-2 py-2 border rounded mt-2 border-[#d9d9d9] rounded-[10px] hover:border-[#1640d6] cursor-pointer"
+              className="w-[100%] outline-none text-base pl-7 pr-2 py-2 border rounded mt-2 border-[#d9d9d9] hover:border-[#1640d6] cursor-pointer"
               type={showNewPassword ? "text" : "password"}
               placeholder="New Password"
               required
@@ -177,6 +178,8 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
           {isResetPasswordLoading ? "Updating password..." : "Update Password"}
         </button>
       </form>}
+
+      </div>
     </div>
   );
 };
