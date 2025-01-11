@@ -22,7 +22,6 @@ import RawMaterial from "../../Dynamic Add Components/RawMaterial";
 import Process from "../../Dynamic Add Components/Process";
 import { useCookies } from "react-cookie";
 import ScrapMaterial from "../../Dynamic Add Components/ScrapMaterial";
-import { MainColor } from "../../../constants/constants";
 
 interface AddBomProps {
   closeDrawerHandler: () => void;
@@ -92,6 +91,7 @@ const AddBom: React.FC<AddBomProps> = ({
     },
   ]);
 
+
   const categoryOptions = [
     { value: "finished goods", label: "Finished Goods" },
     { value: "raw materials", label: "Raw Materials" },
@@ -131,6 +131,7 @@ const AddBom: React.FC<AddBomProps> = ({
           }
         );
         const uploadedFile: any = await uploadedFileResponse.json();
+        
         if (uploadedFile?.error) {
           throw new Error(uploadedFile?.error);
         }
@@ -162,6 +163,8 @@ const AddBom: React.FC<AddBomProps> = ({
         total_part_cost: material?.total_part_cost,
       }));
 
+
+
     const body = {
       raw_materials: modifiedRawMaterials,
       scrap_materials: modifiedScrapMaterials,
@@ -187,10 +190,12 @@ const AddBom: React.FC<AddBomProps> = ({
 
     try {
       const response = await addBom(body).unwrap();
+      console.log(response)
       toast.success(response?.message);
       fetchBomsHandler();
       closeDrawerHandler();
     } catch (error: any) {
+      console.log(error)
       if (error?.data?.message?.includes("Insufficient stock")) {
         fetchBomsHandler();
         closeDrawerHandler();
@@ -282,7 +287,7 @@ const AddBom: React.FC<AddBomProps> = ({
         </h1>
 
         <div className="mt-8 px-5">
-          <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
+          <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
             Add New BOM
           </h2>
 
@@ -322,16 +327,7 @@ const AddBom: React.FC<AddBomProps> = ({
                       >
                         Finished Goods
                       </Th>
-                      <Th
-                        bg="teal.500"
-                        color="white"
-                        fontWeight="bold"
-                        textTransform="uppercase"
-                        textAlign="center"
-                        p={4}
-                      >
-                        Description
-                      </Th>
+                   
                       <Th
                         bg="teal.500"
                         color="white"
@@ -362,16 +358,7 @@ const AddBom: React.FC<AddBomProps> = ({
                       >
                         Category
                       </Th>
-                      <Th
-                        bg="teal.500"
-                        color="white"
-                        fontWeight="bold"
-                        textTransform="uppercase"
-                        textAlign="center"
-                        p={4}
-                      >
-                        Supporting Doc
-                      </Th>
+                     
                       <Th
                         bg="teal.500"
                         color="white"
@@ -417,18 +404,7 @@ const AddBom: React.FC<AddBomProps> = ({
                         />
                       </FormControl>
                     </Td>
-                    <Td>
-                      <FormControl isRequired>
-                        <Input
-                          border="1px"
-                          borderColor="#a9a9a9"
-                          value={description}
-                          onChange={(e) => setDescription(e.target.value)}
-                          type="text"
-                          placeholder="Description"
-                        />
-                      </FormControl>
-                    </Td>
+                    
                     <Td>
                       <FormControl isRequired>
                         <Input
@@ -465,17 +441,7 @@ const AddBom: React.FC<AddBomProps> = ({
                         />
                       </FormControl>
                     </Td>
-                    <Td>
-                      <FormControl isRequired>
-                        <input
-                          type="file"
-                          placeholder="Choose a file"
-                          accept=".pdf"
-                          className="p-1 border border-[#a9a9a9] w-[267px] rounded"
-                          ref={supportingDoc}
-                        />
-                      </FormControl>
-                    </Td>
+                   
                     <Td>
                       <FormControl isRequired>
                         <Input
@@ -704,7 +670,7 @@ const AddBom: React.FC<AddBomProps> = ({
               type="submit"
               className="mt-1"
               color="white"
-              backgroundColor={MainColor}
+              backgroundColor="#1640d6"
             >
               Submit
             </Button>

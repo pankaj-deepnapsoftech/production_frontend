@@ -1,9 +1,5 @@
 import { useState } from "react";
 import Intro from "../components/Authentication/Intro";
-import { FaStarOfLife } from "react-icons/fa";
-import { BiLockAlt, BiUser } from "react-icons/bi";
-import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-import { IoMdArrowBack } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import LoginComponent from "../components/Authentication/LoginComponent";
 import ForgetPasswordComponent from "../components/Authentication/ForgetPasswordComponent";

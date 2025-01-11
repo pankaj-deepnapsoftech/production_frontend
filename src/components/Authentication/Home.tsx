@@ -1,53 +1,32 @@
 import { FC, ReactElement } from "react"
 import Marquee from "react-fast-marquee"
-import { Link,} from "react-router-dom"
+import { Link, } from "react-router-dom"
 
 
 const Home: FC = (): ReactElement => {
     return (
         <>
-            {/* hero */}
-            <div className="relative h-[70vh] ">
-                <video  className="absolute -z-10 -top-20  w-full hidden md:block" autoPlay muted loop>
-                    <source src="/video/small.mp4" type="video/mp4" />
-                </video>
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center lg:pt-32 backdrop-filter backdrop-blur-sm bg-opacity-10">
-                    <p className="mx-auto -mt-4 max-w-2xl text-lg tracking-tight md:text-white  sm:mt-6">Welcome to
-                        <span className="border-b border-dotted border-slate-300"> ITSYBIZZ</span>
-                    </p>
 
-                    <h1 className="mx-auto max-w-4xl font-display text-5xl font-medium tracking-tight md:text-white  sm:text-7xl">
-                        <span className="inline-block">Transform Your
-                            <span className="relative whitespace-nowrap text-blue-600">
-                                <svg aria-hidden="true" viewBox="0 0 418 42" className="absolute top-2/3 left-0 h-[0.58em] w-full fill-blue-300/70" preserveAspectRatio="none"><path d="M203.371.916c-26.013-2.078-76.686 1.963-124.73 9.946L67.3 12.749C35.421 18.062 18.2 21.766 6.004 25.934 1.244 27.561.828 27.778.874 28.61c.07 1.214.828 1.121 9.595-1.176 9.072-2.377 17.15-3.92 39.246-7.496C123.565 7.986 157.869 4.492 195.942 5.046c7.461.108 19.25 1.696 19.17 2.582-.107 1.183-7.874 4.31-25.75 10.366-21.992 7.45-35.43 12.534-36.701 13.884-2.173 2.308-.202 4.407 4.442 4.734 2.654.187 3.263.157 15.593-.78 35.401-2.686 57.944-3.488 88.365-3.143 46.327.526 75.721 2.23 130.788 7.584 19.787 1.924 20.814 1.98 24.557 1.332l.066-.011c1.201-.203 1.53-1.825.399-2.335-2.911-1.31-4.893-1.604-22.048-3.261-57.509-5.556-87.871-7.36-132.059-7.842-23.239-.254-33.617-.116-50.627.674-11.629.54-42.371 2.494-46.696 2.967-2.359.259 8.133-3.625 26.504-9.81 23.239-7.825 27.934-10.149 28.304-14.005.417-4.348-3.529-6-16.878-7.066Z"></path></svg>
-                                <span className="relative"> Workflow</span></span>
-                        </span>
-                        <span className="inline-block">with Real-Time Automation</span>
-                    </h1>
+            <div className="relative bg-gradient-to-r from-purple-600 to-blue-600 h-screen text-white overflow-hidden">
+                <div className="absolute inset-0">
+                    <img src="https://img.freepik.com/free-photo/information-technology-connection-graphics-concept_53876-124766.jpg?t=st=1736483804~exp=1736487404~hmac=dd049c0c8bce8dc985d1d60bd9c7e96aa784c88dab29f89b93e1afa35b6dc8a0&w=826" alt="Background Image" className="object-cover object-center w-full h-full" />
+                    <div className="absolute inset-0 bg-black opacity-50"></div>
+                </div>
 
-                    <p className="mx-auto mt-9 max-w-2xl text-lg tracking-tight md:text-white  sm:mt-6">
-                        <span className="inline-block">Empower your team with cutting-edge automation tools that streamline processes, boost productivity, and enhance efficiency.</span>
-                    </p>
-
-                    <div className="mt-12 flex flex-col justify-center gap-y-5 sm:mt-10 sm:flex-row sm:gap-y-0 sm:gap-x-6">
-                        <Link className="group inline-flex items-center justify-center rounded-full py-2 px-4 text-sm font-semibold focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 bg-slate-900 text-white  hover:bg-slate-700 hover:text-slate-100 active:bg-slate-800 active:text-slate-300 focus-visible:outline-slate-900 animate-fade-in-left"
-                            to="/register">
-
-                            <span className="">Get Started</span>
-                        </Link>
-                      
-                        
-                    </div>
-
+                <div className="relative z-10 flex flex-col justify-center items-center h-full text-center">
+                    <h1 className="text-5xl font-bold leading-tight mb-4">Transform Your Workflow with Real-Time Automation</h1>
+                    <p className="text-lg text-gray-300 mb-8">Empower your team with cutting-edge automation tools <br /> that streamline processes, boost productivity, and enhance efficiency.</p>
+                    <a href="#" className="bg-yellow-400 text-gray-900 hover:bg-yellow-300 py-2 px-6 rounded-full text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">Get Started</a>
                 </div>
             </div>
+
 
             {/* clients */}
 
 
             <section>
                 <div className='mx-auto w-full my-20 px-2 md:px-10'>
-                    <h2 className='subscription-font text-center text-2xl md:text-4xl font-medium text-[#a7a7a7]'>We have 60+ active users across the nation</h2>
+                    <h2 className='subscription-font text-center text-2xl md:text-4xl font-medium '>60+ active users across the nation</h2>
                     <div className="mt-6 md:mt-16">
                         <Marquee play>
                             <img className="mx-6 h-[4rem] object-cover" src="/client/client1.png"></img>
@@ -64,6 +43,31 @@ const Home: FC = (): ReactElement => {
                 </div>
             </section>
 
+            {/* other one */}
+
+            <div className="relative flex flex-col items-center mx-auto lg:flex-row-reverse lg:max-w-5xl lg:mt-12 xl:max-w-6xl py-3">
+
+
+                <div className="w-full h-64 lg:w-1/2 lg:h-auto">
+                    <img className="h-full w-full object-cover" src="/images/opt1.png" alt="Winding mountain road" />
+                </div>
+
+                <div
+                    className="max-w-lg bg-white md:max-w-2xl md:z-10 md:shadow-lg md:absolute md:top-0 md:mt-48 lg:w-3/5 lg:left-0 lg:mt-20 lg:ml-20 xl:mt-24 xl:ml-12">
+
+                    <div className="flex flex-col p-12 md:px-16">
+                        <h2 className="text-2xl font-medium uppercase text-green-800 lg:text-4xl">Productivity-boosting</h2>
+                        <p className="mt-4">
+                            Productivity-boosting refers to methods or tools that increase efficiency and output. It focuses on optimizing workflows, minimizing distractions, and enhancing focus. Common examples include time management techniques and task automation.
+                        </p>
+
+                      
+                    </div>
+
+                </div>
+
+            </div>
+
             {/* How Real-Time Automation Works*/}
 
             <div className="relative overflow-hidden pt-16 pb-32 space-y-24 ">
@@ -71,156 +75,169 @@ const Home: FC = (): ReactElement => {
                     How Real-Time Automation Works
                 </h2>
 
-                <div className="relative">
-                    <div className="lg:mx-auto lg:grid lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2 lg:gap-24 lg:px-8 ">
-                        <div className="mx-auto max-w-xl px-6 lg:mx-0 lg:max-w-none lg:py-16 lg:px-0 ">
 
-                            <div>
-                                <div>
-                                    <span className="flex h-28 w-28  items-center justify-center rounded-xl ">
-                                        <img src="/images/h1.png" alt="" className="size-full" />
+                <div className="container mx-auto px-4 py-8 bg-gray-100">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-                                    </span>
-                                </div>
+                        <div className="flex flex-col justify-center">
+                            <h2 className="text-3xl font-semibold mb-4 ps-4">Real-Time Production Tracking</h2>
+                            <p className="text-lg mb-4 ps-4">
+                                Track every stage of your production process in real-time. Get live updates on machine performance, production line efficiency, and output status. Monitor production KPIs for better decision-making and operational adjustments.
+                            </p>
+                            <ul className="list-disc ps-10">
+                                {["Live feed of production status and output.", "Alerts and notifications for any discrepancies or delays.", "Improve operational efficiency with data-driven insights."].map((item, index) => (
+                                    <li key={index}>
+                                        {item}
+                                    </li>
+                                ))}
 
-                                <div className="mt-6">
-                                    <h2 className="text-3xl font-bold tracking-tight ">
-                                        Identify automation opportunities in your workflow
-                                    </h2>
-                                    <p className="mt-4 text-lg text-gray-500">
-                                        Start by evaluating your workflow to identify repetitive tasks and bottlenecks. Our system helps pinpoint areas where automation can provide immediate value, streamlining operations and reducing inefficiencies.
-                                    </p>
-                                    <div className="mt-6">
-                                        <a className="inline-flex rounded-lg bg-[#0f172a] px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-[#0f172a] hover:bg-pink-700 hover:ring-pink-700"
-                                            href="/login">
-                                            Learn More
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                            </ul>
+
                         </div>
-                        <div className="mt-12 sm:mt-16 lg:mt-0">
-                            <div className="-mr-48 pl-6 md:-mr-16 lg:relative lg:m-0 lg:h-full lg:px-0">
-                                <img loading="lazy" width="647" height="486"
-                                    className="w-full rounded-xl shadow-2xl ring-1 ring-black ring-opacity-5 lg:absolute lg:left-0 lg:h-full lg:w-auto lg:max-w-none"
-                                    style={{ color: "transparent" }} src="/images/hh2.jpg" />
-                            </div>
+
+
+                        <div>
+                            <img src="/images/feature1.avif" alt="Sample Image" className="w-[80%] h-auto rounded-lg shadow-lg" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="container mx-auto px-4 py-8 ">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                        <div>
+                            <img src="/images/feature2.avif" alt="Sample Image" className="w-[80%] h-auto rounded-lg shadow-lg" />
+                        </div>
+
+
+                        <div className="flex flex-col justify-center">
+                            <h2 className="text-3xl font-semibold mb-4">Data Logging and Historical Data Access</h2>
+                            <p className="text-lg mb-4">
+                                Easily store and access historical production data. Leverage this data for performance analysis, trend forecasting, and continuous improvement.
+                            </p>
+                            <ul className="list-disc ps-10">
+                                {["Log production data automatically for future reference.", "Access historical data at any time to analyze past performance.", "Utilize data for long-term strategic decision-making."].map((item, index) => (
+                                    <li key={index}>
+                                        {item}
+                                    </li>
+                                ))}
+
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div className="container mx-auto px-4 py-8 bg-green-100">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                        <div className="flex flex-col justify-center">
+                            <h2 className="text-3xl font-semibold mb-4 ps-4">Production Line Visualization</h2>
+                            <p className="text-lg mb-4 ps-4">
+                                Visualize your entire production line in real time with our advanced dashboards. Monitor machine performance, workflow status, and identify bottlenecks quickly.
+                            </p>
+                            <ul className="list-disc ps-10">
+                                {["Real-time production line visualization", "Track machine performance and maintenance status", "Identify and address bottlenecks or inefficiencies in the production line"].map((item, index) => (
+                                    <li key={index}>
+                                        {item}
+                                    </li>
+                                ))}
+
+                            </ul>
+
+
+                        </div>
+
+
+                        <div>
+                            <img src="/images/feature3.avif" alt="Sample Image" className="w-[80%] h-auto rounded-lg shadow-lg" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="container mx-auto px-4 py-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                        <div>
+                            <img src="/images/feature4.avif" alt="Sample Image" className="w-[80%] h-auto rounded-lg shadow-lg" />
+                        </div>
+
+
+                        <div className="flex flex-col justify-center">
+                            <h2 className="text-3xl font-semibold mb-4">Multi-Location Support</h2>
+                            <p className="text-lg mb-4">
+                                Manage multiple facilities, plants, or warehouses from a single centralized system. Our software provides multi-location support, giving you the flexibility to handle operations across various sites.
+                            </p>
+                            <ul className="list-disc ps-10">
+                                {["Seamlessly manage operations at multiple locations.", "Consolidate data from various plants and warehouses.", "Simplify reporting and decision-making across different sites."].map((item, index) => (
+                                    <li key={index}>
+                                        {item}
+                                    </li>
+                                ))}
+
+                            </ul>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div className="container mx-auto px-4 py-8 bg-yellow-50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                        <div className="flex flex-col justify-center">
+                            <h2 className="text-3xl font-semibold mb-4 ps-4 ">User Access Control and Permissions</h2>
+                            <p className="text-lg mb-4 ps-4">
+                                Ensure the security of your data with robust user access control. Define roles and permissions for each team member, restricting access to sensitive information based on their responsibilities.
+                            </p>
+                            <ul className="list-disc ps-10">
+                                {["Role-based access control for better security.", "Granular permissions for different users.", "Track user activities for compliance and auditing."].map((item, index) => (
+                                    <li key={index}>
+                                        {item}
+                                    </li>
+                                ))}
+
+                            </ul>
+
+                        </div>
+
+
+                        <div>
+                            <img src="/images/feature5.avif" alt="Sample Image" className="w-[80%] h-auto rounded-lg shadow-lg" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="container mx-auto px-4 py-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                        <div>
+                            <img src="/images/feature6.avif" alt="Sample Image" className="w-[80%] h-auto rounded-lg shadow-lg" />
+                        </div>
+
+
+                        <div className="flex flex-col justify-center">
+                            <h2 className="text-3xl font-semibold mb-4">Machine Downtime Tracking</h2>
+                            <p className="text-lg mb-4">
+                                Track machine downtime and identify the root causes of production disruptions. This feature helps you maintain machine efficiency and reduce unnecessary downtime, leading to cost savings.
+                            </p>
+                            <ul className="list-disc ps-10">
+                                {["Log and analyze machine downtime events.", "Identify trends and recurring issues.", "Generate reports on downtime for continuous improvement."].map((item, index) => (
+                                    <li key={index}>
+                                        {item}
+                                    </li>
+                                ))}
+
+                            </ul>
+
                         </div>
                     </div>
                 </div>
 
 
-
-                <div className="relative">
-                    <div className="lg:mx-auto lg:grid lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2 lg:gap-24 lg:px-8 ">
-                        <div className="mx-auto max-w-xl px-6 lg:mx-0 lg:max-w-none lg:py-16 lg:px-0 lg:col-start-2">
-                            <div>
-                                <div>
-                                    <span className="flex h-28 w-28  items-center justify-center rounded-xl ">
-                                        <img src="/images/h2.png" alt="" className="size-full" />
-
-                                    </span>
-                                </div>
-                                <div className="mt-6">
-                                    <h2 className="text-3xl font-bold tracking-tight ">
-                                        Implement our automation tools and connect with existing systems
-                                    </h2>
-                                    <p className="mt-4 text-lg text-gray-500">
-                                        Once automation opportunities are identified, easily integrate our tools into your existing systems. No technical expertise required—our platform offers a simple setup that connects seamlessly with your current software and workflows.
-                                    </p>
-                                    <div className="mt-6">
-                                        <a className="inline-flex rounded-lg bg-[#0f172a] px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-[#0f172a] hover:bg-pink-700 hover:ring-pink-700"
-                                            href="/login">
-                                            Learn More
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-12 sm:mt-16 lg:mt-0">
-                            <div className="-ml-48 pr-6 md:-ml-16 lg:relative lg:m-0 lg:h-full lg:px-0">
-                                <img alt="Inbox user interface" loading="lazy" width="647" height="486"
-                                    className="w-full rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 lg:absolute lg:right-0 lg:h-full lg:w-auto lg:max-w-none"
-                                    src="/images/hh3.jpg" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <div className="relative">
-                    <div className="lg:mx-auto lg:grid lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2 lg:gap-24 lg:px-8 ">
-                        <div className="mx-auto max-w-xl px-6 lg:mx-0 lg:max-w-none lg:py-16 lg:px-0 ">
-                            <div>
-                                <div>
-                                    <span className="flex h-28 w-28  items-center justify-center rounded-xl ">
-                                        <img src="/images/h3.png" alt="" className="size-full" />
-
-                                    </span>
-                                </div>
-                                <div className="mt-6">
-                                    <h2 className="text-3xl font-bold tracking-tight ">
-                                        Monitor and adjust through real-time analytics.
-                                    </h2>
-                                    <p className="mt-4 text-lg text-gray-500">
-                                        With real-time monitoring tools, track the performance of your automated processes. Use live analytics to make data-driven decisions and optimize workflows continually, ensuring your system runs at peak efficiency.
-                                    </p>
-                                    <div className="mt-6">
-                                        <a className="inline-flex rounded-lg bg-[#0f172a] px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-[#0f172a] hover:bg-pink-700 hover:ring-pink-700"
-                                            href="/login">
-                                            Learn More
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-12 sm:mt-16 lg:mt-0">
-                            <div className="-mr-48 pl-6 md:-mr-16 lg:relative lg:m-0 lg:h-full lg:px-0">
-                                <img loading="lazy" width="646" height="485"
-                                    className="w-full rounded-xl shadow-2xl ring-1 ring-black ring-opacity-5 lg:absolute lg:left-0 lg:h-full lg:w-auto lg:max-w-none"
-                                    src="/images/hh4.jpg" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="relative">
-                    <div className="lg:mx-auto lg:grid lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2 lg:gap-24 lg:px-8 ">
-                        <div className="mx-auto max-w-xl px-6 lg:mx-0 lg:max-w-none lg:py-16 lg:px-0 lg:col-start-2">
-                            <div>
-                                <div>
-                                    <span className="flex h-28 w-28  items-center justify-center rounded-xl ">
-                                        <img src="/images/h4.png" alt="" className="size-full" />
-
-                                    </span>
-                                </div>
-                                <div className="mt-6">
-                                    <h2 className="text-3xl font-bold tracking-tight ">
-                                        Enjoy continuous improvements and optimization.
-                                    </h2>
-                                    <p className="mt-4 text-lg text-gray-500">
-                                        Enjoy the benefits of automation with faster operations, fewer manual errors, and higher productivity. Your business can now operate 24/7 without interruptions, improving both speed and quality.
-                                    </p>
-                                    <div className="mt-6">
-                                        <a className="inline-flex rounded-lg bg-[#0f172a] px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-[#0f172a] hover:bg-pink-700 hover:ring-pink-700"
-                                            href="/login">
-                                            Learn More
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-12 sm:mt-16 lg:mt-0">
-                            <div className="-ml-48 pr-6 md:-ml-16 lg:relative lg:m-0 lg:h-full lg:px-0">
-                                <img alt="Inbox user interface" loading="lazy" width="647" height="486"
-                                    className="w-full rounded-xl shadow-xl ring-1 ring-black ring-opacity-5 lg:absolute lg:right-0 lg:h-full lg:w-auto lg:max-w-none"
-                                    src="/images/hh1.avif" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
+
+
 
 
             {/* Why Choose Real-Time Automation */}
@@ -228,7 +245,7 @@ const Home: FC = (): ReactElement => {
             <div className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto text-center">
                     <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                        Why Choose Real-Time Automation?
+                        Why Choose ITSYBIZZ !
                     </h2>
                     <p className="mt-4 text-lg text-gray-500">
                         Discover the key benefits of using real-time automation to improve your operations and boost productivity.
@@ -290,11 +307,44 @@ const Home: FC = (): ReactElement => {
                                 Automate your workflows to run around the clock, increasing efficiency without the need for human intervention.
                             </p>
                         </div>
+
+                        <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+                            <div className="flex justify-center mb-6">
+                                <img src="/images/coustmizable.png" alt="clock" className="h-16 w-16" />
+                            </div>
+                            <h3 className="text-xl font-semibold text-gray-900">Customizable</h3>
+                            <p className="mt-4 text-gray-600">
+                            Customizable software is highly valuable for tailoring solutions to specific business needs or user preferences.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-           
+
+
+            <div>
+                <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl text-center">
+                    Technologies Used
+                </h2>
+                {/* <div className="flex ">
+                    {['/images/tech1.png','/images/tech2.png',"/images/tech3.png","/images/tech4.png","/images/tech5.png"].map((item,ind)=>(
+                        <img src={item} alt="tech images" className="h-20 " />
+                    ))}
+
+                </div> */}
+
+                <div className="mt-10 flex flex-col lg:flex-row items-center lg:gap-16 justify-center">
+                    <img className="h-[10rem] lg:h-auto lg:w-[7rem] object-contain aspect-square" src="/images/tech1.png" />
+                    <img className="h-[10rem] lg:h-auto lg:w-[10rem] object-contain aspect-square" src="/images/tech2.png" />
+                    <img className="h-[10rem] lg:h-auto lg:w-[7rem] object-contain aspect-square mb-10 lg:mb-0" src="/images/tech3.png" />
+                    <img className="h-[10rem] lg:h-auto lg:w-[7rem] object-contain aspect-square" src="/images/tech4.png" />
+                    <img className="h-[12rem] lg:h-auto lg:w-[15rem] object-contain aspect-square -mt-8 lg:mt-0" src="/images/tech5.png" />
+                </div>
+
+            </div>
+
+
 
 
         </>

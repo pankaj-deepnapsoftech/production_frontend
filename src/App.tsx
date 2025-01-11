@@ -13,20 +13,36 @@ import Main from "./pages";
 import Home from "./components/Authentication/Home";
 import Contact from "./components/Authentication/Contact";
 import About from "./components/Authentication/About";
+import MainContent from "./components/UserDashboard/MainContent";
+import Overview from "./components/UserDashboard/Overview";
+import PurchaseHistory from "./components/UserDashboard/PurchaseHistory";
+import TrackProduction from "./components/UserDashboard/TrackProduction";
+import Settings from "./components/UserDashboard/Settings";
+import Entries from "./components/UserDashboard/Entries";
+import NewEntry from "./components/UserDashboard/NewEntry";
 
 const App: React.FC = () => {
 
-  const {allowedroutes, isSuper} = useSelector((state: any) => state.auth);
+  const { allowedroutes, isSuper } = useSelector((state: any) => state.auth);
 
   return (
     <div>
       <ToastContainer />
       <BrowserRouter>
         <Routes>
-        <Route element={<Main/>} >
-          <Route path="/home" element={<Home/>}/>
-          <Route path="/contact" element={<Contact/>}/>
-          <Route path="/about" element={<About/>}/>
+          <Route element={<MainContent />} >
+            <Route path="/userbord" element={<Overview />} />
+            <Route path="/purchase-history" element={<PurchaseHistory />} />
+            <Route path="/track-production" element={<TrackProduction />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/entries" element={<Entries />} />
+            <Route path="/new-entry" element={<NewEntry />} />
+
+          </Route>
+          <Route element={<Main />} >
+            <Route path="/home" element={<Home />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<About />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

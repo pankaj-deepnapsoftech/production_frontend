@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { IoIosRemoveCircleOutline, IoMdAddCircleOutline } from "react-icons/io";
 import Select from "react-select";
 import { toast } from "react-toastify";
@@ -39,6 +40,7 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
   const [suppliers, setSuppliers] = useState<any[]>([]);
   const [suppliersOptionsList, setSuppliersOptionsList] = useState<any[]>([]);
   const [selectedSupplier, setSelectedSupplier] = useState<any[]>([]);
+  const [isTableVisible, setIsTableVisible] = useState(true);
 
   const assemblyPhaseOptions = [
     { value: "not started", label: "Not Started" },
@@ -146,145 +148,168 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
   return (
     <div>
       <FormControl isRequired>
-        <FormLabel fontWeight="bold">Raw Materials</FormLabel>
-        <Table
-          variant="striped"
-          colorScheme="gray"
-          size="sm"
-          mt={4}
-          sx={{ tableLayout: "auto" }}
-        >
-          <Thead>
-            <Tr>
-              {headings.map((heading, index) => (
-                <th key={index}>
-                  <Text
-                    bg="teal.500"
-                    color="white"
-                    fontWeight="bold"
-                    textTransform="uppercase"
-                    textAlign="center"
-                    whiteSpace="nowrap"
-                    fontSize={"sm"}
-                    p={4}
-                  >
-                    {heading}
-                  </Text>
-                </th>
-              ))}
-            </Tr>
-          </Thead>
-          <Tbody className="bg-gray-100">
-            {inputs.map((input, ind) => (
-              <Tr key={ind} bg={ind % 2 === 0 ? "gray.100" : "white"}>
-                <Td>
-                  <FormControl isRequired>
-                    <Select
-                      required
-                      className="outline-none border-none"
-                      options={productOptions}
-                      placeholder="Select"
-                      value={input.item_name}
-                      name="item_name"
-                      onChange={(e) => onChangeHandler("item_name", e, ind)}
-                    />
-                  </FormControl>
-                </Td>
+        <FormLabel fontWeight="bold" display="flex" alignItems="center">
+          <Text fontWeight="bold" fontSize="lg">
+            Raw Materials
+          </Text>
+          <span
+            className="cursor-pointer ml-5"
+            style={{ cursor: "pointer", marginLeft: "10px" }}
+            onClick={() => setIsTableVisible(!isTableVisible)}
+          >
+            {isTableVisible ? (
+              <FaChevronUp size={18} color="#111827 " />
+            ) : (
+              <FaChevronDown size={18} color="#111827 " />
+            )}
+          </span>
+        </FormLabel>
 
-                <Td>
-                  <FormControl isRequired>
-                    <Input
-                      border="1px"
-                      borderColor="#a9a9a9"
-                      onChange={(e) =>
-                        onChangeHandler("quantity", e.target.value, ind)
-                      }
-                      type="number"
-                      name="quantity"
-                      value={input.quantity}
-                      backgroundColor={"white"}
-                    />
-                  </FormControl>
-                </Td>
-
-                <Td>
-                  <FormControl isRequired>
-                    <Input
-                      isDisabled={true}
-                      border="1px"
-                      borderColor="#a9a9a9"
-                      type="text"
-                      name="uom"
-                      value={input.uom}
-                    />
-                  </FormControl>
-                </Td>
-
-                <Td>
-                  <FormControl isRequired>
-                    <Input
-                      isDisabled={true}
-                      border="1px"
-                      borderColor="#a9a9a9"
-                      type="text"
-                      name="category"
-                      value={input.category}
-                    />
-                  </FormControl>
-                </Td>
-
-                <Td>
-                  <FormControl>
-                    <Input
-                      border="1px"
-                      borderColor="#a9a9a9"
-                      onChange={(e) =>
-                        onChangeHandler("comments", e.target.value, ind)
-                      }
-                      type="text"
-                      name="comments"
-                      value={input.comments}
-                      backgroundColor={"white"}
-                    />
-                  </FormControl>
-                </Td>
-
-                <Td>
-                  <FormControl isRequired>
-                    <Input
-                      isDisabled={true}
-                      border="1px"
-                      borderColor="#a9a9a9"
-                      onChange={(e) =>
-                        onChangeHandler("unit_cost", e.target.value, ind)
-                      }
-                      type="number"
-                      name="unit_cost"
-                      value={input.unit_cost}
-                    />
-                  </FormControl>
-                </Td>
-
-                <Td>
-                  <FormControl>
-                    <Input
-                      isDisabled={true}
-                      border="1px"
-                      borderColor="#a9a9a9"
-                      onChange={(e) =>
-                        onChangeHandler("total_part_cost", e.target.value, ind)
-                      }
-                      type="number"
-                      name="total_part_cost"
-                      value={input.total_part_cost}
-                    />
-                  </FormControl>
-                </Td>
+        {isTableVisible && (
+          <Table
+            variant="striped"
+            colorScheme="gray"
+            size="sm"
+            mt={4}
+            sx={{ tableLayout: "auto" }}
+          >
+            <Thead>
+              <Tr>
+                {headings.map((heading, index) => (
+                  <th key={index}>
+                    <Text
+                      bg="teal.500"
+                      color="white"
+                      fontWeight="bold"
+                      textTransform="uppercase"
+                      textAlign="center"
+                      whiteSpace="nowrap"
+                      fontSize={"sm"}
+                      p={4}
+                    >
+                      {heading}
+                    </Text>
+                  </th>
+                ))}
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
+            </Thead>
+            <Tbody className="bg-gray-100">
+              {inputs.map((input, ind) => (
+                <Tr key={ind} bg={ind % 2 === 0 ? "gray.100" : "white"}>
+                  <Td>
+                    <FormControl isRequired>
+                      <Select
+                        required
+                        className="outline-none border-none"
+                        options={productOptions}
+                        placeholder="Select"
+                        value={input.item_name}
+                        name="item_name"
+                        onChange={(e) => onChangeHandler("item_name", e, ind)}
+                      />
+                    </FormControl>
+                  </Td>
+
+                  <Td>
+                    <FormControl isRequired>
+                      <Input
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        onChange={(e) =>
+                          onChangeHandler("quantity", e.target.value, ind)
+                        }
+                        type="number"
+                        name="quantity"
+                        value={input.quantity}
+                        backgroundColor={"white"}
+                      />
+                    </FormControl>
+                  </Td>
+
+                  <Td>
+                    <FormControl isRequired>
+                      <Input
+                        isDisabled={true}
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        type="text"
+                        name="uom"
+                        value={input.uom}
+                      />
+                    </FormControl>
+                  </Td>
+
+                  <Td>
+                    <FormControl isRequired>
+                      <Input
+                        isDisabled={true}
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        type="text"
+                        name="category"
+                        value={input.category}
+                      />
+                    </FormControl>
+                  </Td>
+
+                  <Td>
+                    <FormControl>
+                      <Input
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        onChange={(e) =>
+                          onChangeHandler("comments", e.target.value, ind)
+                        }
+                        type="text"
+                        name="comments"
+                        value={input.comments}
+                        backgroundColor={"white"}
+                      />
+                    </FormControl>
+                  </Td>
+
+                  <Td>
+                    <FormControl isRequired>
+                      <Input
+                        isDisabled={true}
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        onChange={(e) =>
+                          onChangeHandler("unit_cost", e.target.value, ind)
+                        }
+                        type="number"
+                        name="unit_cost"
+                        value={input.unit_cost}
+                      />
+                    </FormControl>
+                  </Td>
+
+                  <Td>
+                    <FormControl>
+                      <Input
+                        isDisabled={true}
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        onChange={(e) =>
+                          onChangeHandler(
+                            "total_part_cost",
+                            e.target.value,
+                            ind
+                          )
+                        }
+                        type="number"
+                        name="total_part_cost"
+                        value={input.total_part_cost}
+                      />
+                    </FormControl>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        )}
       </FormControl>
+
       <div className="text-end my-3">
         {inputs.length > 1 && (
           <Button

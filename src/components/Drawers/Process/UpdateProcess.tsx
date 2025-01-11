@@ -1,4 +1,16 @@
-import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import Drawer from "../../../ui/Drawer";
 import { BiX } from "react-icons/bi";
 import React, { useEffect, useRef, useState } from "react";
@@ -16,6 +28,7 @@ import Process from "../../Dynamic Add Components/ProductionProcess";
 import RawMaterial from "../../Dynamic Add Components/ProcessRawMaterial";
 import ScrapMaterial from "../../Dynamic Add Components/ScrapMaterial";
 import ProcessScrapMaterial from "../../Dynamic Add Components/ProcessScrapMaterial";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 interface UpdateProcess {
   closeDrawerHandler: () => void;
@@ -89,8 +102,10 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
   >();
   const [submitBtnText, setSubmitBtnText] = useState<string>("Update");
   const [processStatus, setProcessStatus] = useState<string | undefined>();
-  const [rawMaterialApprovalPending, setRawMaterialApprovalPending] = useState<boolean>(false);
+  const [rawMaterialApprovalPending, setRawMaterialApprovalPending] =
+    useState<boolean>(false);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
+  const [isTableVisible, setIsTableVisible] = useState(true); 
 
   const [scrapMaterials, setScrapMaterials] = useState<any[]>([
     {
@@ -313,15 +328,17 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
         data.production_process.finished_good.produced_quantity
       );
 
-     if (data.production_process.status === "raw materials approved") {
+      if (data.production_process.status === "raw materials approved") {
         setSubmitBtnText("Start Production");
         setProcessStatus("work in progress");
       } else if (data.production_process.status === "work in progress") {
         setSubmitBtnText("Update");
         setProcessStatus("work in progress");
-      } else if(data.production_process.status === "completed"){
+      } else if (data.production_process.status === "completed") {
         setIsCompleted(true);
-      } else if(data.production_process.status === "raw material approval pending"){
+      } else if (
+        data.production_process.status === "raw material approval pending"
+      ) {
         setRawMaterialApprovalPending(true);
       }
     } catch (error: any) {
@@ -381,6 +398,19 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
     }
   }, [selectedProducts]);
 
+  const headings = [
+    "Finished Goods",
+    "Description",
+    "Estimated Quantity",
+    "Produced Quantity",
+    "UOM",
+    "Category",
+    "Supporting Doc",
+    "Comments",
+    "Unit Cost",
+    "Cost",
+  ];
+
   return (
     <Drawer closeDrawerHandler={closeDrawerHandler}>
       <div
@@ -396,11 +426,14 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
         </h1>
 
         <div className="mt-8 px-5">
-          <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
+          <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
             Update Production Process
           </h2>
 
-          <form onSubmit={updateProcessHandler}>
+          <form
+            onSubmit={updateProcessHandler}
+            className=" mx-auto  bg-white space-y-5"
+          >
             <div className="grid grid-cols-3 gap-2">
               <FormControl className="mt-3 mb-5" isRequired>
                 <FormLabel fontWeight="bold">BOM Name</FormLabel>
@@ -435,6 +468,8 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
               </FormControl>
             </div>
             <div>
+              <hr className="my-5" />
+
               <RawMaterial
                 inputs={selectedProducts}
                 setInputs={setSelectedProducts}
@@ -442,130 +477,220 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
                 productOptions={productOptions}
               />
             </div>
+
+            <hr className="my-5" />
+
             <div>
               <Process inputs={processes} setInputs={setProcesses} />
             </div>
+
+            <hr className="my-5" />
+
             <div className="mt-4">
-              <FormLabel fontWeight="bold">Finished Good</FormLabel>
-              <div className="grid grid-cols-4 gap-2">
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">Finished Good</FormLabel>
-                  <Select
-                    isDisabled
-                    className="rounded mt-2 border border-[#a9a9a9]"
-                    options={productOptions}
-                    placeholder="Select"
-                    value={finishedGood}
-                    name="assembly_phase"
-                    onChange={onFinishedGoodChangeHandler}
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5">
-                  <FormLabel fontWeight="bold">Description</FormLabel>
-                  <Input
-                    isDisabled
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={finishedGoodDescription}
-                    onChange={(e) => setFinishedGoodDescription(e.target.value)}
-                    type="text"
-                    placeholder="Description"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">Estimated Quantity</FormLabel>
-                  <Input
-                    disabled
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={finishedGoodQuantity}
-                    onChange={(e) =>
-                      onFinishedGoodQntyChangeHandler(+e.target.value)
-                    }
-                    type="number"
-                    placeholder="Quantity"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">Produced Quantity</FormLabel>
-                  <Input
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={finishedGoodProducedQuantity}
-                    onChange={(e) =>
-                      setFinishedGoodProducedQuantity(+e.target.value)
-                    }
-                    type="number"
-                    placeholder="Produced Quantity"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">
-                    Unit Of Measurement (UOM)
-                  </FormLabel>
-                  <Input
-                    isDisabled={true}
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={finishedGoodUom}
-                    type="text"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">Category</FormLabel>
-                  <Input
-                    isDisabled={true}
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={finishedGoodCategory}
-                    type="text"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5">
-                  <FormLabel fontWeight="bold">Supporting Doc</FormLabel>
-                  <input
-                    disabled
-                    type="file"
-                    placeholder="Choose a file"
-                    accept=".pdf"
-                    className="p-1 border border-[#a9a9a9] w-[267px] rounded"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5">
-                  <FormLabel fontWeight="bold">Comments</FormLabel>
-                  <Input
-                    isDisabled
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={finishedGoodComments}
-                    onChange={(e) => setFinishedGoodComments(e.target.value)}
-                    type="text"
-                    placeholder="Comments"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">Unit Cost</FormLabel>
-                  <Input
-                    isDisabled={true}
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={finishedGoodUnitCost}
-                    type="number"
-                  />
-                </FormControl>
-                <FormControl className="mt-3 mb-5" isRequired>
-                  <FormLabel fontWeight="bold">Cost</FormLabel>
-                  <Input
-                    isDisabled={true}
-                    border="1px"
-                    borderColor="#a9a9a9"
-                    value={finishedGoodCost}
-                    type="number"
-                    placeholder="Cost"
-                  />
-                </FormControl>
+              <FormLabel fontWeight="bold" display="flex" alignItems="center">
+                      <Text fontWeight="bold" fontSize="lg">
+                        Finished Goods
+                      </Text>
+                      <span
+                        className="cursor-pointer ml-5"
+                        style={{ cursor: "pointer", marginLeft: "10px" }}
+                        onClick={() => setIsTableVisible(!isTableVisible)}
+                      >
+                        {isTableVisible ? (
+                          <FaChevronUp size={18} color="#111827 " />
+                        ) : (
+                          <FaChevronDown size={18} color="#111827 " />
+                        )}
+                      </span>
+                    </FormLabel>
+              {isTableVisible && (
+              <div className="overflow-x-auto mt-4">
+                <Table
+                  variant="striped"
+                  colorScheme="gray"
+                  size="sm"
+                  className="min-w-full"
+                >
+                  <Thead>
+                    <Tr>
+                      {headings.map((heading, index) => (
+                        <th key={index}>
+                          <Text
+                            bg="teal.500"
+                            color="white"
+                            fontWeight="bold"
+                            textTransform="uppercase"
+                            textAlign="center"
+                            whiteSpace="nowrap"
+                            fontSize={"sm"}
+                            p={4}
+                          >
+                            {heading}
+                          </Text>
+                        </th>
+                      ))}
+                    </Tr>
+                  </Thead>
+
+                  <Tbody>
+                    <Tr>
+                      {/* Finished Good */}
+                      <Td>
+                        <FormControl isRequired>
+                          <Select
+                            isDisabled
+                            className="rounded mt-2 border border-[#a9a9a9]"
+                            options={productOptions}
+                            placeholder="Select"
+                            value={finishedGood}
+                            name="assembly_phase"
+                            onChange={onFinishedGoodChangeHandler}
+                          />
+                        </FormControl>
+                      </Td>
+
+                      {/* Description */}
+                      <Td>
+                        <FormControl>
+                          <Input
+                            isDisabled
+                            border="1px"
+                            borderColor="#a9a9a9"
+                            value={finishedGoodDescription}
+                            onChange={(e) =>
+                              setFinishedGoodDescription(e.target.value)
+                            }
+                            type="text"
+                            placeholder="Description"
+                          />
+                        </FormControl>
+                      </Td>
+
+                      {/* Estimated Quantity */}
+                      <Td>
+                        <FormControl isRequired>
+                          <Input
+                            disabled
+                            border="1px"
+                            borderColor="#a9a9a9"
+                            value={finishedGoodQuantity}
+                            onChange={(e) =>
+                              onFinishedGoodQntyChangeHandler(+e.target.value)
+                            }
+                            type="number"
+                            placeholder="Quantity"
+                          />
+                        </FormControl>
+                      </Td>
+
+                      {/* Produced Quantity */}
+                      <Td>
+                        <FormControl isRequired>
+                          <Input
+                            border="1px"
+                            borderColor="#a9a9a9"
+                            value={finishedGoodProducedQuantity}
+                            onChange={(e) =>
+                              setFinishedGoodProducedQuantity(+e.target.value)
+                            }
+                            type="number"
+                            placeholder="Produced Quantity"
+                          />
+                        </FormControl>
+                      </Td>
+
+                      {/* UOM */}
+                      <Td>
+                        <FormControl isRequired>
+                          <Input
+                            isDisabled={true}
+                            border="1px"
+                            borderColor="#a9a9a9"
+                            value={finishedGoodUom}
+                            type="text"
+                          />
+                        </FormControl>
+                      </Td>
+
+                      {/* Category */}
+                      <Td>
+                        <FormControl isRequired>
+                          <Input
+                            isDisabled={true}
+                            border="1px"
+                            borderColor="#a9a9a9"
+                            value={finishedGoodCategory}
+                            type="text"
+                          />
+                        </FormControl>
+                      </Td>
+
+                      {/* Supporting Doc */}
+                      <Td>
+                        <FormControl>
+                          <input
+                            disabled
+                            type="file"
+                            placeholder="Choose a file"
+                            accept=".pdf"
+                            className="p-1 border border-[#a9a9a9] w-[267px] rounded"
+                          />
+                        </FormControl>
+                      </Td>
+
+                      {/* Comments */}
+                      <Td>
+                        <FormControl>
+                          <Input
+                            isDisabled
+                            border="1px"
+                            borderColor="#a9a9a9"
+                            value={finishedGoodComments}
+                            onChange={(e) =>
+                              setFinishedGoodComments(e.target.value)
+                            }
+                            type="text"
+                            placeholder="Comments"
+                          />
+                        </FormControl>
+                      </Td>
+
+                      {/* Unit Cost */}
+                      <Td>
+                        <FormControl isRequired>
+                          <Input
+                            isDisabled={true}
+                            border="1px"
+                            borderColor="#a9a9a9"
+                            value={finishedGoodUnitCost}
+                            type="number"
+                          />
+                        </FormControl>
+                      </Td>
+
+                      {/* Cost */}
+                      <Td>
+                        <FormControl isRequired>
+                          <Input
+                            isDisabled={true}
+                            border="1px"
+                            borderColor="#a9a9a9"
+                            value={finishedGoodCost}
+                            type="number"
+                            placeholder="Cost"
+                          />
+                        </FormControl>
+                      </Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
               </div>
+                )}
             </div>
+           
+
+            <hr className="my-5" />
+
             <div>
               <ProcessScrapMaterial
                 products={products}
@@ -574,6 +699,9 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
                 setInputs={setScrapMaterials}
               />
             </div>
+
+            <hr className="my-5" />
+            
             <div>
               <Button
                 disabled={isCompleted || rawMaterialApprovalPending}
