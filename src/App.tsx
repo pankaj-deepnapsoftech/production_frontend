@@ -13,6 +13,8 @@ import Main from "./pages";
 import Home from "./components/Authentication/Home";
 import Contact from "./components/Authentication/Contact";
 import About from "./components/Authentication/About";
+import Sidebar from "./components/UserDashboard/Sidebar";
+import MainContent from "./components/UserDashboard/MainContent";
 
 const App: React.FC = () => {
 
@@ -26,8 +28,9 @@ const App: React.FC = () => {
         <Route element={<Main/>} >
           <Route path="/home" element={<Home/>}/>
           <Route path="/contact" element={<Contact/>}/>
-          <Route path="/about" element={<About/>}/>
+          <Route path="/about" element={<About/>}/>          
           </Route>
+          <Route path="/userboard/*" element={<MainContent />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Layout />}>

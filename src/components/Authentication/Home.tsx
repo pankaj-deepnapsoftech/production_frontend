@@ -42,46 +42,19 @@ const Home: FC = (): ReactElement => {
                 </div>
             </div>
 
-            {/* clients */}
-
-
-            <section>
-                <div className='mx-auto w-full my-20 px-2 md:px-10'>
-                    <h2 className='subscription-font text-center text-2xl md:text-4xl font-medium text-[#a7a7a7]'>We have 60+ active users across the nation</h2>
-                    <div className="mt-6 md:mt-16">
-                        <Marquee play>
-                            <img className="mx-6 h-[4rem] object-cover" src="/client/client1.png"></img>
-                            <img className="mx-6 h-[4rem] object-cover" src="/client/client2.webp"></img>
-                            <img className="mx-6 h-[4rem] object-cover" src="/client/client3.webp"></img>
-                            <img className="mx-6 w-[8rem] object-cover" src="/client/client4.webp"></img>
-                            <img className="mx-6 h-[4rem] object-cover" src="/client/client5.webp"></img>
-                            <img className="mx-6 h-[4rem] object-cover" src="/client/client6.png"></img>
-                            <img className="mx-6 h-[4rem] object-cover" src="/client/client7.png"></img>
-                            <img className="mx-6 w-[8rem] object-cover" src="/client/client8.webp"></img>
-                            <img className="mx-6 h-[4rem] object-cover" src="/client/client9.png"></img>
-                        </Marquee>
-                    </div>
-                </div>
-            </section>
 
             {/* How Real-Time Automation Works*/}
 
             <div className="relative overflow-hidden pt-16 pb-32 space-y-24 ">
-                <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl text-center">
+                <h2 className="text-3xl py-5 font-extrabold text-blue-900 sm:text-4xl text-center">
                     How Real-Time Automation Works
                 </h2>
 
-                <div className="relative">
+                <div className="relative ">
                     <div className="lg:mx-auto lg:grid lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2 lg:gap-24 lg:px-8 ">
                         <div className="mx-auto max-w-xl px-6 lg:mx-0 lg:max-w-none lg:py-16 lg:px-0 ">
 
                             <div>
-                                <div>
-                                    <span className="flex h-28 w-28  items-center justify-center rounded-xl ">
-                                        <img src="/images/h1.png" alt="" className="size-full" />
-
-                                    </span>
-                                </div>
 
                                 <div className="mt-6">
                                     <h2 className="text-3xl font-bold tracking-tight ">
@@ -111,7 +84,7 @@ const Home: FC = (): ReactElement => {
 
 
 
-                <div className="relative">
+                <div className="relative bg-blue-200 p-5">
                     <div className="lg:mx-auto lg:grid lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2 lg:gap-24 lg:px-8 ">
                         <div className="mx-auto max-w-xl px-6 lg:mx-0 lg:max-w-none lg:py-16 lg:px-0 lg:col-start-2">
                             <div>
@@ -185,7 +158,7 @@ const Home: FC = (): ReactElement => {
                     </div>
                 </div>
 
-                <div className="relative">
+                <div className="relative bg-gray-200 p-3">
                     <div className="lg:mx-auto lg:grid lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-2 lg:gap-24 lg:px-8 ">
                         <div className="mx-auto max-w-xl px-6 lg:mx-0 lg:max-w-none lg:py-16 lg:px-0 lg:col-start-2">
                             <div>
