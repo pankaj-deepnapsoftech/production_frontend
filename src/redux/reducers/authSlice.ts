@@ -6,6 +6,7 @@ const initialState = {
     lastname: undefined,
     email: undefined,
     phone: undefined,
+    role:undefined,
     allowedroutes: [],
     isSuper: false
 }
@@ -22,6 +23,7 @@ const authSlice = createSlice({
             state.phone = action.payload.phone;
             state.allowedroutes = action.payload?.role?.permissions || [];
             state.isSuper = action.payload.isSuper;
+            state.role = action.payload.role.role
         },
         userNotExists: (state)=>{
             state.id = undefined;

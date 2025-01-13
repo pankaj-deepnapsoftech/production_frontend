@@ -11,6 +11,7 @@ import {
   Textarea,
   useToast,
 } from "@chakra-ui/react";
+import axios from "axios";
 
 const NewEntry: React.FC = () => {
   const [type, setType] = useState<"person" | "vehicle">("person");
@@ -25,22 +26,21 @@ const NewEntry: React.FC = () => {
 
   const toast = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const newEntry = {
-      id: Date.now().toString(),
       type,
       details,
-      phoneNo,
+      phone:phoneNo,
       address,
       purpose: type === "person" ? purpose : null,
-      whomToMeet,
+      contact_persone:whomToMeet,
       material: type === "vehicle" ? (material === "Other" ? materialComment : material) : null,
       status,
-      createdAt: new Date().toISOString(),
     };
 
+    await axios.post(`${process.env.REACT_APP_BACKEND_URL}gard/create`,newEntry)
     console.log("New Entry:", newEntry);
 
     toast({
@@ -103,6 +103,7 @@ const NewEntry: React.FC = () => {
               onChange={(e) => setPhoneNo(e.target.value)}
               placeholder="Enter phone number"
               bg="white"
+              type="number"
               borderColor="gray.300"
             />
           </FormControl>

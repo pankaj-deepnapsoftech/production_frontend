@@ -21,6 +21,7 @@ const Header: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
   const logoutHandler = () => {
     try {
       removeCookie("access_token");
+      removeCookie("role");
       toast.success("Logged out successfully");
       navigate("/login");
     } catch (error: any) {

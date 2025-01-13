@@ -1,107 +1,126 @@
-import { Box, Text, Stack, Icon, VStack, Badge, Card, CardBody, CardHeader } from "@chakra-ui/react";
-import { FaCheckCircle, FaSpinner, FaStopCircle } from "react-icons/fa"; // Importing icons for each stage
+import { useEffect, useState } from "react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Spinner,
+  Box,
+  Text,
+  VStack,
+  Badge,
+  Progress,
+} from "@chakra-ui/react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-const TrackProduction = () => {
-  const stages = [
-    {
-      stage: "Production Start",
-      status: "Completed",
-      icon: FaCheckCircle,
-      color: "green",
-      subProcesses: [
-        { name: "Initial Setup", status: "Completed" },
-        { name: "Raw Material Procurement", status: "Completed" },
-      ],
-    },
-    {
-      stage: "Manufacturing",
-      status: "In Progress",
-      icon: FaSpinner,
-      color: "yellow",
-      subProcesses: [
-        { name: "Machine Setup", status: "Completed" },
-        { name: "Assembly Line 1", status: "In Progress" },
-        { name: "Assembly Line 2", status: "Pending" },
-      ],
-    },
-    {
-      stage: "Quality Check",
-      status: "Pending",
-      icon: FaStopCircle,
-      color: "gray",
-      subProcesses: [
-        { name: "Visual Inspection", status: "Pending" },
-        { name: "Functionality Test", status: "Pending" },
-      ],
-    },
-    {
-      stage: "Packaging",
-      status: "Pending",
-      icon: FaStopCircle,
-      color: "gray",
-      subProcesses: [
-        { name: "Packaging Design", status: "Pending" },
-        { name: "Final Packaging", status: "Pending" },
-      ],
-    },
-    {
-      stage: "Shipping",
-      status: "Pending",
-      icon: FaStopCircle,
-      color: "gray",
-      subProcesses: [
-        { name: "Labeling", status: "Pending" },
-        { name: "Shipping Dispatch", status: "Pending" },
-      ],
-    },
-  ];
+const TrackProduction = ({ productName, isOpen, onClose }: any) => {
+  const [productionProcess, setProductionProcess] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const fetchProductionProcess = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}track/track-process`,
+        {
+          params: { name: productName },
+        }
+      );
+      const data = response.data.data[0];
+      setProductionProcess(data);
+      console.log(productionProcess);
+    } catch (error) {
+      toast.error("Failed to fetch production data");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen && productName) {
+      fetchProductionProcess();
+    }
+  }, [isOpen, productName]);
 
   return (
-    <div className="md:ml-80 sm:ml-0 overflow-x-hidden">
-      <h3 className="text-2xl mb-6 text-blue-950 font-bold inline-block border-b-2 border-dashed border-black ">Track Production Process</h3>
-      <VStack spacing={6}>
-        {stages.map((item, index) => (
-          <Card key={index} width="full" variant="outline" boxShadow="md" borderRadius="lg">
-            <CardHeader>
-              <Box display="flex" alignItems="center">
-                <Icon
-                  as={item.icon}
-                  color={item.color === "green" ? "green.500" : item.color === "yellow" ? "yellow.500" : "gray.500"}
-                  boxSize={8}
-                  mr={4}
-                />
-                <Text fontSize="lg" fontWeight="bold">{item.stage}</Text>
-              </Box>
-            </CardHeader>
-            <CardBody>
-              <Text color={item.status === "Completed" ? "green.500" : item.status === "In Progress" ? "yellow.500" : "gray.500"}>
-                {item.status}
-              </Text>
-
-              {/* Sub-processes */}
-              <Box pl={8} mt={4}>
-                {item.subProcesses.map((subProcess, subIndex) => (
-                  <Box key={subIndex} display="flex" alignItems="center" mb={2}>
-                    <Icon
-                      as={subProcess.status === "Completed" ? FaCheckCircle : FaStopCircle}
-                      color={subProcess.status === "Completed" ? "green.500" : "gray.500"}
-                      boxSize={5}
-                      mr={4}
-                    />
-                    <Text fontSize="md" fontWeight="medium" color={subProcess.status === "Completed" ? "green.500" : "gray.500"}>
-                      {subProcess.name}
-                    </Text>
-                    <Badge ml={4} colorScheme={subProcess.status === "Completed" ? "green" : "gray"}>
-                      {subProcess.status}
-                    </Badge>
-                  </Box>
-                ))}
-              </Box>
-            </CardBody>
-          </Card>
-        ))}
-      </VStack>
-    </div>
+    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Production Process for {productName}</ModalHeader>
+        <ModalBody>
+          {isLoading ? (
+            <Box textAlign="center" py={6}>
+              <Spinner size="xl" color="teal.500" />
+            </Box>
+          ) : productionProcess ? (
+            <Box>
+              {/* Display Stages */}
+              <VStack align="start" spacing={4} mb={6}>
+                <Text fontWeight="bold" fontSize="xl" color="teal.600">
+                  Production Stages:
+                </Text>
+                {productionProcess.processes.map(
+                  (process: any, index: number) => (
+                    <Box
+                      key={index}
+                      p={4}
+                      w="full"
+                      borderWidth="1px"
+                      borderRadius="lg"
+                      shadow="md"
+                      bg={process.done ? "green.50" : "red.50"}
+                      borderColor={process.done ? "green.300" : "red.300"}
+                    >
+                      <Text
+                        fontWeight="bold"
+                        fontSize="lg"
+                        color={process.done ? "green.700" : "red.700"}
+                      >
+                        {process.process}
+                      </Text>
+                      <Text mt={2} fontSize="md">
+                        Status:
+                        <Badge
+                          ml={2}
+                          colorScheme={process.done ? "green" : "red"}
+                          variant="solid"
+                        >
+                          {process.done ? "Completed" : "Pending"}
+                        </Badge>
+                      </Text>
+                      <Box mt={2}>
+                        <Text fontSize="sm" color="gray.500">
+                          Progress:
+                        </Text>
+                        <Box mt={1} w="full">
+                          <Progress
+                            value={process.done ? 100 : 50} // Assuming 50% for pending as a placeholder
+                            size="sm"
+                            colorScheme={process.done ? "green" : "red"}
+                            borderRadius="md"
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
+                  )
+                )}
+              </VStack>
+            </Box>
+          ) : (
+            <Box>No production process data available.</Box>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button colorScheme="blue" onClick={onClose}>
+            Close
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 

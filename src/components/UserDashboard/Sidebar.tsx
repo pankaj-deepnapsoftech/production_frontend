@@ -36,7 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, isSidebarOpen, toggleSidebar })
 
       <nav className="space-y-6">
         <Link
-          to="/userboard/overview"
+          to="/userboard"
           className="block p-5 rounded-md text-xl border-b border-gray-400 transition-colors duration-300 hover:text-blue-700"
         >
           <div className="flex items-center justify-start gap-3">
@@ -55,15 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, isSidebarOpen, toggleSidebar })
           </div>
         </Link>
 
-        <Link
-          to="/track-production"
-          className="block p-5 rounded-md text-xl border-b border-gray-400 transition-colors duration-300 hover:text-blue-800 "
-        >
-          <div className="flex items-center justify-start gap-3">
-            <FaListCheck className="text-blue-800" />
-            <h1> Track Production</h1>
-          </div>
-        </Link>
+      
 
         <Link
           to="/settings"
@@ -86,8 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, isSidebarOpen, toggleSidebar })
         </Link>
 
         <Link
-          to="/
-          new-entry"
+          to="/new-entry"
           className="block p-5 rounded-md text-xl border-b border-gray-400 transition-colors duration-300 hover:text-blue-800"
         >
           <div className="flex items-center justify-start gap-3">
