@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SiSimpleanalytics } from "react-icons/si";
 import { RiHistoryFill } from "react-icons/ri";
 import { FaGears, FaListCheck } from "react-icons/fa6";
 import { TbTruckDelivery } from "react-icons/tb";
 import { IoCreate } from "react-icons/io5";
+import { toast } from "react-toastify";
+import { useCookies } from "react-cookie";
 
 type SidebarProps = {
   user: {
@@ -15,7 +17,21 @@ type SidebarProps = {
   toggleSidebar: () => void;
 };
 
+
+
 const Sidebar: React.FC<SidebarProps> = ({ user, isSidebarOpen, toggleSidebar }) => {
+  const navigate = useNavigate();
+  const [cookie, _, removeCookie] = useCookies();
+
+  const logoutHandler = () => {
+    try {
+      removeCookie("access_token");
+      toast.success("Logged out successfully");
+      navigate("/login");
+    } catch (error: any) {
+      toast.error(error.message || "Something went wrong");
+    }
+  };
   return (
     <div
       className={`${
@@ -90,6 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, isSidebarOpen, toggleSidebar })
     
       <div className="mt-auto">
         <button
+        onClick={logoutHandler}
           className="w-full py-3 mt-6 bg-blue-800 text-white text-xl font-semibold rounded-md transition-colors duration-300 hover:bg-blue-700"
         >
           Logout

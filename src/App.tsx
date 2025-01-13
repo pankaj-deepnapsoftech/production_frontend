@@ -24,13 +24,14 @@ import NewEntry from "./components/UserDashboard/NewEntry";
 const App: React.FC = () => {
 
   const { allowedroutes, isSuper, role } = useSelector((state: any) => state.auth);
+  console.log(role !== "user" || role !== "Security Guard")
 
   return (
     <div>
       <ToastContainer />
       <BrowserRouter>
         <Routes>
-         { role === "user"  ? <Route element={<MainContent />} >
+         { role === "user" || role  === "Security Guard"   ? <Route element={<MainContent />} >
             <Route path="/userboard" element={<Overview />} />
             <Route path="/purchase-history" element={<PurchaseHistory />} />
             <Route path="/settings" element={<Settings />} />
@@ -46,7 +47,7 @@ const App: React.FC = () => {
 
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          {role !== "user" ? <Route path="/" element={<Layout />}>
+          {role !== "user" && role !== "Security Guard" ? <Route path="/" element={<Layout />}>
             {routes.map((route, ind) => {
               const isAllowed = isSuper || allowedroutes.includes(route.path.replaceAll('/', ''));
               if (route.isSublink) {

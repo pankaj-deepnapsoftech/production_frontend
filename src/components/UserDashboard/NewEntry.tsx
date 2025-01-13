@@ -105,6 +105,7 @@ const NewEntry: React.FC = () => {
               bg="white"
               type="number"
               borderColor="gray.300"
+              required
             />
           </FormControl>
 
