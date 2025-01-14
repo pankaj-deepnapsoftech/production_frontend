@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import Login from "./pages/Login";
@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Register from "./pages/Register";
 import Layout from "./pages/Layout";
 import routes from "./routes/routes";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import NotFound from "./pages/NotFound";
 import Main from "./pages";
 import Home from "./components/Authentication/Home";
@@ -24,11 +24,17 @@ import { useCookies } from "react-cookie";
 const App: React.FC = () => {
 
   const { allowedroutes, isSuper, role } = useSelector((state: any) => state.auth);
-  const [cookies] = useCookies();
   const [userRole, setUserRole] = useState<string | null>(null)
+  const [cookies] = useCookies();
+ 
+
+
+  
+
+    
 
   useEffect(() => {
-    setUserRole(role || cookies?.role)
+    setUserRole(role || cookies?.role);
   }, [cookies, role])
 
   return (

@@ -6,7 +6,9 @@ import { TbTruckDelivery } from "react-icons/tb";
 import { IoCreate } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { userExists } from "../../redux/reducers/authSlice";
+import { useEffect } from "react";
 
 type SidebarProps = {
   user: {
@@ -23,9 +25,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   isSidebarOpen,
   toggleSidebar,
 }) => {
+   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [cookie, _, removeCookie] = useCookies();
-  const { firstname, lastname, email, role } = useSelector(
+  const [cookie, setCookie, removeCookie] = useCookies();
+  const { firstname,  email } = useSelector(
     (state: any) => state.auth
   ); 
 
@@ -39,6 +42,40 @@ const Sidebar: React.FC<SidebarProps> = ({
       toast.error(error.message || "Something went wrong");
     }
   };
+
+  const loginWithTokenHandler = async (token: string) => {
+    try {
+      const response = await fetch(
+        process.env.REACT_APP_BACKEND_URL + "auth/login",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${cookie?.access_token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+      setCookie("access_token", data.token, { maxAge: 86400 });
+      if(data?.user?.role){
+        dispatch(userExists(data.user));
+      }else{
+        dispatch(userExists({...data.user,role:"admin"}));
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Something went wrong");
+    }
+  };
+
+  useEffect(() => {
+    if (!cookie?.access_token) {
+      navigate("/login");
+    } else {
+      loginWithTokenHandler(cookie?.access_token);
+    }
+  }, []);
 
   return (
     <div

@@ -1,27 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   ChakraProvider,
   Box,
-  Text,
   FormControl,
   FormLabel,
   Input,
   Select,
   Button,
   Textarea,
-  useToast,
 } from "@chakra-ui/react";
-import { useCookies } from "react-cookie";
-import axios from "axios";
 
 interface Entry {
   _id: string;
   type: "person" | "vehicle";
-  details: string;
+  name: string;
+  comment?: string;
+  details?: string;
   phone: string;
   address: string;
   purpose?: string;
-  contact_persone: string;
+  contact_persone?: string;
   material?: string;
   status: "in" | "out";
   createdAt: string;
@@ -33,50 +31,41 @@ interface UpdateEntryProps {
   onCancel: () => void;
 }
 
-const UpdateEntry: React.FC<UpdateEntryProps> = ({ entry, onUpdate, onCancel }) => {
-  const [type, setType] = useState<"person" | "vehicle">(entry.type);
-  const [details, setDetails] = useState<string>(entry.details);
-  const [phone, setPhone] = useState<string>(entry.phone);
-  const [address, setAddress] = useState<string>(entry.address);
-  const [purpose, setPurpose] = useState<string>(entry.purpose || "");
-  const [contact_persone, setContact_persone] = useState<string>(entry.contact_persone);
-  const [material, setMaterial] = useState<string>(entry.material || "");
-  const [materialComment, setMaterialComment] = useState<string>(
-    entry.material === "Other" ? entry.material : ""
-  );
-  const [status, setStatus] = useState<"in" | "out">(entry.status);
-  const [cookies] = useCookies(["access_token"]);
+const UpdateEntry: React.FC<UpdateEntryProps> = ({
+  entry,
+  onUpdate,
+  onCancel,
+}) => {
+  const [formData, setFormData] = useState<Entry>({
+    ...entry,
+  });
 
-  const toast = useToast();
+  const handleChange = (field: keyof Entry, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
-  const handleSubmit = async(e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Creating the updated entry based on the form fields
-    const updatedEntry: Entry = {
-      ...entry,    
-      type,
-      details,
-      phone,
-      address,
-      purpose,
-      contact_persone,
-      material,
-      status,
-    };
-
-      onUpdate(updatedEntry); // Pass the updated data to the parent component
-     
+    onUpdate(formData); // Pass the updated data to the parent component
   };
 
   return (
     <ChakraProvider>
-      <Box as="form" onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+      <Box
+        as="form"
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-lg shadow-md"
+      >
         <FormControl mb="4" isRequired>
           <FormLabel>Type</FormLabel>
           <Select
-            value={type}
-            onChange={(e) => setType(e.target.value as "person" | "vehicle")}
+            value={formData.type}
+            onChange={(e) =>
+              handleChange("type", e.target.value as "person" | "vehicle")
+            }
             bg="white"
             borderColor="gray.300"
           >
@@ -85,12 +74,12 @@ const UpdateEntry: React.FC<UpdateEntryProps> = ({ entry, onUpdate, onCancel }) 
           </Select>
         </FormControl>
 
-        <FormControl mb="4" isRequired>
-          <FormLabel>Details</FormLabel>
+        <FormControl mb="4">
+          <FormLabel>Name</FormLabel>
           <Input
-            value={details}
-            onChange={(e) => setDetails(e.target.value)}
-            placeholder="Enter details (e.g., Name or Vehicle Info)"
+            value={formData.name || ""}
+            onChange={(e) => handleChange("name", e.target.value)}
+            placeholder="material description"
             bg="white"
             borderColor="gray.300"
           />
@@ -99,8 +88,8 @@ const UpdateEntry: React.FC<UpdateEntryProps> = ({ entry, onUpdate, onCancel }) 
         <FormControl mb="4">
           <FormLabel>Phone Number</FormLabel>
           <Input
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={formData.phone}
+            onChange={(e) => handleChange("phone", e.target.value)}
             placeholder="Enter phone number"
             bg="white"
             borderColor="gray.300"
@@ -110,34 +99,32 @@ const UpdateEntry: React.FC<UpdateEntryProps> = ({ entry, onUpdate, onCancel }) 
         <FormControl mb="4">
           <FormLabel>Address</FormLabel>
           <Textarea
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            value={formData.address}
+            onChange={(e) => handleChange("address", e.target.value)}
             placeholder="Enter address"
             bg="white"
             borderColor="gray.300"
           />
         </FormControl>
 
-        {type === "person" && (
-          <FormControl mb="4" isRequired>
-            <FormLabel>Purpose of Visit</FormLabel>
-            <Input
-              value={purpose}
-              onChange={(e) => setPurpose(e.target.value)}
-              placeholder="Enter purpose of visit"
-              bg="white"
-              borderColor="gray.300"
-            />
-          </FormControl>
-        )}
-
-        {type === "vehicle" && (
+        {formData.type === "vehicle" && (
           <>
+            <FormControl mb="4" isRequired>
+              <FormLabel>Vehicle Details</FormLabel>
+              <Input
+                value={formData.details || ""}
+                onChange={(e) => handleChange("details", e.target.value)}
+                placeholder="Enter vehicle details"
+                bg="white"
+                borderColor="gray.300"
+              />
+            </FormControl>
+
             <FormControl mb="4" isRequired>
               <FormLabel>Material</FormLabel>
               <Select
-                value={material}
-                onChange={(e) => setMaterial(e.target.value)}
+                value={formData.material || ""}
+                onChange={(e) => handleChange("material", e.target.value)}
                 bg="white"
                 borderColor="gray.300"
               >
@@ -146,37 +133,56 @@ const UpdateEntry: React.FC<UpdateEntryProps> = ({ entry, onUpdate, onCancel }) 
                 <option value="Finished Goods">Finished Goods</option>
                 <option value="Other">Other</option>
               </Select>
+            </FormControl>
 
-              {material === "Other" && (
-                <Input
-                  mt="4"
-                  value={materialComment}
-                  onChange={(e) => setMaterialComment(e.target.value)}
-                  placeholder="Specify 'Other'"
-                  bg="white"
-                  borderColor="gray.300"
-                />
-              )}
+            <FormControl mb="4">
+              <FormLabel>Comment</FormLabel>
+              <Input
+                value={formData.comment || ""}
+                onChange={(e) => handleChange("comment", e.target.value)}
+                placeholder="material description"
+                bg="white"
+                borderColor="gray.300"
+              />
             </FormControl>
           </>
         )}
 
-        <FormControl mb="4" isRequired>
-          <FormLabel>Whom to Meet</FormLabel>
-          <Input
-            value={contact_persone}
-            onChange={(e) => setContact_persone(e.target.value)}
-            placeholder="Enter name of person/department to meet"
-            bg="white"
-            borderColor="gray.300"
-          />
-        </FormControl>
+        {formData.type === "person" && (
+          <FormControl mb="4" isRequired>
+            <FormLabel>Contact Person</FormLabel>
+            <Input
+              value={formData.contact_persone || ""}
+              onChange={(e) => handleChange("contact_persone", e.target.value)}
+              placeholder="Enter name of person/department to meet"
+              bg="white"
+              borderColor="gray.300"
+            />
+          </FormControl>
+        )}
+
+      
+
+        {formData.type === "person" && (
+          <FormControl mb="4" isRequired>
+            <FormLabel>Purpose of Visit</FormLabel>
+            <Input
+              value={formData.purpose || ""}
+              onChange={(e) => handleChange("purpose", e.target.value)}
+              placeholder="Enter purpose of visit"
+              bg="white"
+              borderColor="gray.300"
+            />
+          </FormControl>
+        )}
 
         <FormControl mb="4" isRequired>
           <FormLabel>Status</FormLabel>
           <Select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as "in" | "out")}
+            value={formData.status}
+            onChange={(e) =>
+              handleChange("status", e.target.value as "in" | "out")
+            }
             bg="white"
             borderColor="gray.300"
           >
