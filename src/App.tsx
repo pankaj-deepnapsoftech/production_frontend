@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
@@ -16,28 +16,33 @@ import About from "./components/Authentication/About";
 import MainContent from "./components/UserDashboard/MainContent";
 import Overview from "./components/UserDashboard/Overview";
 import PurchaseHistory from "./components/UserDashboard/PurchaseHistory";
-import TrackProduction from "./components/UserDashboard/TrackProduction";
 import Settings from "./components/UserDashboard/Settings";
 import Entries from "./components/UserDashboard/Entries";
 import NewEntry from "./components/UserDashboard/NewEntry";
+import { useCookies } from "react-cookie";
 
 const App: React.FC = () => {
 
   const { allowedroutes, isSuper, role } = useSelector((state: any) => state.auth);
-  console.log(role !== "user" || role !== "Security Guard")
+  const [cookies] = useCookies();
+  const [userRole, setUserRole] = useState<string | null>(null)
+
+  useEffect(() => {
+    setUserRole(role || cookies?.role)
+  }, [cookies, role])
 
   return (
     <div>
       <ToastContainer />
       <BrowserRouter>
         <Routes>
-         { role === "user" || role  === "Security Guard"   ? <Route element={<MainContent />} >
+          {userRole === "user" || userRole === "Security Guard" ? <Route element={<MainContent />} >
             <Route path="/userboard" element={<Overview />} />
             <Route path="/purchase-history" element={<PurchaseHistory />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/entries" element={<Entries />} />
             <Route path="/new-entry" element={<NewEntry />} />
-          </Route> : <Route path="/" element={<Navigate to="/" replace />}/> }
+          </Route> : <Route path="*" element={<Navigate to="/" replace />} />}
 
           <Route element={<Main />} >
             <Route path="/home" element={<Home />} />
@@ -47,7 +52,7 @@ const App: React.FC = () => {
 
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          {role !== "user" && role !== "Security Guard" ? <Route path="/" element={<Layout />}>
+          {userRole !== "user" && userRole !== "Security Guard" ? <Route path="/" element={<Layout />}>
             {routes.map((route, ind) => {
               const isAllowed = isSuper || allowedroutes.includes(route.path.replaceAll('/', ''));
               if (route.isSublink) {
@@ -76,7 +81,7 @@ const App: React.FC = () => {
                 );
               }
             })}
-          </Route> :   <Route path="/" element={<Navigate to="/userboard" replace />} />}
+          </Route> : <Route path="/" element={<Navigate to="/userboard" replace />} />}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -12,6 +12,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const NewEntry: React.FC = () => {
   const [type, setType] = useState<"person" | "vehicle">("person");
@@ -23,34 +24,37 @@ const NewEntry: React.FC = () => {
   const [material, setMaterial] = useState<string>("");
   const [materialComment, setMaterialComment] = useState<string>("");
   const [status, setStatus] = useState<"in" | "out">("in");
+  const [cookies] = useCookies(["access_token"]);
 
   const toast = useToast();
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newEntry = {
-      type,
-      details,
-      phone:phoneNo,
-      address,
-      purpose: type === "person" ? purpose : null,
-      contact_persone:whomToMeet,
-      material: type === "vehicle" ? (material === "Other" ? materialComment : material) : null,
-      status,
-    };
-
-    await axios.post(`${process.env.REACT_APP_BACKEND_URL}gard/create`,newEntry)
-    console.log("New Entry:", newEntry);
-
+    try {
+      const newEntry = {
+        type,
+        details,
+        phone:phoneNo,
+        address,
+        purpose: type === "person" ? purpose : null,
+        contact_persone:whomToMeet,
+        material: type === "vehicle" ? (material === "Other" ? materialComment : material) : null,
+        status,
+      };
+      
+    const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}gard/create`,newEntry,{headers:{Authorization:`brr ${cookies.access_token}`}});
+    
+    
     toast({
-      title: "Entry Added",
+      title: res.data.message,
       description: "The new entry has been successfully added!",
       status: "success",
       duration: 3000,
       isClosable: true,
     });
-  
+
     setType("person");
     setDetails("");
     setPhoneNo("");
@@ -60,6 +64,20 @@ const NewEntry: React.FC = () => {
     setMaterial("");
     setMaterialComment("");
     setStatus("in");
+
+    } catch (error:any) {
+      toast({
+        title: error.response?.errors[0].message || error.response?.message || "something went wrong",
+        description: "The new entry has been successfully added!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+
+
+  
+   
   };
 
   return (

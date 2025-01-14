@@ -16,6 +16,7 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         userExists: (state, action)=>{
+            console.log(action.payload)
             state.id = action.payload._id;
             state.firstname = action.payload.first_name;
             state.lastname = action.payload.last_name;
@@ -23,7 +24,7 @@ const authSlice = createSlice({
             state.phone = action.payload.phone;
             state.allowedroutes = action.payload?.role?.permissions || [];
             state.isSuper = action.payload.isSuper;
-            state.role = action.payload.role.role
+            state.role = action.payload.role.role || action.payload.role
         },
         userNotExists: (state)=>{
             state.id = undefined;

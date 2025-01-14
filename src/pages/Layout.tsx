@@ -30,7 +30,11 @@ const Layout: React.FC = () => {
         throw new Error(data.message);
       }
       setCookie("access_token", data.token, { maxAge: 86400 });
-      dispatch(userExists(data.user));
+      if(data?.user?.role){
+        dispatch(userExists(data.user));
+      }else{
+        dispatch(userExists({...data.user,role:"admin"}));
+      }
     } catch (err: any) {
       navigate('/login');
       toast.error(err?.message || "Something went wrong");

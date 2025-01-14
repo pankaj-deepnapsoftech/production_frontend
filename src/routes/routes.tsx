@@ -7,7 +7,7 @@ import { SlDirection } from "react-icons/sl";
 import { FaHandsHelping } from "react-icons/fa";
 import { SiScrapy } from "react-icons/si";
 import { FaPeopleGroup } from "react-icons/fa6";
-import { BiPurchaseTagAlt } from "react-icons/bi";
+import { BiPurchaseTagAlt, BiSolidDiscount } from "react-icons/bi";
 import { VscServerProcess } from "react-icons/vsc";
 import { GiProgression } from "react-icons/gi";
 import Dashboard from "../pages/Dashboard";
@@ -27,6 +27,7 @@ import IndirectProducts from "../pages/IndirectProducts";
 import Scrap from "../pages/Scrap";
 import WIPProducts from "../pages/WIPProducts";
 import InventoryApprovals from "../pages/InventoryApprovals";
+import Sales from "../pages/Sales";
 
 const routes = [
   {
@@ -168,6 +169,13 @@ const routes = [
       },
     ],
     isSublink: true
+  },
+  {
+    name: "Sales",
+    icon: <BiSolidDiscount />,
+    path: "/sales",
+    element: <Sales />,
+    isSublink: false
   },
 ];
 

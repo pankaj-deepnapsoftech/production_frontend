@@ -14,8 +14,8 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useCookies } from "react-cookie";
-import TrackProduction from "./TrackProduction"; // Import the TrackProduction component
+import { useCookies } from "react-cookie";import TrackProduction from "../components/UserDashboard/TrackProduction";
+// Import the TrackProduction component
 
 interface Purchase {
   product_name: string;
@@ -27,7 +27,7 @@ interface Purchase {
   Status: string;
 }
 
-const PurchaseHistory = () => {
+const Sales = () => {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
@@ -78,9 +78,9 @@ const PurchaseHistory = () => {
   };
 
   return (
-    <div className="md:ml-80 sm:ml-0 overflow-x-hidden">
+    <div className=" overflow-x-hidden">
       <h3 className="text-2xl mb-6 text-blue-950 font-bold inline-block border-b-2 border-dashed border-black">
-        Purchase History
+        Sales History
       </h3>
       <Box overflowX="auto" w="full" maxW="1000px">
         {isLoading ? (
@@ -146,4 +146,4 @@ const PurchaseHistory = () => {
   );
 };
 
-export default PurchaseHistory;
+export default Sales;

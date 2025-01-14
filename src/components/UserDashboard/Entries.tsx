@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ChakraProvider,
   Select,
@@ -23,78 +23,63 @@ import {
 } from "@chakra-ui/react";
 import { MdEdit } from "react-icons/md";
 import UpdateEntry from "./UpdateEntry"; // Import the UpdateEntry component
+import axios from "axios"; // Axios for API calls
+import { useCookies } from "react-cookie";
 
 interface Entry {
-  id: string;
+  _id: string;
   type: "person" | "vehicle";
   details: string;
-  phoneNo: string;
+  phone: string;
   address: string;
-  purpose: string;
-  whomToMeet: string;
-  material: string;
+  purpose: string | null;
+  contact_persone: string; // Changed to match the API response
+  material: string | null;
   status: "in" | "out";
-  createdAt: string;
+  createdAt: string | null; // Optional field for created date
 }
-
-const dummyEntries: Entry[] = [
-  {
-    id: "1",
-    type: "person",
-    details: "John Doe",
-    phoneNo: "1234567890",
-    address: "123 Elm Street, Springfield",
-    purpose: "Delivery",
-    whomToMeet: "Mr. Smith",
-    material: "",
-    status: "in",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    type: "vehicle",
-    details: "Toyota Corolla - AB123CD",
-    phoneNo: "9876543210",
-    address: "456 Oak Avenue, Shelbyville",
-    purpose: "",
-    whomToMeet: "",
-    material: "Raw Material",
-    status: "in",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    type: "person",
-    details: "Jane Smith",
-    phoneNo: "4561237890",
-    address: "789 Maple Lane, Ogdenville",
-    purpose: "Meeting",
-    whomToMeet: "Mrs. Johnson",
-    material: "",
-    status: "out",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "4",
-    type: "vehicle",
-    details: "Ford F-150 - XY987ZY",
-    phoneNo: "3216549870",
-    address: "101 Birch Road, North Haverbrook",
-    purpose: "",
-    whomToMeet: "",
-    material: "Finished Good",
-    status: "out",
-    createdAt: new Date().toISOString(),
-  },
-];
 
 const Entries: React.FC = () => {
   const [inOutFilter, setInOutFilter] = useState<"all" | "in" | "out">("all");
-  const [entries, setEntries] = useState<Entry[]>(dummyEntries);
+  const [entries, setEntries] = useState<Entry[]>([]);
   const [editingEntry, setEditingEntry] = useState<Entry | null>(null);
-
+  const [cookies] = useCookies(["access_token"]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+
+  // Fetch entry logs from API
+  useEffect(() => {
+    const fetchEntries = async () => {
+      const token = cookies.access_token;
+
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}gard/get-all`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setEntries(response.data.data); // Assuming response data structure is { data: [] }
+        console.log(response.data.data); // Log the fetched data for debugging
+      } catch (error) {
+        console.error("Error fetching entries:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch entries.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    };
+
+    fetchEntries();
+  }, []); // Empty dependency array means this will only run on component mount
 
   const filteredEntries = entries.filter((entry) => {
     if (inOutFilter === "all") return true;
@@ -106,21 +91,57 @@ const Entries: React.FC = () => {
     onOpen();
   };
 
-  const handleUpdate = (updatedEntry: Entry) => {
-    setEntries((prevEntries) =>
-      prevEntries.map((entry) =>
-        entry.id === updatedEntry.id ? updatedEntry : entry
-      )
-    );
-    toast({
-      title: "Entry Updated",
-      description: "The entry has been successfully updated.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-    onClose();
-    
+  const handleUpdate = async (updatedEntry: Entry) => {
+    const token = cookies.access_token;
+
+    if (!token) {
+      toast({
+        title: "Authentication Error",
+        description: "Please login again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    try {
+      // Send the update request to the backend
+      const response = await axios.put(
+        `${process.env.REACT_APP_BACKEND_URL}gard/update/${updatedEntry._id}`, 
+        updatedEntry,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+       // Update the state with the updated entry
+    if (response.data) {    
+        toast({
+          title: "Entry Updated",
+          description: "The entry has been successfully updated.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+
+         // Refresh the page to reload all data
+      window.location.reload();
+
+        onClose(); // Close the modal after the update
+      }
+    } catch (error) {
+      console.error("Error updating entry:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update the entry.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   const headings = [
@@ -132,13 +153,12 @@ const Entries: React.FC = () => {
     "Whom To Meet",
     "Material",
     "Status",
-    "Date/Time",
     "Actions",
   ];
 
   return (
     <ChakraProvider>
-      <Box className="p-6 bg-gray-100 min-h-screen md:ml-80 sm:ml-0">
+      <Box className="p-6 bg-gray-100 min-h-screen md:ml-80 sm:ml-0 mt-10 lg:mt-0">
         <Text className="text-2xl font-bold mb-4">
           Security Guard Dashboard
         </Text>
@@ -182,13 +202,13 @@ const Entries: React.FC = () => {
                   <Tr key={entry.id}>
                     <Td>{entry.type}</Td>
                     <Td>{entry.details}</Td>
-                    <Td>{entry.phoneNo}</Td>
+                    <Td>{entry.phone}</Td>
                     <Td>{entry.address}</Td>
                     <Td>{entry.purpose}</Td>
-                    <Td>{entry.whomToMeet}</Td>
+                    <Td>{entry.contact_persone}</Td>{" "}
+                    {/* Changed to contact_persone */}
                     <Td>{entry.material}</Td>
                     <Td>{entry.status}</Td>
-                    <Td>{new Date(entry.createdAt).toLocaleString()}</Td>
                     <Td>
                       <IconButton
                         icon={<MdEdit />}

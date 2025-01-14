@@ -44,8 +44,14 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
         email: email,
         password: password,
       }).unwrap();
-      dispatch(userExists(data.user));
+      if(data.user.role){
+        dispatch(userExists(data.user));
+      }
+      else{
+        dispatch(userExists({...data.user,role:"admin"}))
+      }
       setCookie('access_token', data.token, {maxAge: 86400});
+      setCookie('role', data?.user?.role?.role || "admin", {maxAge: 86400});
       toast.success(data.message);
       navigate('/');
     } catch (err: any) {
