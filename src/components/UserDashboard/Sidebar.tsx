@@ -28,53 +28,25 @@ const Sidebar: React.FC<SidebarProps> = ({
    const dispatch = useDispatch();
   const navigate = useNavigate();
   const [cookie, setCookie, removeCookie] = useCookies();
-  const { firstname,  email } = useSelector(
-    (state: any) => state.auth
-  ); 
 
   const logoutHandler = () => {
     try {
       removeCookie("access_token");
       removeCookie("role");
+      removeCookie("name");
+      removeCookie("email");
       toast.success("Logged out successfully");
-      navigate("/login");
+      navigate("/customer-login");
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
     }
   };
 
-  const loginWithTokenHandler = async (token: string) => {
-    try {
-      const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + "auth/login",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${cookie?.access_token}`,
-          },
-        }
-      );
-      const data = await response.json();
-      if (!data.success) {
-        throw new Error(data.message);
-      }
-      setCookie("access_token", data.token, { maxAge: 86400 });
-      if(data?.user?.role){
-        dispatch(userExists(data.user));
-      }else{
-        dispatch(userExists({...data.user,role:"admin"}));
-      }
-    } catch (err: any) {
-      toast.error(err?.message || "Something went wrong");
-    }
-  };
 
   useEffect(() => {
     if (!cookie?.access_token) {
-      navigate("/login");
-    } else {
-      loginWithTokenHandler(cookie?.access_token);
-    }
+      navigate("/customer-login");
+    } 
   }, []);
 
   return (
@@ -90,8 +62,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <div className="w-full flex flex-col justify-center items-center">
-          <h1 className="text-2xl font-semibold text-black">{firstname}</h1>
-          <p className="text-lg text-gray-800">{email}</p>
+          <h1 className="text-2xl font-semibold text-black">{cookie.name}</h1>
+          <p className="text-lg text-gray-800">{cookie.email}</p>
         </div>
       </div>
 

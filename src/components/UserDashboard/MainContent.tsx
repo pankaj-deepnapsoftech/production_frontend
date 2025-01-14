@@ -1,10 +1,8 @@
 import {  Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 const MainContent = () => {
-  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const user = {
@@ -49,7 +47,7 @@ const MainContent = () => {
           </svg>
         </button>
 
-        <div className="cursor-pointer w-full p-3 shadow-md px-10 flex items-center justify-end gap-1" onClick={() => navigate("/home")}>
+        <div className="cursor-pointer w-full p-3 shadow-md px-10 flex items-center justify-end gap-1" >
           <img src="/images/logo.png" alt="logo" className="h-10" />
           <span className="text-2xl font-bold">ITSYBIZZ</span>
         </div>

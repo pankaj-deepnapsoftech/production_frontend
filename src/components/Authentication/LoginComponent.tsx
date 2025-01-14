@@ -52,6 +52,8 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
       }
       setCookie('access_token', data.token, {maxAge: 86400});
       setCookie('role', data?.user?.role?.role || "admin", {maxAge: 86400});
+      setCookie("name", data.user.first_name , { maxAge: 86400 });
+      setCookie("email", data.user.email , { maxAge: 86400 });
       toast.success(data.message);
       navigate('/');
     } catch (err: any) {

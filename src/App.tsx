@@ -20,18 +20,19 @@ import Settings from "./components/UserDashboard/Settings";
 import Entries from "./components/UserDashboard/Entries";
 import NewEntry from "./components/UserDashboard/NewEntry";
 import { useCookies } from "react-cookie";
+import CustomerLogin from "./components/Authentication/CustomerLogin";
 
 const App: React.FC = () => {
 
   const { allowedroutes, isSuper, role } = useSelector((state: any) => state.auth);
   const [userRole, setUserRole] = useState<string | null>(null)
   const [cookies] = useCookies();
- 
 
 
-  
 
-    
+
+
+
 
   useEffect(() => {
     setUserRole(role || cookies?.role);
@@ -43,11 +44,11 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Routes>
           {userRole === "user" || userRole === "Security Guard" ? <Route element={<MainContent />} >
-            <Route path="/userboard" element={<Overview />} />
-            <Route path="/purchase-history" element={<PurchaseHistory />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/entries" element={<Entries />} />
-            <Route path="/new-entry" element={<NewEntry />} />
+            {userRole === "user" ? <> <Route path="/userboard" element={<Overview />} />
+              <Route path="/purchase-history" element={<PurchaseHistory />} />
+              <Route path="/settings" element={<Settings />} /></> : <Route path="*" element={<Navigate to="/entries" replace />} />}
+            {userRole === "Security Guard" ? <><Route path="/entries" element={<Entries />} />
+              <Route path="/new-entry" element={<NewEntry />} /></> : <Route path="*" element={<Navigate to="/userboard" replace />} />}
           </Route> : <Route path="*" element={<Navigate to="/" replace />} />}
 
           <Route element={<Main />} >
@@ -55,7 +56,7 @@ const App: React.FC = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
           </Route>
-
+          <Route path="/customer-login" element={<CustomerLogin />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           {userRole !== "user" && userRole !== "Security Guard" ? <Route path="/" element={<Layout />}>

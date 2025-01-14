@@ -16,7 +16,6 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         userExists: (state, action)=>{
-            console.log(action.payload)
             state.id = action.payload._id;
             state.firstname = action.payload.first_name;
             state.lastname = action.payload.last_name;

@@ -13,6 +13,8 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import { useDispatch } from "react-redux";
+import { updateData } from "../../redux/reducers/commonSlice";
 
 const NewEntry: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -29,6 +31,7 @@ const NewEntry: React.FC = () => {
   });
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
+  const dispatch = useDispatch()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -46,9 +49,7 @@ const NewEntry: React.FC = () => {
         { headers: { Authorization: `Bearer ${cookies.access_token}` } }
       );
 
-      console.log(formData);
-      
-
+      dispatch(updateData(1))
       toast({
         title: res.data.message,
         description: "The new entry has been successfully added!",
