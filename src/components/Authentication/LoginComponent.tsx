@@ -146,6 +146,8 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
         >
           {isLoginLoading ? 'Logging in...' : 'Login'}
         </button>
+
+        <button onClick={()=>navigate("/customer-login")} className="py-3 font-medium text-blue-500" >Back to Customer Login</button>
       </form>
     </div>
   );

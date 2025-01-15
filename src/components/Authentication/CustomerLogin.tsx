@@ -1,15 +1,14 @@
 import { BiLockAlt, BiUser } from "react-icons/bi";
 import { FaStarOfLife } from "react-icons/fa";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-import { Link, useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../../redux/api/api";
+import {  useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import { userExists } from "../../redux/reducers/authSlice";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
 import Intro from "./Intro";
 import axios from "axios";
+import CoustomerForget from "./Coustomer.forget";
+import ResetCustomerPassword from "./ResetCustomerPassword";
 
 const CustomerLogin: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -17,6 +16,8 @@ const CustomerLogin: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
   const [cookies, setCookie, removeCookie] = useCookies();
+  const [step,setStep] = useState<number>(0)
+  const [forgetEmail,setForgetEmail] = useState<string>("")
   const navigate = useNavigate();
 
   const loginHandler = async (e: React.FormEvent) => {
@@ -35,7 +36,6 @@ const CustomerLogin: React.FC = () => {
       setCookie("name", data.user.full_name , { maxAge: 86400 });
       setCookie("email", data.user.email , { maxAge: 86400 });
       toast.success(data.message);
-      console.log(response);
       
      navigate("/userboard");
     } catch (error) {
@@ -49,7 +49,7 @@ const CustomerLogin: React.FC = () => {
   return (
     <div className="max-h-screen flex">
       <Intro />
-      <div className="w-[80%] md:w-[60%] flex items-center justify-center flex-col px-5">
+     {step === 0 ?  <div className="w-[80%] md:w-[60%] flex items-center justify-center flex-col px-5">
         <h1 className="text-4xl text-black font-bold border-b pb-5">
           Customer Login
         </h1>
@@ -113,6 +113,11 @@ const CustomerLogin: React.FC = () => {
               )}
             </div>
           </div>
+          <div className="py-2 flex justify-between items-center" >
+            <button onClick={()=>setStep(1)} className="text-blue-500 font-bold" >Forgot Password</button>
+            <button onClick={()=>navigate("/login")} className="text-blue-500 font-medium" >Company
+               Login</button>
+          </div>
 
           <button
             disabled={isLoginLoading}
@@ -122,7 +127,7 @@ const CustomerLogin: React.FC = () => {
             {isLoginLoading ? "Logging in..." : "Login"}
           </button>
         </form>
-      </div>
+      </div> : step === 1 ?  <CoustomerForget setStep={setStep} forgetEmail={forgetEmail} setForgetEmail={setForgetEmail} /> : <ResetCustomerPassword email={forgetEmail} setStep={setStep}/>}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { FaRegCheckCircle } from "react-icons/fa";
 import { IoDocumentTextOutline, IoStorefrontOutline } from "react-icons/io5";
 import { MdOutlineShoppingCart, MdOutlineSpeed, MdOutlineSell, MdOutlineAttachMoney, MdOutlinePayment, MdOutlineProductionQuantityLimits } from "react-icons/md";
-import { RiBillLine } from "react-icons/ri";
+import { RiBillLine, RiUserAddFill } from "react-icons/ri";
 import { TbLockAccess, TbUsersGroup } from "react-icons/tb";
 import { SlDirection } from "react-icons/sl";
 import { FaHandsHelping } from "react-icons/fa";
@@ -28,6 +28,7 @@ import Scrap from "../pages/Scrap";
 import WIPProducts from "../pages/WIPProducts";
 import InventoryApprovals from "../pages/InventoryApprovals";
 import Sales from "../pages/Sales";
+import Customer from "../pages/Customer";
 
 const routes = [
   {
@@ -49,6 +50,13 @@ const routes = [
     icon: <FaPeopleGroup />,
     path: "employee",
     element: <Employees />,
+    isSublink: false
+  },
+  {
+    name: "Customer",
+    icon: <RiUserAddFill />,
+    path: "customer",
+    element: <Customer />,
     isSublink: false
   },
   {

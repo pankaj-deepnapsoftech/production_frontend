@@ -6,6 +6,7 @@ import { Fragment, useState } from "react";
 
 const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
   const { allowedroutes, isSuper } = useSelector((state: any) => state.auth);
+  console.log(allowedroutes)
 
   const [openSubMenus, setOpenSubMenus] = useState<{ [key: string]: boolean }>(
     {}

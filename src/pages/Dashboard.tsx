@@ -183,7 +183,6 @@ const Dashboard: React.FC = () => {
         <div className="text-3xl font-bold text-[#22075e]">
           Hi {firstname || ""},
         </div>
-
         <div >
           <form
             onSubmit={applyFilterHandler}

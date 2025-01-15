@@ -68,7 +68,7 @@ const Overview = () => {
         }
   
         const response = await axios.get<{ data: Purchase[] }>(
-          `${process.env.REACT_APP_BACKEND_URL}purchase/getAll`,
+          `${process.env.REACT_APP_BACKEND_URL}purchase/customer-get`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

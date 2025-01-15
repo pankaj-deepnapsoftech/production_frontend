@@ -43,7 +43,7 @@ const Layout: React.FC = () => {
 
   useEffect(() => {
     if (!cookies?.access_token) {
-      navigate("/login");
+      navigate("/customer-login");
     } else {
       loginWithTokenHandler(cookies?.access_token);
     }
