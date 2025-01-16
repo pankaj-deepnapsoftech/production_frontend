@@ -108,7 +108,6 @@ const Task = () => {
     console.log(task);
     
     setSelectedTask(task);
-    console.log(selectedTask);
     setFile(null);
     onOpen();
   };
@@ -126,7 +125,6 @@ const Task = () => {
   };
 
   const handleFileUpload = async () => {
-    console.log(selectedTask?.sale_id)
   
     if (!file) {
       alert("Please select a file to upload.");
@@ -143,6 +141,7 @@ const Task = () => {
     // Form data for uploading
     const formData = new FormData();
     formData.append("image", file);
+    formData.append("assined_to", selectedTask.id);
   
     try {
       // Upload the image to the backend
@@ -218,6 +217,7 @@ const Task = () => {
 
       <VStack spacing={5}>
         {tasks.map((task) => (
+          
           <Box
             key={task._id}
             borderWidth="1px"
