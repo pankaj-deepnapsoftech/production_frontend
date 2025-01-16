@@ -24,13 +24,12 @@ interface GSTFields {
 const CreateSale: React.FC = () => {
   const [formData, setFormData] = useState({
     customer_id: "",
-    product_name: "",
+    product_id:"",
     product_type: "finished goods",
     price: "",
     product_qty: "",
     GST: { CGST: 0, SGST: 0, IGST: 0 },
-    Status: "Pending",
-    customer_approve: "Pending",
+    comment: ""
   });
 
   const [customers, setCustomers] = useState([]);
@@ -109,6 +108,7 @@ const CreateSale: React.FC = () => {
 
     try {
       
+      
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}purchase/create`,
         formData,
@@ -119,19 +119,19 @@ const CreateSale: React.FC = () => {
         }
       ); 
 
-      console.log(formData);
+      console.log("sales", response.data);
+      
       
       
       setFormData({
         customer_id: "",
-        product_name: "",
+        product_id: "",
         product_type: "finished goods",
         price: "",
         product_qty: "",
         GST: { CGST: 0, SGST: 0, IGST: 0 },
-        Status: "Pending",
-        assined_to: "",
         customer_approve: "Pending",
+        comment: ""
       })
 
       toast({
@@ -190,7 +190,7 @@ const CreateSale: React.FC = () => {
 
               setFormData((prevData) => ({
                 ...prevData,
-                product_name: selectedProductId,
+                product_id: selectedProductId,
                 price: selectedProduct ? selectedProduct.price : "",
               }));
             }}
@@ -230,6 +230,16 @@ const CreateSale: React.FC = () => {
               <Radio value="CGST_SGST">CGST (9%) & SGST (9%)</Radio>
             </Stack>
           </RadioGroup>
+        </FormControl>
+        <FormControl id="comment" >
+        <FormLabel>Additional Information</FormLabel>
+          <Input
+            type="text"
+            name="comment"
+            value={formData.comment}
+            onChange={handleInputChange}
+            placeholder="Further Details (if any)"
+          />
         </FormControl>
 
         <Button type="submit" colorScheme="teal" size="lg" width="full">

@@ -7,9 +7,6 @@ import {
 } from "@chakra-ui/react";
 
 const TrackProduction = ({ designProcess, productionProcess }: any) => {
-  console.log(designProcess);
-  console.log(productionProcess);
-  
   
   return (
     <Box p={4}>
@@ -18,11 +15,11 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
         <Text fontWeight="bold" fontSize="2xl" color="blue.600" mb={4}>
           Design Process
         </Text>
-        {designProcess.length === 0 ? (
+        {designProcess?.length === 0 ? (
           <Box>No design process data available.</Box>
         ) : (
           <VStack align="start" spacing={4}>
-            {designProcess.map((stage: any, index: number) => (
+            {designProcess?.map((stage: any, index: number) => (
               <Box
                 key={index}
                 p={4}
@@ -70,11 +67,11 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
         <Text fontWeight="bold" fontSize="2xl" color="blue.600" mb={4}>
           Production Process
         </Text>
-        {productionProcess.length === 0 ? (
+        {productionProcess?.length === 0 ? (
           <Box>No production process data available.</Box>
         ) : (
           <VStack align="start" spacing={4}>
-            {productionProcess.map((stage: any, index: number) => (
+            {productionProcess?.map((stage: any, index: number) => (
               <Box
                 key={index}
                 p={4}

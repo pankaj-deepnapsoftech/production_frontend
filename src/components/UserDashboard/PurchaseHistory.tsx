@@ -45,9 +45,10 @@ const PurchaseHistory = () => {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
-  const [selectedProcess, setSelectedProcess] = useState<any | null>(null);
-  const [designProcess, setDesignProcess] = useState<any | null>(null);
+  const [selectedProcess, setSelectedProcess] = useState<any>([]);
+  const [designProcess, setDesignProcess] = useState<any>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  
 
   const fetchPurchases = async () => {
     try {
@@ -55,7 +56,7 @@ const PurchaseHistory = () => {
       const token = cookies.access_token;
       if (!token) throw new Error("Authentication token not found");
 
-      const response = await axios.get<{ data: Purchase[] }>(
+      const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}purchase/customer-get`,
         {
           headers: {
@@ -64,8 +65,7 @@ const PurchaseHistory = () => {
         }
       );
       setPurchases(response.data.data);
-      console.log(response.data.data);
-      
+
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || error.message || "Failed to fetch purchase data"
@@ -104,9 +104,7 @@ const PurchaseHistory = () => {
     return price * product_qty * gstMultiplier;
   };
 
-  const handleTrackProduction = (designProcess: any, prodProcess: any) => {
-    setDesignProcess(designProcess);
-    setSelectedProcess(prodProcess);
+  const handleTrackProduction = () => {
     onOpen();
   };
 
@@ -114,7 +112,7 @@ const PurchaseHistory = () => {
     fetchPurchases();
   }, []);
 
-  console.log(purchases)
+
 
   return (
     <div className="md:ml-80 sm:ml-0 overflow-x-hidden">
@@ -139,9 +137,8 @@ const PurchaseHistory = () => {
               className="relative p-4 mt-3"
             >
               <Box
-                className={`absolute top-0 left-0 h-full w-2 ${
-                  purchase?.Status === "Pending" ? "bg-red-500" : "bg-green-500"
-                }`}
+                className={`absolute top-0 left-0 h-full w-2 ${purchase?.Status === "Pending" ? "bg-red-500" : "bg-green-500"
+                  }`}
               ></Box>
               <HStack justifyContent="space-between">
                 <VStack align="flex-start" spacing={1}>
@@ -179,7 +176,7 @@ const PurchaseHistory = () => {
                       {purchase?.product_id?.[0].name}
                     </span>
                   </Text>
-                  
+
                   <Text fontSize="sm" fontWeight="bold">
                     Quantity: <span className="font-normal">{purchase?.product_qty}</span>
                   </Text>
@@ -188,10 +185,12 @@ const PurchaseHistory = () => {
                   <Text fontSize="sm" fontWeight="bold">
                     Price: <span className="font-normal">{purchase?.price}</span>
                   </Text>
-                 
+
                 </VStack>
               </HStack>
               <Divider my={2} />
+              <div className="flex  gap-3 ">
+
               <HStack justifyContent="space-between">
                 {purchase.Status === "Approve" && (
                   <Button
@@ -199,12 +198,29 @@ const PurchaseHistory = () => {
                     bgColor="white"
                     _hover={{ bgColor: "green.500" }}
                     className="border border-green-500 hover:text-white"
-                    onClick={() => handleTrackProduction(purchase?.empprocess, purchase?.product_id[0]?.process[0]?.processes)}
+                    onClick={() => {
+                      handleTrackProduction();
+                      setDesignProcess(purchase?.empprocess);
+                      setSelectedProcess(purchase?.product_id[0]?.process[0]?.processes);
+                    }}
                   >
                     Track Production
                   </Button>
                 )}
               </HStack>
+              
+                
+                  <a target="_blank" href={purchase.designFile}
+                    size="sm"
+                    bgColor="white"
+                    className="border border-green-500 hover:bg-green-700 hover:text-white flex items-center justify-center px-3 rounded-lg"
+                    
+                  >
+                    View Design
+                  </a>
+              
+             </div>
+
             </Box>
           ))
         )}
@@ -217,7 +233,7 @@ const PurchaseHistory = () => {
           <ModalHeader>Track Production</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <TrackProduction design={designProcess} process = {selectedProcess} />
+            <TrackProduction designProcess={designProcess} productionProcess={selectedProcess} />
           </ModalBody>
         </ModalContent>
       </Modal>
