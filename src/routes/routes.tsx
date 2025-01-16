@@ -7,7 +7,7 @@ import { SlDirection } from "react-icons/sl";
 import { FaHandsHelping } from "react-icons/fa";
 import { SiScrapy } from "react-icons/si";
 import { FaPeopleGroup } from "react-icons/fa6";
-import { BiPurchaseTagAlt, BiSolidDiscount } from "react-icons/bi";
+import { BiPurchaseTagAlt, BiSolidDiscount, BiTask } from "react-icons/bi";
 import { VscServerProcess } from "react-icons/vsc";
 import { GiProgression } from "react-icons/gi";
 import Dashboard from "../pages/Dashboard";
@@ -29,6 +29,7 @@ import WIPProducts from "../pages/WIPProducts";
 import InventoryApprovals from "../pages/InventoryApprovals";
 import Sales from "../pages/Sales";
 import Customer from "../pages/Customer";
+import Task from "../pages/Task";
 
 const routes = [
   {
@@ -57,6 +58,20 @@ const routes = [
     icon: <RiUserAddFill />,
     path: "customer",
     element: <Customer />,
+    isSublink: false
+  },
+  {
+    name: "Sales",
+    icon: <BiSolidDiscount />,
+    path: "/sales",
+    element: <Sales />,
+    isSublink: false
+  },
+  {
+    name: "Task",
+    icon: <BiTask  />,
+    path: "/task",
+    element: <Task />,
     isSublink: false
   },
   {
@@ -178,13 +193,8 @@ const routes = [
     ],
     isSublink: true
   },
-  {
-    name: "Sales",
-    icon: <BiSolidDiscount />,
-    path: "/sales",
-    element: <Sales />,
-    isSublink: false
-  },
+ 
+
 ];
 
 export default routes;

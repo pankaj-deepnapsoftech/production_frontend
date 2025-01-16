@@ -37,7 +37,7 @@ const CustomerLogin: React.FC = () => {
       setCookie("email", data.user.email , { maxAge: 86400 });
       toast.success(data.message);
       
-     navigate("/userboard");
+    window.location.href = "/userboard";
     } catch (error) {
       console.error("Login failed:", error);
       alert("Login failed!");

@@ -121,7 +121,7 @@ const Sales = () => {
     "Product Quantity",
     "Product Price",
     "Assigned To",
-    "Status",
+    "Customer_Approval",
     "Actions",
   ];
 
