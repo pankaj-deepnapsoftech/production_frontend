@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-nocheck
 import { useEffect, useState } from "react";
 import {
   Table,
@@ -37,11 +37,11 @@ const Sales = () => {
   const isAllowed = isSuper || allowedroutes.includes("sale");
   const createDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
-  const assignDisclosure = useDisclosure(); // Add new disclosure for the Assign Employee Modal
+  const assignDisclosure = useDisclosure();
   const [purchases, setPurchases] = useState<[]>([]);
-  const [employees, setEmployees] = useState<any[]>([]); // State to hold the list of employees
-  const [selectedEmployee, setSelectedEmployee] = useState<any>(null); // State to hold selected employee
-  const [selectedSale, setSelectedSale] = useState<any>(null); // State to track selected sale for editing
+  const [employees, setEmployees] = useState<any[]>([]);
+  const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
+  const [selectedSale, setSelectedSale] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
 
@@ -63,7 +63,6 @@ const Sales = () => {
         }
       );
       console.log(response.data.data);
-
       setPurchases(response.data.data);
     } catch (error: any) {
       const errorMessage =
@@ -110,7 +109,7 @@ const Sales = () => {
 
   useEffect(() => {
     fetchPurchases();
-    fetchEmployees(); // Fetch the employee list when the component mounts
+    fetchEmployees();
   }, []);
 
   const headings = [
@@ -130,8 +129,8 @@ const Sales = () => {
     updateDisclosure.onOpen();
   };
 
-  const handleAssignClick = (sale: any) => {
-    setSelectedSale(sale);
+  const handleAssignClick = (purchase: any) => {
+    setSelectedSale(purchase);
     assignDisclosure.onOpen();
   };
 
@@ -160,8 +159,6 @@ const Sales = () => {
       toast.success("Employee assigned successfully!");
       assignDisclosure.onClose();
     } catch (error: any) {
-      console.log(error);
-
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
@@ -241,9 +238,9 @@ const Sales = () => {
                 {purchases?.map((purchase: any) => (
                   <Tr key={purchase._id}>
                     <Td>{new Date(purchase.createdAt).toLocaleDateString()}</Td>
-                    <Td>{purchase.customer_id.full_name}</Td>
-                    <Td>{purchase.product_name.name}</Td>
-                    <Td>{purchase.product_type}</Td>
+                    <Td>{purchase.customer_id[0]?.full_name || "N/A"}</Td>
+                    <Td>{purchase.product_id[0]?.name || "N/A"}</Td>
+                    <Td>{purchase.product_type || "N/A"}</Td>
                     <Td>{purchase.product_qty}</Td>
                     <Td>{purchase.price}</Td>
                     <Td>
@@ -254,7 +251,7 @@ const Sales = () => {
                           bgColor="white"
                           _hover={{ bgColor: "orange.500" }}
                           className="border border-orange-500 hover:text-white"
-                          onClick={() => handleAssignClick(purchase)} // Open the assign modal
+                          onClick={() => handleAssignClick(purchase)}
                         >
                           Assign
                         </Button>
@@ -275,6 +272,9 @@ const Sales = () => {
                         cursor="pointer"
                         onClick={() => handleEditClick(purchase)}
                       />
+                      {purchase.Status === "Approve" ? (
+                        <Text className="text-blue-500 underline">Track Process</Text>
+                      ) : null}
                     </Td>
                   </Tr>
                 ))}
@@ -285,10 +285,7 @@ const Sales = () => {
       </Box>
 
       {/* Create Sale Modal */}
-      <Modal
-        isOpen={createDisclosure.isOpen}
-        onClose={createDisclosure.onClose}
-      >
+      <Modal isOpen={createDisclosure.isOpen} onClose={createDisclosure.onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Add a new Sale</ModalHeader>
@@ -310,10 +307,7 @@ const Sales = () => {
       </Modal>
 
       {/* Update Sale Modal */}
-      <Modal
-        isOpen={updateDisclosure.isOpen}
-        onClose={updateDisclosure.onClose}
-      >
+      <Modal isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Edit Sale</ModalHeader>
@@ -335,10 +329,7 @@ const Sales = () => {
       </Modal>
 
       {/* Assign Employee Modal */}
-      <Modal
-        isOpen={assignDisclosure.isOpen}
-        onClose={assignDisclosure.onClose}
-      >
+      <Modal isOpen={assignDisclosure.isOpen} onClose={assignDisclosure.onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Assign Employee</ModalHeader>
@@ -351,17 +342,10 @@ const Sales = () => {
                   onClick={() => handleEmployeeSelect(employee)}
                   _active={{ bgColor: "blue.500" }}
                   width="100%"
-                  bg={
-                    selectedEmployee?._id === employee._id
-                      ? "blue.500"
-                      : "gray.100"
-                  } // Change button color if selected
+                  bg={selectedEmployee?._id === employee._id ? "blue.500" : "gray.100"}
                   _hover={{
-                    bg:
-                      selectedEmployee?._id === employee._id
-                        ? "blue.600"
-                        : "gray.200",
-                  }} // Change hover color for selected employee
+                    bg: selectedEmployee?._id === employee._id ? "blue.600" : "gray.200",
+                  }}
                   className="mb-2"
                 >
                   {employee.first_name} - {employee.role.role}
@@ -373,7 +357,7 @@ const Sales = () => {
             <Button
               colorScheme="blue"
               onClick={handleAssignEmployee}
-              isDisabled={!selectedEmployee} // Disable if no employee is selected
+              isDisabled={!selectedEmployee}
             >
               Assign
             </Button>

@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-nocheck
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -21,8 +21,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
 import { MdEdit } from "react-icons/md";
-import { ImBin } from "react-icons/im";
-import { Link } from "react-router-dom";
 import TrackProduction from "./TrackProduction";
 
 interface Purchase {
@@ -32,33 +30,30 @@ interface Purchase {
     IGST: number;
   };
   Status: string;
-  assined_to: string;
   createdAt: string;
   updatedAt: string;
   price: number;
-  product_name: { name: string }[];
+  product_name: { name: string; process?: any }[]; // Unified declaration
   product_qty: number;
   product_type: string;
+  designFile: string;
   _id: string;
 }
+
 
 const PurchaseHistory = () => {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
-  const [selectedProduct, setSelectedProduct] = useState<string | null>(null); 
-  const { isOpen, onOpen, onClose } = useDisclosure(); // Manage modal state
-  
+  const [selectedProcess, setSelectedProcess] = useState<any | null>(null);
+  const [designProcess, setDesignProcess] = useState<any | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const fetchPurchases = async () => {
     try {
       setIsLoading(true);
-
       const token = cookies.access_token;
-
-      if (!token) {
-        throw new Error("Authentication token not found");
-      }
+      if (!token) throw new Error("Authentication token not found");
 
       const response = await axios.get<{ data: Purchase[] }>(
         `${process.env.REACT_APP_BACKEND_URL}purchase/customer-get`,
@@ -68,13 +63,13 @@ const PurchaseHistory = () => {
           },
         }
       );
+      setPurchases(response.data.data);
       console.log(response.data.data);
       
-      setPurchases(response.data.data);
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || error.message || "Failed to fetch purchase data";
-      toast.error(errorMessage);
+      toast.error(
+        error.response?.data?.message || error.message || "Failed to fetch purchase data"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -83,10 +78,7 @@ const PurchaseHistory = () => {
   const handleApprove = async (purchaseId: string) => {
     try {
       const token = cookies.access_token;
-
-      if (!token) {
-        throw new Error("Authentication token not found");
-      }
+      if (!token) throw new Error("Authentication token not found");
 
       await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}purchase/approve-status/${purchaseId}`,
@@ -97,13 +89,12 @@ const PurchaseHistory = () => {
           },
         }
       );
-
-
       toast.success("Purchase approved successfully!");
+      fetchPurchases(); // Refresh data
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || error.message || "Failed to approve purchase";
-      toast.error(errorMessage);
+      toast.error(
+        error.response?.data?.message || error.message || "Failed to approve purchase"
+      );
     }
   };
 
@@ -113,16 +104,17 @@ const PurchaseHistory = () => {
     return price * product_qty * gstMultiplier;
   };
 
-  const handleTrackProduction = (process: []) => {
-    setSelectedProduct(process); 
-    onOpen(); 
-   // console.log("SelectedProduct: " + selectedProduct);
-    
+  const handleTrackProduction = (designProcess: any, prodProcess: any) => {
+    setDesignProcess(designProcess);
+    setSelectedProcess(prodProcess);
+    onOpen();
   };
 
   useEffect(() => {
     fetchPurchases();
   }, []);
+
+  console.log(purchases)
 
   return (
     <div className="md:ml-80 sm:ml-0 overflow-x-hidden">
@@ -138,7 +130,7 @@ const PurchaseHistory = () => {
         ) : (
           purchases.map((purchase) => (
             <Box
-              key={purchase._id}
+              key={purchase?._id}
               borderWidth="1px"
               borderRadius="lg"
               overflow="hidden"
@@ -148,20 +140,20 @@ const PurchaseHistory = () => {
             >
               <Box
                 className={`absolute top-0 left-0 h-full w-2 ${
-                  purchase.Status === "Pending" ? "bg-red-500" : "bg-green-500"
+                  purchase?.Status === "Pending" ? "bg-red-500" : "bg-green-500"
                 }`}
               ></Box>
               <HStack justifyContent="space-between">
                 <VStack align="flex-start" spacing={1}>
                   <Text fontSize="sm" fontWeight="bold">
-                    Date: {new Date(purchase.createdAt).toLocaleDateString()}
+                    Date: {new Date(purchase?.createdAt).toLocaleDateString()}
                   </Text>
                   <Text fontSize="sm" className="text-gray-500">
-                    Time: {new Date(purchase.createdAt).toLocaleTimeString()}
+                    Time: {new Date(purchase?.createdAt).toLocaleTimeString()}
                   </Text>
                 </VStack>
                 <VStack>
-                  {purchase.Status === "Pending" ? (
+                  {purchase?.Status === "Pending" ? (
                     <Button
                       size="sm"
                       bg="orange.400"
@@ -173,7 +165,7 @@ const PurchaseHistory = () => {
                     </Button>
                   ) : (
                     <Badge colorScheme="green" fontSize="sm">
-                      Status: {purchase.Status}
+                      Status: {purchase?.Status}
                     </Badge>
                   )}
                 </VStack>
@@ -184,45 +176,30 @@ const PurchaseHistory = () => {
                   <Text fontSize="sm" fontWeight="bold">
                     Product Name:{" "}
                     <span className="font-normal">
-                      {purchase.product_name.map((product) => product.name).join(", ")}
+                      {purchase?.product_id?.[0].name}
                     </span>
                   </Text>
+                  
                   <Text fontSize="sm" fontWeight="bold">
-                    Product Type: <span className="font-normal">{purchase.product_type}</span>
-                  </Text>
-                  <Text fontSize="sm" fontWeight="bold">
-                    Quantity: <span className="font-normal">{purchase.product_qty}</span>
+                    Quantity: <span className="font-normal">{purchase?.product_qty}</span>
                   </Text>
                 </VStack>
                 <VStack align="flex-end" spacing={2}>
                   <Text fontSize="sm" fontWeight="bold">
-                    Price: <span className="font-normal">{purchase.price}</span>
+                    Price: <span className="font-normal">{purchase?.price}</span>
                   </Text>
-                  <Text fontSize="sm" fontWeight="bold">
-                    Total Price:{" "}
-                    <span className="font-normal">{calculateTotalPrice(purchase).toFixed(2)}</span>
-                  </Text>
+                 
                 </VStack>
               </HStack>
               <Divider my={2} />
               <HStack justifyContent="space-between">
-                <Button
-                  size="sm"
-                  bgColor="white"
-                  _hover={{ bgColor: "blue.500" }}
-                  className="border border-blue-500 hover:text-white"
-                  onClick={() => handleEdit(purchase)}
-                >
-                  <MdEdit />
-                </Button>
-
-                {purchase.Status === "Approved" && (
+                {purchase.Status === "Approve" && (
                   <Button
                     size="sm"
                     bgColor="white"
                     _hover={{ bgColor: "green.500" }}
                     className="border border-green-500 hover:text-white"
-                    onClick={() => handleTrackProduction(purchase.product_name[0].process)}
+                    onClick={() => handleTrackProduction(purchase?.empprocess, purchase?.product_id[0]?.process[0]?.processes)}
                   >
                     Track Production
                   </Button>
@@ -240,7 +217,7 @@ const PurchaseHistory = () => {
           <ModalHeader>Track Production</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <TrackProduction process={selectedProduct} />
+            <TrackProduction design={designProcess} process = {selectedProcess} />
           </ModalBody>
         </ModalContent>
       </Modal>

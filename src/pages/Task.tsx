@@ -74,7 +74,7 @@ const Task = () => {
               design_status: task?.isCompleted ? "Completed" : "Pending",
               design_approval: sale?.customer_approve || "Not Approved",  
               sale_id: sale?._id,
-              designFile: sale?.designFile || "No file"
+              designFile: sale?.designFile
             };
           });
       
@@ -164,6 +164,10 @@ const Task = () => {
       onClose();
     }
   };
+
+  const handleRefresh = ()=>{
+    fetchTasks();
+  }
   
 
   return (
@@ -179,6 +183,7 @@ const Task = () => {
             leftIcon={<MdOutlineRefresh />}
             color="#1640d6"
             borderColor="#1640d6"
+            onClick={handleRefresh}
             variant="outline"
           >
             Refresh
@@ -313,7 +318,8 @@ const Task = () => {
                 </Button>
               ) : (
                 <Text fontSize="sm">
-                  <strong>Uploaded File:</strong> {task.designFile}
+                  <strong>Uploaded File: </strong> 
+                    <a href={task.designFile} className="text-blue-500 underline" target="_blank">preview</a>
                 </Text>
               )}
 
