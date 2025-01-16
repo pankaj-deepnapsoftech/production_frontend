@@ -206,7 +206,7 @@ const PurchaseHistory = () => {
                 )}
               </HStack>
             </Box>
-          ))
+          ))  
         )}
       </Box>
 

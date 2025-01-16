@@ -31,6 +31,7 @@ import { FaEdit } from "react-icons/fa";
 import CreateSale from "./CreateSale";
 import UpdateSale from "./UpdateSale";
 import { MdOutlineRefresh } from "react-icons/md";
+import Assign from "./Assign";
 
 const Sales = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
@@ -119,7 +120,6 @@ const Sales = () => {
     "Product Type",
     "Product Quantity",
     "Product Price",
-    "Assigned To",
     "Customer_Approval",
     "Actions",
   ];
@@ -132,39 +132,6 @@ const Sales = () => {
   const handleAssignClick = (purchase: any) => {
     setSelectedSale(purchase);
     assignDisclosure.onOpen();
-  };
-
-  const handleEmployeeSelect = (employee: any) => {
-    setSelectedEmployee(employee);
-  };
-
-  const handleAssignEmployee = async () => {
-    try {
-      const token = cookies.access_token;
-
-      if (!token) {
-        throw new Error("Authentication token not found");
-      }
-
-      const response = await axios.patch(
-        `${process.env.REACT_APP_BACKEND_URL}purchase/assined-to/${selectedSale._id}`,
-        { assined_to: selectedEmployee._id },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      toast.success("Employee assigned successfully!");
-      assignDisclosure.onClose();
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to assign employee";
-      toast.error(errorMessage);
-    }
   };
 
   return (
@@ -236,18 +203,31 @@ const Sales = () => {
               </Thead>
               <Tbody>
                 {purchases?.map((purchase: any) => (
-                  <Tr key={purchase._id}>
-                    <Td>{new Date(purchase.createdAt).toLocaleDateString()}</Td>
-                    <Td>{purchase.customer_id[0]?.full_name || "N/A"}</Td>
-                    <Td>{purchase.product_id[0]?.name || "N/A"}</Td>
-                    <Td>{purchase.product_type || "N/A"}</Td>
-                    <Td>{purchase.product_qty}</Td>
-                    <Td>{purchase.price}</Td>
-                    <Td>
-                      {purchase.assined_to ? (
-                        <Text>{purchase.assined_to.first_name}</Text>
-                      ) : (
-                        <Button
+                  <Tr key={purchase?._id}>
+                    <Td>{new Date(purchase?.createdAt).toLocaleDateString()}</Td>
+                    <Td>{purchase?.customer_id[0]?.full_name || "N/A"}</Td>
+                    <Td>{purchase?.product_id[0]?.name || "N/A"}</Td>
+                    <Td>{purchase?.product_type || "N/A"}</Td>
+                    <Td>{purchase?.product_qty}</Td>
+                    <Td>{purchase?.price}</Td>
+
+                    <Td
+                      style={{
+                        color: purchase?.Status === "Pending" ? "red" : "green",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {purchase?.Status}
+                    </Td>
+
+                    <Td className="flex gap-2 items-center justify-center">
+                      <Button
+                         bgColor="white"
+                         _hover={{ bgColor: "blue.500" }}
+                         className="border border-blue-500 hover:text-white"
+                        onClick={() => handleEditClick(purchase)}
+                      >Edit </Button>
+                      <Button
                           bgColor="white"
                           _hover={{ bgColor: "orange.500" }}
                           className="border border-orange-500 hover:text-white"
@@ -255,26 +235,6 @@ const Sales = () => {
                         >
                           Assign
                         </Button>
-                      )}
-                    </Td>
-
-                    <Td
-                      style={{
-                        color: purchase.Status === "Pending" ? "red" : "green",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {purchase.Status}
-                    </Td>
-
-                    <Td className="flex gap-2 items-center justify-center">
-                      <FaEdit
-                        cursor="pointer"
-                        onClick={() => handleEditClick(purchase)}
-                      />
-                      {purchase.Status === "Approve" ? (
-                        <Text className="text-blue-500 underline">Track Process</Text>
-                      ) : null}
                     </Td>
                   </Tr>
                 ))}
@@ -335,32 +295,9 @@ const Sales = () => {
           <ModalHeader>Assign Employee</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <VStack align="start" className="max-h-[30rem] overflow-y-scroll">
-              {employees.map((employee) => (
-                <Button
-                  key={employee._id}
-                  onClick={() => handleEmployeeSelect(employee)}
-                  _active={{ bgColor: "blue.500" }}
-                  width="100%"
-                  bg={selectedEmployee?._id === employee._id ? "blue.500" : "gray.100"}
-                  _hover={{
-                    bg: selectedEmployee?._id === employee._id ? "blue.600" : "gray.200",
-                  }}
-                  className="mb-2"
-                >
-                  {employee.first_name} - {employee.role.role}
-                </Button>
-              ))}
-            </VStack>
+            <Assign empData = {employees} saleData = {purchases}/>
           </ModalBody>
           <ModalFooter>
-            <Button
-              colorScheme="blue"
-              onClick={handleAssignEmployee}
-              isDisabled={!selectedEmployee}
-            >
-              Assign
-            </Button>
             <Button
               bgColor="white"
               _hover={{ bgColor: "red.500" }}
