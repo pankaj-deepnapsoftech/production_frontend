@@ -37,6 +37,8 @@ const Task = () => {
   const [file, setFile] = useState(null);
   const [comment,setComment] = useState(null);
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
+  const [page,setPage] = useState(1);
+
   const [filters, setFilters] = useState({
     status: "",
     date: "",
@@ -50,7 +52,7 @@ const Task = () => {
     const fetchTasks = async () => {
         try {
           const response = await axios.get(
-            `${process.env.REACT_APP_BACKEND_URL}assined/get-assined`,
+            `${process.env.REACT_APP_BACKEND_URL}assined/get-assined?page=${page}`,
             {
               headers: {
                 Authorization: `Bearer ${cookies?.access_token}`,
@@ -58,7 +60,6 @@ const Task = () => {
             }
           );
       
-          console.log(response.data.data);
       
           const tasks = response.data.data.map((task) => {
             // Ensure that sale_id, product_id, and user_id are valid and have values
@@ -89,7 +90,7 @@ const Task = () => {
       };
       
     fetchTasks(); 
-  }, [cookies?.access_token]);
+  }, [cookies?.access_token,page]);
 
   // Handle filter change
   const handleFilterChange = (field, value) => {
@@ -413,7 +414,7 @@ const Task = () => {
         </ModalContent>
       </Modal>
 
-      <Pagination />
+      <Pagination page={page} setPage={setPage} length={tasks.length} />
     </div>
   );
 };

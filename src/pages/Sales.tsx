@@ -46,6 +46,7 @@ const Sales = () => {
   const [selectedSale, setSelectedSale] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
+  const [pages,setPages] = useState(1)
  
 
   const fetchPurchases = async () => {
@@ -58,7 +59,7 @@ const Sales = () => {
       }
 
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}purchase/getAll`,
+        `${process.env.REACT_APP_BACKEND_URL}purchase/getAll?page=${pages}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -113,7 +114,7 @@ const Sales = () => {
   useEffect(() => {
     fetchPurchases();
     fetchEmployees();
-  }, []);
+  }, [pages]);
 
   const headings = [
     "Date",
@@ -313,7 +314,7 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
-      <Pagination />
+      <Pagination page={pages} setPage={setPages} length={purchases.length} />
     </div>
   );
 };
