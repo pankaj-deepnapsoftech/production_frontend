@@ -122,6 +122,7 @@ const Sales = () => {
     "Product Quantity",
     "Product Price",
     "Customer_Approval",
+    "Remarks",
     "Actions",
   ];
 
@@ -210,7 +211,7 @@ const Sales = () => {
                     <Td>{purchase?.product_type || "N/A"}</Td>
                     <Td>{purchase?.product_qty}</Td>
                     <Td>{purchase?.price}</Td>
-
+                  
                     <Td
                       style={{
                         color: purchase?.Status === "Pending" ? "red" : "green",
@@ -219,6 +220,7 @@ const Sales = () => {
                     >
                       {purchase?.Status}
                     </Td>
+                    <Td>{purchase?.comment}</Td>
 
                     <Td className="flex gap-2 items-center justify-center">
                       <Button
@@ -231,7 +233,7 @@ const Sales = () => {
                           bgColor="white"
                           _hover={{ bgColor: "orange.500" }}
                           className="border border-orange-500 hover:text-white"
-                          onClick={() => {handleAssignClick();setSelectedSale(purchase.assinedto)}}
+                          onClick={() => {handleAssignClick();setSelectedSale(purchase)}}
                         >
                           Assign
                         </Button>

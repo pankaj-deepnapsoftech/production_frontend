@@ -247,7 +247,7 @@ const UpdateSale: React.FC = ({ sale }) => {
           </Select>
         </FormControl>
         <FormControl id="comment">
-          <FormLabel>Product Quantity</FormLabel>
+          <FormLabel>Additional Details</FormLabel>
           <Textarea
             name="comment"
             value={formData.comment}
