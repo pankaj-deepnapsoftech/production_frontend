@@ -233,7 +233,7 @@ const CreateSale: React.FC = () => {
           </RadioGroup>
         </FormControl>
         <FormControl id="comment" >
-        <FormLabel>Additional Information</FormLabel>
+        <FormLabel>Remarks</FormLabel>
           <Input
             type="text"
             name="comment"
