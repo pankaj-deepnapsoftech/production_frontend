@@ -7,37 +7,66 @@ import {
   RadioGroup,
   Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
+import axios from "axios";
 import { useState } from "react";
+import { useCookies } from "react-cookie";
 import { BiHappyHeartEyes, BiSad } from "react-icons/bi";
 
 // Define prop type for the component
 interface ViewDesignProps {
-  designUrl: string; // Type designUrl properly
+  designUrl: string;
   purchaseData: any;
 }
 
 const ViewDesign: React.FC<ViewDesignProps> = ({ designUrl, purchaseData }) => {
   const [status, setStatus] = useState<string>("");
   const [comment, setComment] = useState<string>("");
-  const data = purchaseData;
-  console.log("data", data);
+  const [cookies] = useCookies(["access_token"]);
+  const toast = useToast();
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log("data", {
+    const formData = {
       customer_approve: status,
       customer_design_comment: comment,
-      assined_to: purchaseData?._id,
-    });
+      assined_to: purchaseData?.empprocess?.find((process: any) =>
+        process.assined_process.includes("design")
+      )?._id,
+    };
+    try {
+      const response = await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}purchase/image-status/${purchaseData?._id}`,
+        formData,
+        {
+          headers: { Authorization: `Bearer ${cookies.access_token}` },
+        }
+      );
+      console.log("design form",response);
+      toast({
+        title: response.data.message,
+        description: "Response added successfully :) ",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Failed",
+        description: "error adding your response, try again :( ",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
     <Box>
-      {/* Display Design Image */}
       <Image src={designUrl} alt="Design File" mb={4} />
 
-      {/* Radio Buttons for Approve/Reject */}
       <form onSubmit={handleSubmit}>
         <HStack align="center" justify="space-between" mb={4}>
           <RadioGroup onChange={setStatus} value={status}>
@@ -91,7 +120,6 @@ const ViewDesign: React.FC<ViewDesignProps> = ({ designUrl, purchaseData }) => {
           </RadioGroup>
         </HStack>
 
-        {/* Feedback Textarea for Rejection */}
         {status === "Reject" && (
           <Textarea
             placeholder="Please provide feedback..."

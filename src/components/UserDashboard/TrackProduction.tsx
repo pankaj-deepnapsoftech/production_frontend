@@ -7,6 +7,8 @@ import {
 } from "@chakra-ui/react";
 
 const TrackProduction = ({ designProcess, productionProcess }: any) => {
+  console.log("designprocess", designProcess);
+  
   
   return (
     <Box p={4}>

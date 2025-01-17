@@ -35,9 +35,9 @@ const Task = () => {
   const [tasks, setTasks] = useState([]);
   const [cookies] = useCookies();
   const [file, setFile] = useState(null);
-  const [comment,setComment] = useState(null);
+  const [comment, setComment] = useState(null);
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
-  const [page,setPage] = useState(1);
+  const [page, setPage] = useState(1);
 
   const [filters, setFilters] = useState({
     status: "",
@@ -50,47 +50,46 @@ const Task = () => {
   // Fetch tasks on mount
   useEffect(() => {
     const fetchTasks = async () => {
-        try {
-          const response = await axios.get(
-            `${process.env.REACT_APP_BACKEND_URL}assined/get-assined?page=${page}`,
-            {
-              headers: {
-                Authorization: `Bearer ${cookies?.access_token}`,
-              },
-            }
-          );
-      
-      
-          const tasks = response.data.data.map((task) => {
-            // Ensure that sale_id, product_id, and user_id are valid and have values
-            const sale = task?.sale_id?.[0];
-            const product = task?.sale_id?.[0].product_id?.[0];
-            const user = task?.sale_id?.[0].user_id?.[0];
-      
-            return {
-              id: task?._id,
-              date: new Date(task.createdAt).toLocaleDateString(),
-              productName: product?.name || "No product name", 
-              productQuantity: sale?.product_qty || 0,  
-              productPrice: `${sale?.price || 0} /-`,
-              assignedBy: `${user?.first_name || ""} ${user?.last_name || ""}`,  
-              design_status: task?.isCompleted ? "Completed" : "Pending",
-              design_approval: sale?.customer_approve || "Not Approved",  
-              sale_id: sale?._id,
-              designFile: sale?.designFile,
-              assinedby_comment: task?.assinedby_comment
-            };
-          });
-      
-          setTasks(tasks);
-          console.log(tasks);
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      
-    fetchTasks(); 
-  }, [cookies?.access_token,page]);
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}assined/get-assined?page=${page}`,
+          {
+            headers: {
+              Authorization: `Bearer ${cookies?.access_token}`,
+            },
+          }
+        );
+
+        const tasks = response.data.data.map((task) => {
+          // Ensure that sale_id, product_id, and user_id are valid and have values
+          const sale = task?.sale_id?.[0];
+          const product = task?.sale_id?.[0].product_id?.[0];
+          const user = task?.sale_id?.[0].user_id?.[0];
+
+          return {
+            id: task?._id,
+            date: new Date(task.createdAt).toLocaleDateString(),
+            productName: product?.name || "No product name",
+            productQuantity: sale?.product_qty || 0,
+            productPrice: `${sale?.price || 0} /-`,
+            assignedBy: `${user?.first_name || ""} ${user?.last_name || ""}`,
+            design_status: task?.isCompleted ? "Completed" : "Pending",
+            design_approval: sale?.customer_approve || "Not Approved",
+            sale_id: sale?._id,
+            designFile: sale?.designFile,
+            assinedby_comment: task?.assinedby_comment,
+          };
+        });
+
+        setTasks(tasks);
+        console.log(tasks);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchTasks();
+  }, [cookies?.access_token, page]);
 
   // Handle filter change
   const handleFilterChange = (field, value) => {
@@ -110,7 +109,7 @@ const Task = () => {
 
   const handleOpenModal = (task) => {
     console.log(task);
-    
+
     setSelectedTask(task);
     setFile(null);
     onOpen();
@@ -129,25 +128,24 @@ const Task = () => {
   };
 
   const handleFileUpload = async () => {
-  
     if (!file) {
       alert("Please select a file to upload.");
       return;
     }
-  
+
     // Validate that the file is an image
     const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
     if (!validImageTypes.includes(file.type)) {
       alert("Please upload a valid image file (JPG, PNG, GIF).");
       return;
     }
-  
+
     // Form data for uploading
     const formData = new FormData();
     formData.append("image", file);
     formData.append("assined_to", selectedTask.id);
     formData.append("assinedto_comment", comment);
-  
+
     try {
       // Upload the image to the backend
       const response = await axios.patch(
@@ -160,39 +158,23 @@ const Task = () => {
           },
         }
       );
-      
+
       toast.success("File uploaded successfully.");
       onClose();
     } catch (error) {
       console.error("Error uploading file:", error);
-     
+
       onClose();
     }
   };
 
-  
   console.log(tasks);
-  
 
   return (
     <div className="overflow-x-hidden">
       <HStack className="flex justify-between items-center mb-5 mt-5">
         <Text className="text-lg font-bold">Tasks</Text>
-        <HStack className="space-x-2">
-          <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 100 }}
-            leftIcon={<MdOutlineRefresh />}
-            color="#1640d6"
-            borderColor="#1640d6"
-            onClick={fetchTasks}
-            variant="outline"
-          >
-            Refresh
-          </Button>
-        </HStack>
+        <HStack className="space-x-2"></HStack>
       </HStack>
 
       <HStack spacing={4} mb={5} mt={5}>
@@ -226,7 +208,6 @@ const Task = () => {
 
       <VStack spacing={5}>
         {tasks.map((task) => (
-          
           <Box
             key={task._id}
             borderWidth="1px"
@@ -269,14 +250,14 @@ const Task = () => {
             {/* Task Details */}
             <HStack justify="space-between" spacing={3} mt={3}>
               <VStack align="start">
-              <Text fontSize="sm">
+                <Text fontSize="sm">
                   <strong>Product Price:</strong> {task.productPrice}
                 </Text>
                 <Text fontSize="sm">
                   <strong>Quantity:</strong> {task.productQuantity}
                 </Text>
               </VStack>
-              <VStack align="start">               
+              <VStack align="start">
                 <Text fontSize="sm">
                   <strong>Assigned By:</strong> {task.assignedBy}
                 </Text>
@@ -289,7 +270,7 @@ const Task = () => {
             {/* Footer */}
             <Divider my={3} />
             <HStack justify="space-between" mt={3}>
-              {task.design_approval === "rejected" ? (
+              {task.design_approval === "Reject" ? (
                 <>
                   <VStack align="start">
                     <Badge
@@ -304,6 +285,13 @@ const Task = () => {
                       <strong>Feedback:</strong> {task.rejection_comment}
                     </Text>
                   </VStack>
+                  <Badge colorScheme="green" fontSize="sm">
+                    Customer Approval : {task.design_approval}
+                  </Badge>
+                  <Text fontSize="sm">
+                  <strong>Feedback: </strong>
+                  {task?.customer_design_comment}
+                  </Text>
                   <Button
                     leftIcon={<FaUpload />}
                     colorScheme="teal"
@@ -313,7 +301,7 @@ const Task = () => {
                     Re-upload Design
                   </Button>
                 </>
-              ) : task.design_status === "Pending" ? (
+              ) : task?.design_status === "Pending" ? (
                 <Button
                   leftIcon={<FaUpload />}
                   colorScheme="teal"
@@ -322,10 +310,20 @@ const Task = () => {
                 >
                   Upload File
                 </Button>
+              ) : task?.design_approval === "Approve" ? (
+                <Badge colorScheme="green" fontSize="sm">
+                  Customer Approval : {task.design_approval}
+                </Badge>
               ) : (
                 <Text fontSize="sm">
-                  <strong>Uploaded File: </strong> 
-                    <a href={task.designFile} className="text-blue-500 underline" target="_blank">preview</a>
+                  <strong>Uploaded File: </strong>
+                  <a
+                    href={task.designFile}
+                    className="text-blue-500 underline"
+                    target="_blank"
+                  >
+                    preview
+                  </a>
                 </Text>
               )}
 
@@ -388,12 +386,12 @@ const Task = () => {
               </FormControl>
               <FormControl>
                 <FormLabel>Remarks:</FormLabel>
-                <Input 
-                type="text"
-                id="assinedto_comment"
-                placeholder="Add Details (if any)"
-                value={comment}
-                onChange={(e)=> setComment(e.target.value)}
+                <Input
+                  type="text"
+                  id="assinedto_comment"
+                  placeholder="Add Details (if any)"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
                 />
               </FormControl>
             </VStack>
