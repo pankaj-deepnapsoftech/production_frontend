@@ -35,6 +35,7 @@ const Task = () => {
   const [tasks, setTasks] = useState([]);
   const [cookies] = useCookies();
   const [file, setFile] = useState(null);
+  const [comment,setComment] = useState(null);
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
   const [filters, setFilters] = useState({
     status: "",
@@ -69,8 +70,8 @@ const Task = () => {
               id: task?._id,
               date: new Date(task.createdAt).toLocaleDateString(),
               productName: product?.name || "No product name", 
-              productQuantity: sale?.product_qty || 0,  // Fallback value for product quantity
-              productPrice: `${sale?.price || 0} /-`,  // Fallback value for price
+              productQuantity: sale?.product_qty || 0,  
+              productPrice: `${sale?.price || 0} /-`,
               assignedBy: `${user?.first_name || ""} ${user?.last_name || ""}`,  
               design_status: task?.isCompleted ? "Completed" : "Pending",
               design_approval: sale?.customer_approve || "Not Approved",  
@@ -144,6 +145,7 @@ const Task = () => {
     const formData = new FormData();
     formData.append("image", file);
     formData.append("assined_to", selectedTask.id);
+    formData.append("assinedto_comment", comment);
   
     try {
       // Upload the image to the backend
@@ -167,9 +169,6 @@ const Task = () => {
     }
   };
 
-  const handleRefresh = ()=>{
-    fetchTasks();
-  }
   
   console.log(tasks);
   
@@ -187,7 +186,7 @@ const Task = () => {
             leftIcon={<MdOutlineRefresh />}
             color="#1640d6"
             borderColor="#1640d6"
-            onClick={handleRefresh}
+            onClick={fetchTasks}
             variant="outline"
           >
             Refresh
@@ -384,6 +383,16 @@ const Task = () => {
                   onChange={(event) =>
                     setFile(event.target.files ? event.target.files[0] : null)
                   }
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Remarks:</FormLabel>
+                <Input 
+                type="text"
+                id="assinedto_comment"
+                placeholder="Add Details (if any)"
+                value={comment}
+                onChange={(e)=> setComment(e.target.value)}
                 />
               </FormControl>
             </VStack>

@@ -18,7 +18,7 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
         {designProcess?.length === 0 ? (
           <Box>No design process data available.</Box>
         ) : (
-          <VStack align="start" spacing={4}>
+          <VStack align="start" spacing={4} className="max-h-[20rem] overflow-y-scroll">
             {designProcess?.map((stage: any, index: number) => (
               <Box
                 key={index}
@@ -27,8 +27,8 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
                 borderWidth="1px"
                 borderRadius="lg"
                 shadow="md"
-                bg={stage?.isCompleted? "green.50" : "red.50"}
-                borderColor={stage?.isCompleted? "green.300" : "red.300"}
+                bg={stage?.isCompleted? "green.50" : "orange.50"}
+                borderColor={stage?.isCompleted? "green.300" : "orange.300"}
               >
                 <Text
                   fontWeight="bold"
@@ -70,7 +70,7 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
         {productionProcess?.length === 0 ? (
           <Box>No production process data available.</Box>
         ) : (
-          <VStack align="start" spacing={4}>
+          <VStack align="start" spacing={4} className="max-h-[20rem] overflow-y-scroll">
             {productionProcess?.map((stage: any, index: number) => (
               <Box
                 key={index}
