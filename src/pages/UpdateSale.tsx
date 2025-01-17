@@ -11,6 +11,7 @@ import {
   Radio,
   Stack,
   useToast,
+  Textarea,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
@@ -21,18 +22,17 @@ interface GSTFields {
   IGST?: number;
 }
 
-const UpdateSale: React.FC = ({sale}) => {
-  
+const UpdateSale: React.FC = ({ sale }) => {
+ // console.log(sale);
+
   const [formData, setFormData] = useState({
-    customer_id: sale?.customer_id?._id || "",
-    product_name: sale?.product_name?._id || "",
+    customer_id: sale?.customer_id[0]?._id || "",
+    product_id: sale?.product_id[0]?._id || "",
     product_type: sale?.product_type || "finished goods",
     price: sale?.price || "",
     product_qty: sale?.product_qty || "",
     GST: sale?.GST || { CGST: 0, SGST: 0, IGST: 0 },
-    Status: sale?.Status || "Pending",
-    assined_to: sale?.assined_to?._id || "",
-    customer_approve: sale?.customer_approve || "Pending",
+    comment: sale?.comment || "",
   });
 
   const [customers, setCustomers] = useState([]);
@@ -106,6 +106,8 @@ const UpdateSale: React.FC = ({sale}) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    //console.log("formdata:", formData);
+
     try {
       
       const response = await axios.put(
@@ -118,8 +120,7 @@ const UpdateSale: React.FC = ({sale}) => {
         }
       );
       
-     
-      
+
       setFormData({
         customer_id: "",
         product_name: "",
@@ -127,10 +128,8 @@ const UpdateSale: React.FC = ({sale}) => {
         price: "",
         product_qty: "",
         GST: { CGST: 0, SGST: 0, IGST: 0 },
-        Status: "Pending",
-        assined_to: "",
-        customer_approve: "Pending",
-      })
+        comment: "",
+      });
 
       toast({
         title: "Purchase Created",
@@ -206,7 +205,7 @@ const UpdateSale: React.FC = ({sale}) => {
 
         <FormControl id="price" isRequired>
           <FormLabel>Price</FormLabel>
-          <Input type="number" name="price" value={formData.price} isReadOnly />
+          <Input type="number" name="price" value={formData.price} />
         </FormControl>
 
         <FormControl id="product_qty" isRequired>
@@ -246,6 +245,15 @@ const UpdateSale: React.FC = ({sale}) => {
               </option>
             ))}
           </Select>
+        </FormControl>
+        <FormControl id="comment">
+          <FormLabel>Product Quantity</FormLabel>
+          <Textarea
+            name="comment"
+            value={formData.comment}
+            onChange={handleInputChange}
+            placeholder="Any other details..."
+          />
         </FormControl>
 
         <Button type="submit" colorScheme="teal" size="lg" width="full">
