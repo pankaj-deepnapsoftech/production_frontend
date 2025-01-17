@@ -31,6 +31,7 @@ const CreateSale: React.FC = () => {
     GST: { CGST: 0, SGST: 0, IGST: 0 },
     comment: ""
   });
+  console.log(formData)
 
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);

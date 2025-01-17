@@ -16,12 +16,8 @@ import {
 import { useState } from "react";
 
 const Assign = ({ empData, saleData }) => {
-  console.log("saleData:", saleData);
+  const tasks = saleData;
 
-  const tasks = saleData[0]?.assinedto;
-  console.log("taskst", tasks);
-
-  // State for reassignment form
   const [selectedTaskId, setSelectedTaskId] = useState("");
   const [newAssignee, setNewAssignee] = useState("");
   const toast = useToast();

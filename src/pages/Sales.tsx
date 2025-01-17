@@ -42,9 +42,10 @@ const Sales = () => {
   const [purchases, setPurchases] = useState<[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
-  const [selectedSale, setSelectedSale] = useState<any>(null);
+  const [selectedSale, setSelectedSale] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
+ 
 
   const fetchPurchases = async () => {
     try {
@@ -130,7 +131,6 @@ const Sales = () => {
   };
 
   const handleAssignClick = (purchase: any) => {
-    setSelectedSale(purchase);
     assignDisclosure.onOpen();
   };
 
@@ -231,7 +231,7 @@ const Sales = () => {
                           bgColor="white"
                           _hover={{ bgColor: "orange.500" }}
                           className="border border-orange-500 hover:text-white"
-                          onClick={() => handleAssignClick(purchase)}
+                          onClick={() => {handleAssignClick();setSelectedSale(purchase.assinedto)}}
                         >
                           Assign
                         </Button>
@@ -295,7 +295,7 @@ const Sales = () => {
           <ModalHeader>Assign Employee</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Assign empData = {employees} saleData = {purchases}/>
+            <Assign empData = {employees} saleData = {selectedSale} />
           </ModalBody>
           <ModalFooter>
             <Button
