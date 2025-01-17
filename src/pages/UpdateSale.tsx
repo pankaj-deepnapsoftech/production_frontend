@@ -23,7 +23,7 @@ interface GSTFields {
 }
 
 const UpdateSale: React.FC = ({ sale }) => {
- // console.log(sale);
+
 
   const [formData, setFormData] = useState({
     customer_id: sale?.customer_id[0]?._id || "",
