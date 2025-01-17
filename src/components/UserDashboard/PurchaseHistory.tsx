@@ -222,7 +222,7 @@ const PurchaseHistory = () => {
              </div>
 
             </Box>
-          ))
+          ))  
         )}
       </Box>
 
