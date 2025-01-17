@@ -27,6 +27,7 @@ import CreateCustomer from "./CreateCustomer";
 import { useCookies } from "react-cookie";
 import { FaEdit } from "react-icons/fa";
 import { MdOutlineRefresh } from "react-icons/md";
+import Pagination from "./Pagination";
 
 const headings = [
   "Full Name",
@@ -172,6 +173,8 @@ const Customer: React.FC = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <Pagination />
     </Box>
   );
 };

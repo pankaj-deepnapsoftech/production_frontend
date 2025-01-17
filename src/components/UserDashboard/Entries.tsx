@@ -29,6 +29,7 @@ import { MdEdit } from "react-icons/md";
 import { ImBin } from "react-icons/im";
 import { useDispatch, useSelector } from "react-redux";
 import { updateData } from "../../redux/reducers/commonSlice";
+import Pagination from "../../pages/Pagination";
 
 interface Entry {
   _id: string;
@@ -472,6 +473,8 @@ const Entries: React.FC = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      <Pagination />
     </ChakraProvider>
   );
 };

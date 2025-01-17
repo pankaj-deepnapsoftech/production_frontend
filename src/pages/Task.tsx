@@ -27,6 +27,7 @@ import { MdOutlineRefresh } from "react-icons/md";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
+import Pagination from "./Pagination";
 
 const Task = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -69,12 +70,13 @@ const Task = () => {
               date: new Date(task.createdAt).toLocaleDateString(),
               productName: product?.name || "No product name", 
               productQuantity: sale?.product_qty || 0,  // Fallback value for product quantity
-              productPrice: `$${sale?.price || 0}`,  // Fallback value for price
-              assignedBy: `${user?.first_name || ""} ${user?.last_name || ""}`,  // Fallback empty string if no user
+              productPrice: `${sale?.price || 0} /-`,  // Fallback value for price
+              assignedBy: `${user?.first_name || ""} ${user?.last_name || ""}`,  
               design_status: task?.isCompleted ? "Completed" : "Pending",
               design_approval: sale?.customer_approve || "Not Approved",  
               sale_id: sale?._id,
-              designFile: sale?.designFile
+              designFile: sale?.designFile,
+              assinedby_comment: task?.assinedby_comment
             };
           });
       
@@ -168,6 +170,8 @@ const Task = () => {
   const handleRefresh = ()=>{
     fetchTasks();
   }
+  
+  console.log(tasks);
   
 
   return (
@@ -272,10 +276,12 @@ const Task = () => {
                   <strong>Quantity:</strong> {task.productQuantity}
                 </Text>
               </VStack>
-              <VStack align="start">
-               
+              <VStack align="start">               
                 <Text fontSize="sm">
                   <strong>Assigned By:</strong> {task.assignedBy}
+                </Text>
+                <Text fontSize="sm">
+                  <strong>Remarks:</strong> {task?.assinedby_comment}
                 </Text>
               </VStack>
             </HStack>
@@ -397,6 +403,8 @@ const Task = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <Pagination />
     </div>
   );
 };

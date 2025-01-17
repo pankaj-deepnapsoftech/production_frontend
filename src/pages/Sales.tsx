@@ -32,6 +32,7 @@ import CreateSale from "./CreateSale";
 import UpdateSale from "./UpdateSale";
 import { MdOutlineRefresh } from "react-icons/md";
 import Assign from "./Assign";
+import Pagination from "./Pagination";
 
 const Sales = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
@@ -311,6 +312,8 @@ const Sales = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <Pagination />
     </div>
   );
 };

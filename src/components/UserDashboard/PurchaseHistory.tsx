@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
 import { MdEdit } from "react-icons/md";
 import TrackProduction from "./TrackProduction";
+import Pagination from "../../pages/Pagination";
 
 interface Purchase {
   GST: {
@@ -237,6 +238,9 @@ const PurchaseHistory = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+
+      <Pagination />
     </div>
   );
 };

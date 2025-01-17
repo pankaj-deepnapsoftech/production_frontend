@@ -36,7 +36,12 @@ interface Purchase {
 
 interface GraphData {
   labels: string[];
-  datasets: { label: string; data: number[]; borderColor: string; tension: number }[];
+  datasets: {
+    label: string;
+    data: number[];
+    borderColor: string;
+    tension: number;
+  }[];
 }
 
 const Overview = () => {
@@ -66,7 +71,7 @@ const Overview = () => {
         if (!token) {
           throw new Error("Authentication token not found");
         }
-  
+
         const response = await axios.get<{ data: Purchase[] }>(
           `${process.env.REACT_APP_BACKEND_URL}purchase/customer-get`,
           {
@@ -75,7 +80,7 @@ const Overview = () => {
             },
           }
         );
-  
+
         const fetchedPurchases = response.data.data;
         setPurchases(fetchedPurchases);
 
@@ -89,8 +94,18 @@ const Overview = () => {
 
         setGraphData({
           labels: [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
           ],
           datasets: [
             {
@@ -118,6 +133,7 @@ const Overview = () => {
     status: "In Progress",
     progress: 75,
   };
+  
 
   return (
     <div className="md:ml-80 sm:ml-0 overflow-x-hidden mt-10 lg:mt-0">
@@ -127,73 +143,35 @@ const Overview = () => {
 
       <div className="mb-8 w-full max-w-4xl sm:max-w-full mx-auto">
         <div className="h-full">
-          <Line data={graphData} options={{
-            responsive: true,
-            plugins: {
-              legend: { position: "top" },
-              title: { display: true, text: "Purchases Over the Year" },
-            },
-          }} />
+          <Line
+            data={graphData}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: { position: "top" },
+                title: { display: true, text: "Purchases Over the Year" },
+              },
+            }}
+          />
         </div>
       </div>
       <hr className="bg-gray-800 border" />
 
-      <Grid
-        templateColumns={{ base: "1fr", md: "1fr 1fr" }}
-        gap={3}
-        className="p-4 mt-5"
-      >
-        {/* Production Status Card */}
-        <Box
-          bg="blue.400"
-          p={6}
-          color="white"
-          borderRadius="lg"
-          className="flex items-center justify-center flex-col"
-          boxShadow="md"
-          width="80%"
-          height="100%"
-          textAlign="center"
-        >
-          <TbProgressCheck className="text-9xl text-gray-200" />
-          <Text fontSize="xl" mb={4} mt={4}>
-            Production Status: <span className="font-semibold">{productionStatus.status}</span>
-          </Text>
-        </Box>
+      {/* Purchases Card */}
+      <Box
+  bg="green.200"
+  p={4}
+  color="black"
+  borderRadius="md"
+  boxShadow="sm"
+  width="100%" // Full width
+  textAlign="center"
+>
+  <Text fontSize="lg" fontWeight="bold" alignContent="center" display="flex" justifyContent="center" gap={2}>
+    No. of Purchases: <Text className="text-red-900">{totalPurchases}</Text>
+  </Text>
+</Box>
 
-        {/* Purchases Card */}
-        <Box
-          bg="green.400"
-          p={6}
-          color="white"
-          borderRadius="lg"
-          boxShadow="md"
-          width="80%"
-          height="100%"
-          textAlign="center"
-        >
-          <Box
-            borderColor="gray-200"
-            className="border-8 shadow-md"
-            color="white"
-            borderRadius="100%"
-            width="8em"
-            height="8em"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            mx="auto"
-            mb={4}
-          >
-            <Text fontSize="3xl" fontWeight="bold">
-              {totalPurchases}
-            </Text>
-          </Box>
-          <Text fontSize="2xl" fontWeight="bold" mb={2}>
-            Purchases
-          </Text>
-        </Box>
-      </Grid>
     </div>
   );
 };
