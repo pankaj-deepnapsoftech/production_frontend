@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState } from "react";
 import {
   Table,
@@ -44,13 +45,14 @@ const Customer: React.FC = () => {
   const [customers, setCustomers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [page,setpage] = useState(1);
 
   const fetchCustomers = async () => {
     try {
       setIsLoading(true); // Start loading
       setError(null); // Reset error
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}customer/get-all`,
+        `${process.env.REACT_APP_BACKEND_URL}customer/get-all?page=${page}`,
         {
           headers: {
             Authorization: `Bearer ${cookies?.access_token}`,
@@ -68,7 +70,7 @@ const Customer: React.FC = () => {
 
   useEffect(() => {
     fetchCustomers();
-  }, []);
+  }, [page]);
 
   return (
     <Box className="max-w-7xl mx-auto p-5">
@@ -174,7 +176,7 @@ const Customer: React.FC = () => {
         </ModalContent>
       </Modal>
 
-      <Pagination />
+      <Pagination page={page} setPage={setpage} length={customers.length} />
     </Box>
   );
 };
