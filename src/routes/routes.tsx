@@ -6,7 +6,7 @@ import { TbLockAccess, TbUsersGroup } from "react-icons/tb";
 import { SlDirection } from "react-icons/sl";
 import { FaHandsHelping } from "react-icons/fa";
 import { SiScrapy } from "react-icons/si";
-import { FaPeopleGroup } from "react-icons/fa6";
+import { FaListCheck, FaPeopleGroup } from "react-icons/fa6";
 import { BiPurchaseTagAlt, BiSolidDiscount, BiTask } from "react-icons/bi";
 import { VscServerProcess } from "react-icons/vsc";
 import { GiProgression } from "react-icons/gi";
@@ -30,6 +30,7 @@ import InventoryApprovals from "../pages/InventoryApprovals";
 import Sales from "../pages/Sales";
 import Customer from "../pages/Customer";
 import Task from "../pages/Task";
+import Production from "../pages/Productions";
 
 const routes = [
   {
@@ -179,6 +180,12 @@ const routes = [
     icon: <MdOutlineProductionQuantityLimits />,
     sublink: [
       {
+        name: "Track Production",
+        icon: <FaListCheck  />,
+        path: "production-track",
+        element: <Production />,
+      },
+      {
         name: "BOM",
         icon: <RiBillLine />,
         path: "bom",
@@ -190,6 +197,7 @@ const routes = [
         path: "production-process",
         element: <Process />,
       },
+     
     ],
     isSublink: true
   },

@@ -19,7 +19,7 @@ import { useCookies } from "react-cookie";
 
 const Assign = ({ empData, saleData }) => {
   const tasks = saleData?.assinedto;
-  console.log("sales", saleData);
+  console.log("tasks", saleData);
 
   const [formData, setFormData] = useState({
     sale_id: saleData?._id,
@@ -42,7 +42,6 @@ const Assign = ({ empData, saleData }) => {
     try {
       const token = cookies?.access_token;
       //console.log("token", token);
-      
 
       if (!token) {
         throw new Error("Authentication token not found");
@@ -57,7 +56,7 @@ const Assign = ({ empData, saleData }) => {
           },
         }
       );
-     // console.log(response);
+      // console.log(response);
       toast({
         title: "Task Reassigned",
         description: "The task has been successfully reassigned.",
@@ -70,12 +69,11 @@ const Assign = ({ empData, saleData }) => {
         processName: "",
         additionalInfo: "",
       });
-      
 
       console.log(formData);
     } catch (error) {
       console.log(error);
-      
+
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
@@ -103,8 +101,13 @@ const Assign = ({ empData, saleData }) => {
               borderWidth="1px"
               borderRadius="lg"
               shadow="md"
+              className="bg-orange-50 border border-orange-500"
             >
               <VStack align="start" spacing={2}>
+                <Text>
+                  <strong>Date:</strong>{" "}
+                  {new Date(task?.createdAt).toLocaleDateString()}
+                </Text>
                 <Text>
                   <strong>Task:</strong> {task?.assined_process}
                 </Text>
@@ -124,7 +127,13 @@ const Assign = ({ empData, saleData }) => {
       )}
 
       {/* Reassignment Form */}
-      <Box p={4} borderWidth="1px" borderRadius="lg" shadow="md">
+      <Box
+        p={4}
+        borderWidth="1px"
+        borderRadius="lg"
+        shadow="md"
+        className="bg-blue-50 border border-blue-500"
+      >
         <Text fontWeight="bold" fontSize="lg" color="teal.500" mb={4}>
           Assign Task
         </Text>
@@ -135,6 +144,7 @@ const Assign = ({ empData, saleData }) => {
             placeholder="Select an employee"
             value={formData.assined_to}
             onChange={handleChange}
+            bgColor="white"
           >
             {empData?.map((emp) => (
               <option key={emp?._id} value={emp?._id}>
@@ -150,6 +160,7 @@ const Assign = ({ empData, saleData }) => {
             placeholder="Enter new process name"
             value={formData.assined_process}
             onChange={handleChange}
+            bgColor="white"
           />
         </FormControl>
         <FormControl mb={4}>
@@ -159,9 +170,10 @@ const Assign = ({ empData, saleData }) => {
             placeholder="Enter further details (if any)"
             value={formData.assinedby_comment}
             onChange={handleChange}
+            bgColor="white"
           />
         </FormControl>
-        <Button colorScheme="blue" onClick={handleReassign}>
+        <Button colorScheme="blue" onClick={handleReassign} className="w-full">
           Assign
         </Button>
       </Box>

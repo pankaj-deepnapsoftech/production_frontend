@@ -40,13 +40,15 @@ const Sales = () => {
   const createDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
   const assignDisclosure = useDisclosure();
+  const remarksDisclosure = useDisclosure();
   const [purchases, setPurchases] = useState<[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
   const [selectedSale, setSelectedSale] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
-  const [pages,setPages] = useState(1)
+  const [pages,setPages] = useState(1);
+  const [comment, setComment] = useState("");
  
 
   const fetchPurchases = async () => {
@@ -66,7 +68,7 @@ const Sales = () => {
           },
         }
       );
-      console.log(response.data.data);
+      //console.log("sales",response.data.data);
       setPurchases(response.data.data);
     } catch (error: any) {
       const errorMessage =
@@ -107,7 +109,7 @@ const Sales = () => {
         error.message ||
         "Failed to fetch employees";
       toast.error(errorMessage);
-      console.log(error);
+      //console.log(error);
     }
   };
 
@@ -118,6 +120,7 @@ const Sales = () => {
 
   const headings = [
     "Date",
+    "Created By",
     "Customer",
     "Product Name",
     "Product Type",
@@ -137,6 +140,10 @@ const Sales = () => {
     assignDisclosure.onOpen();
   };
 
+  const handleRemarksClick = (comment: string) =>{
+    setComment(comment);
+    remarksDisclosure.onOpen();
+  }
   return (
     <div className="overflow-x-hidden">
       <Box p={5}>
@@ -208,6 +215,7 @@ const Sales = () => {
                 {purchases?.map((purchase: any) => (
                   <Tr key={purchase?._id}>
                     <Td>{new Date(purchase?.createdAt).toLocaleDateString()}</Td>
+                    <Td>{purchase?.user_id[0]?.first_name || "N/A"}</Td>
                     <Td>{purchase?.customer_id[0]?.full_name || "N/A"}</Td>
                     <Td>{purchase?.product_id[0]?.name || "N/A"}</Td>
                     <Td>{purchase?.product_type || "N/A"}</Td>
@@ -222,7 +230,12 @@ const Sales = () => {
                     >
                       {purchase?.Status}
                     </Td>
-                    <Td>{purchase?.comment}</Td>
+                    <Td>
+                    <Text
+                         className="text-blue-500 underline cursor-pointer"
+                        onClick={() => handleRemarksClick(purchase?.comment)}
+                      >Remarks </Text>
+                      </Td>
 
                     <Td className="flex gap-2 items-center justify-center">
                       <Button
@@ -311,6 +324,19 @@ const Sales = () => {
               Cancel
             </Button>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+       {/* Remarks Modal */}
+       <Modal isOpen={remarksDisclosure.isOpen} onClose={remarksDisclosure.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Remarks</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text className="p-3 bg-orange-100 mb-5">{comment}</Text>
+          </ModalBody>
+         
         </ModalContent>
       </Modal>
 
