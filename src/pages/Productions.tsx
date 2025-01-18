@@ -1,13 +1,50 @@
-import axios from "axios";
+//@ts-nocheck
 import { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
+import {
+  Box,
+  Spinner,
+  Button,
+  useDisclosure,
+  HStack,
+  Text,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  VStack,
+  Badge,
+  Divider,
+  Input,
+} from "@chakra-ui/react";
+import axios from "axios";
 import { toast } from "react-toastify";
+import { useCookies } from "react-cookie";
+import { useSelector } from "react-redux";
+import { FaEdit } from "react-icons/fa";
+import CreateSale from "./CreateSale";
+import UpdateSale from "./UpdateSale";
+import { MdOutlineRefresh } from "react-icons/md";
+import Assign from "./Assign";
+import Pagination from "./Pagination";
+import Track from "./Track";
 
-const Production = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+const Productions = () => {
+  const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
+  const isAllowed = isSuper || allowedroutes.includes("sale");
+  const trackDisclosure = useDisclosure();
   const [purchases, setPurchases] = useState<[]>([]);
-  const [pages, setPages] = useState(1);
+  const [employees, setEmployees] = useState<any[]>([]);
+  const [selectedSale, setSelectedSale] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
+  const [pages, setPages] = useState(1);
+  const [comment, setComment] = useState("");
+  const [filterText, setFilterText] = useState("");
+  const [filterDate, setFilterDate] = useState("");
+  const [filteredPurchases, setFilteredPurchases] = useState<any[]>([]);
 
   const fetchPurchases = async () => {
     try {
@@ -26,7 +63,7 @@ const Production = () => {
           },
         }
       );
-      console.log("sales", response.data.data);
+      //console.log("sales",response.data.data);
       setPurchases(response.data.data);
     } catch (error: any) {
       const errorMessage =
@@ -39,13 +76,274 @@ const Production = () => {
     }
   };
 
-  useEffect (()=>{
-    fetchPurchases();
-  }, []);
+  const calculateProcessStatus = (processes) => {
+    const total = processes.length;
+    const completed = processes.filter((process) => process.done).length;
 
+    if (completed === total) {
+      return { status: "Completed", color: "green" };
+    } else if (completed > 0) {
+      return { status: "Under Process", color: "yellow" };
+    } else {
+      return { status: "Pending", color: "orange" };
+    }
+  };
+
+  useEffect(() => {
+    fetchPurchases();
+  }, [pages]);
+
+  useEffect(() => {
+    if (!purchases.length) {
+      setFilteredPurchases([]);
+      return;
+    }
+
+    const filteredData = purchases.filter((purchase) => {
+      const matchesText =
+        !filterText ||
+        [
+          purchase?.user_id?.[0]?.first_name,
+          purchase?.product_id?.[0]?.name,
+          purchase?.customer_id[0]?.full_name,
+        ]
+          .filter(Boolean) // Filter out undefined/null values
+          .some((field) =>
+            field.toLowerCase().includes(filterText.toLowerCase())
+          );
+
+      const matchesDate =
+        !filterDate ||
+        new Date(purchase?.createdAt).toISOString().split("T")[0] ===
+          filterDate;
+
+      return matchesText && matchesDate;
+    });
+
+    setFilteredPurchases(filteredData);
+  }, [filterText, filterDate, purchases]);
+
+  const handleTrackClick = (sale: string) => {
+    setSelectedSale(sale);
+    trackDisclosure.onOpen();
+  };
   return (
-  <div>TrackProduction</div>
-);
+    <div className="overflow-x-hidden">
+      <Box p={5}>
+        <Text className="text-lg font-bold">Track Productions</Text>
+        <HStack className="flex justify-between items-center mb-5 mt-5">
+          <Input
+            type="text"
+            placeholder="Search production..."
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+          />
+          <Input
+            type="date"
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
+          />
+          <HStack className="space-x-2">
+            <Button
+              fontSize={{ base: "14px", md: "14px" }}
+              paddingX={{ base: "10px", md: "12px" }}
+              paddingY={{ base: "0", md: "3px" }}
+              width={{ base: "-webkit-fill-available", md: 100 }}
+              onClick={fetchPurchases}
+              leftIcon={<MdOutlineRefresh />}
+              color="#1640d6"
+              borderColor="#1640d6"
+              variant="outline"
+            >
+              Refresh
+            </Button>
+          </HStack>
+        </HStack>
+
+        {isLoading ? (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="300px"
+          >
+            <Spinner size="xl" />
+          </Box>
+        ) : (
+          <Box
+            maxW="100%"
+            overflowX="auto"
+            borderWidth="1px"
+            borderRadius="md"
+            borderColor="gray.200"
+          >
+            {filteredPurchases?.map((purchase: any) => {
+              const { status, color } = calculateProcessStatus(
+                purchase?.product_id[0]?.process[0]?.processes || []
+              );
+
+              return (
+                <Box
+                  key={purchase?._id}
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  boxShadow="lg"
+                  bg="white"
+                  p={4}
+                  w="100%"
+                  position="relative"
+                  className="mb-2"
+                >
+                  {/* Left colored bar */}
+                  <Box
+                    position="absolute"
+                    top={0}
+                    left={0}
+                    h="100%"
+                    w={2}
+                    bg={status === "Pending" ? "orange" : "green"}
+                    borderRadius="md"
+                  />
+
+                  {/* Header */}
+                  <HStack justify="space-between" mb={3}>
+                    <VStack align="start">
+                      <Text fontWeight="bold" fontSize="lg">
+                        Product: {purchase?.product_id[0]?.name || "N/A"}
+                      </Text>
+                      <Text
+                        fontWeight="bold"
+                        fontSize="sm"
+                        className="underline"
+                      >
+                        Date:{" "}
+                        {new Date(purchase?.createdAt).toLocaleDateString()}
+                      </Text>
+                    </VStack>
+                    <VStack>
+                      <Badge
+                        colorScheme={
+                          purchase?.Status === "Pending" ? "orange" : "green"
+                        }
+                        fontSize="sm"
+                      >
+                        Customer Sale Approval: {purchase?.Status}
+                      </Badge>
+                    </VStack>
+                  </HStack>
+
+                  {/* Divider */}
+                  <Divider />
+
+                  {/* Task Details */}
+                  <HStack justify="space-between" spacing={3} mt={3}>
+                    <VStack align="start">
+                      <Text fontSize="sm">
+                        <strong>Price:</strong> {purchase?.price}
+                      </Text>
+
+                      <Text fontSize="sm">
+                        <strong>Quantity:</strong> {purchase?.product_qty}
+                      </Text>
+                    </VStack>
+                    <VStack align="end">
+                      <Text fontSize="sm">
+                        <strong>Customer:</strong>{" "}
+                        {purchase?.customer_id[0]?.full_name || "N/A"}
+                      </Text>
+                      <Text fontSize="sm">
+                        <strong>Sale By:</strong>{" "}
+                        {purchase?.user_id[0]?.first_name || "N/A"}
+                      </Text>
+                    </VStack>
+                  </HStack>
+
+                  {/* Footer */}
+                  <Divider my={3} />
+                  <HStack justify="space-between" mt={3}>
+                    <Text
+                      className="text-blue-500 underline cursor-pointer"
+                      onClick={() => handleTrackClick(purchase)}
+                    >
+                      Track{" "}
+                    </Text>
+
+                    <HStack spacing={2}>
+                      {status === "Completed" && (
+                        <HStack spacing={2}>
+                          <Box
+                            boxSize={3}
+                            bg="green.500"
+                            borderRadius="full"
+                            animation="pulse 1.5s infinite"
+                          />
+                          <Text
+                            fontSize="sm"
+                            fontWeight="bold"
+                            color="green.500"
+                          >
+                            Process {status}
+                          </Text>
+                        </HStack>
+                      )}
+                      {status === "Under Process" && (
+                        <HStack spacing={2}>
+                          <Spinner
+                            size="sm"
+                            color="yellow.500"
+                            thickness="2px"
+                            speed="0.7s"
+                          />
+                          <Text
+                            fontSize="sm"
+                            fontWeight="bold"
+                            color="yellow.500"
+                          >
+                            Process {status}
+                          </Text>
+                        </HStack>
+                      )}
+                      {status === "Pending" && (
+                        <HStack spacing={2}>
+                          <Box
+                            boxSize={3}
+                            bg="orange.500"
+                            borderRadius="full"
+                            animation="pulse 1.5s infinite"
+                          />
+                          <Text
+                            fontSize="sm"
+                            fontWeight="bold"
+                            color="orange.500"
+                          >
+                            Process {status}
+                          </Text>
+                        </HStack>
+                      )}
+                    </HStack>
+                  </HStack>
+                </Box>
+              );
+            })}
+          </Box>
+        )}
+      </Box>
+
+      {/* track Modal */}
+      <Modal isOpen={trackDisclosure.isOpen} onClose={trackDisclosure.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Track</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Track sale={selectedSale} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Pagination page={pages} setPage={setPages} length={purchases.length} />
+    </div>
+  );
 };
 
-export default Production;
+export default Productions;

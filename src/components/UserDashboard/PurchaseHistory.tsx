@@ -56,6 +56,7 @@ const PurchaseHistory = () => {
   const [selectedData, setSelectedData] = useState<any>([]);
   const [designProcess, setDesignProcess] = useState<any>([]);
   const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
+  const [pages, setPages] = useState(1);
   const {
     isOpen: isProductionModalOpen,
     onOpen: onProductionOpen,
@@ -74,7 +75,7 @@ const PurchaseHistory = () => {
       if (!token) throw new Error("Authentication token not found");
 
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}purchase/customer-get`,
+        `${process.env.REACT_APP_BACKEND_URL}purchase/customer-get?page=${pages}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -305,7 +306,7 @@ const PurchaseHistory = () => {
         </ModalContent>
       </Modal>
 
-      <Pagination />
+      <Pagination page={pages} setPage={setPages} length={purchases.length} />
     </div>
   );
 };

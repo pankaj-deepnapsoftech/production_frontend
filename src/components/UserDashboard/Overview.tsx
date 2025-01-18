@@ -16,6 +16,7 @@ import {
 } from "chart.js";
 import { Box, Grid, Text } from "@chakra-ui/react";
 import { useCookies } from "react-cookie";
+import { ResponsiveContainer } from "recharts";
 
 // Register chart components
 ChartJS.register(
@@ -143,6 +144,7 @@ const Overview = () => {
 
       <div className="mb-8 w-full max-w-4xl sm:max-w-full mx-auto">
         <div className="h-full">
+          <ResponsiveContainer>
           <Line
             data={graphData}
             options={{
@@ -153,6 +155,7 @@ const Overview = () => {
               },
             }}
           />
+          </ResponsiveContainer>
         </div>
       </div>
       <hr className="bg-gray-800 border" />

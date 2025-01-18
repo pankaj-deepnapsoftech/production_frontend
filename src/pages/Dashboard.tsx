@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
@@ -7,8 +8,19 @@ import Loading from "../ui/Loading";
 import { IoIosDocument, IoMdCart } from "react-icons/io";
 import { FaRupeeSign, FaStoreAlt, FaUser } from "react-icons/fa";
 import { AiFillProduct } from "react-icons/ai";
-import { IoPeople, IoPeopleCircle } from "react-icons/io5";
-import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import {
+  IoPeople,
+  IoPeopleCircle,
+  IoPersonCircleOutline,
+} from "react-icons/io5";
+import {
+  Button,
+  CardBody,
+  FormControl,
+  FormLabel,
+  Grid,
+  Input,
+} from "@chakra-ui/react";
 import Card2 from "../components/Dashboard/Card2";
 
 const Dashboard: React.FC = () => {
@@ -183,7 +195,7 @@ const Dashboard: React.FC = () => {
         <div className="text-3xl font-bold text-[#22075e]">
           Hi {firstname || ""},
         </div>
-        <div >
+        <div>
           <form
             onSubmit={applyFilterHandler}
             className="flex items-end justify-between gap-2 flex-wrap lg:flex-nowrap"
@@ -214,7 +226,7 @@ const Dashboard: React.FC = () => {
               width={{ base: "-webkit-fill-available", md: 150 }}
               color="white"
               backgroundColor="#e67e22"
-              _hover={{backgroundColor:"#e67e22"}}
+              _hover={{ backgroundColor: "#e67e22" }}
             >
               Apply
             </Button>
@@ -240,29 +252,34 @@ const Dashboard: React.FC = () => {
           <div className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
             Employee Insights
           </div>
-          {employees && employees.length === 0 && (
-            <div className="text-center mb-2">No data found.</div>
-          )}
-          {employees && (
-            <div  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {employees.map((emp, ind) => {
-                 const colors = ["#16a085", "#3498db", "#A948E7", "#16a085", "#FFD700", "#e67e22"];
-                 const primaryColor = colors[ind % colors.length];
-                return (
-                  <Card
-                    primaryColor={primaryColor}
-                    secondaryColor="#A82298"
-                    textColor="white"
-                    title={emp?._id}
-                    content={emp?.total_employee_count}
-                    link="employee"
-                    icon={<IoPeopleCircle color="#ffffff" size={28} />}
-                  />
-                );
-              })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-center">
+          {employees &&
+            employees.map((emp, ind) => {
+              const colors = [
+                "#16a085",
+                "#3498db",
+                "#A948E7",
+                "#16a085",
+                "#FFD700",
+                "#e67e22",
+              ];
+              const primaryColor = colors[ind % colors.length];
+              return (
+                <Card
+                  key={emp._id}
+                  primaryColor={primaryColor}
+                  secondaryColor="#A82298"
+                  textColor="white"
+                  title={emp._id}
+                  content={emp.total_employee_count}
+                  link="employee"
+                  icon={<IoPeopleCircle color="#ffffff" size={28} />}
+                />
+              );
+            })}
             </div>
-          )}
-          <div  className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
+
+          <div className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
             Sales & Purchase Insights
           </div>
           {approvalsPending && (
@@ -339,7 +356,7 @@ const Dashboard: React.FC = () => {
               />
             </div>
           )}
-          <div  className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
+          <div className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
             Inventory Insights
           </div>
           {directInventory && (
@@ -460,7 +477,7 @@ const Dashboard: React.FC = () => {
               link="product"
             />
           </div>
-          <div  className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
+          <div className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
             Store & Merchant Insights
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-2">
@@ -501,9 +518,10 @@ const Dashboard: React.FC = () => {
             )}
           </div>
 
-          <div  className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
+          <div className="mx-3 my-3 py-5 bg-blue-100 font-semibold border-b border-t text-center text-xl">
             Production Insights
           </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {boms && (
               <Card
@@ -552,6 +570,7 @@ const Dashboard: React.FC = () => {
               link="production/production-process"
               icon={<FaStoreAlt color="#ffffff" size={28} />}
             />
+             
           </div>
         </div>
       )}

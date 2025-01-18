@@ -1,34 +1,21 @@
-// @ts-nocheck
-
-import { useEffect, useMemo } from "react";
+import React from "react";
 import {
-  Cell,
-  Column,
-  HeaderGroup,
-  TableInstance,
-  usePagination,
-  useSortBy,
-  useTable,
-} from "react-table";
-import Loading from "../../ui/Loading";
-import { FcApproval, FcDatabase } from "react-icons/fc";
-import {
-  Select,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
+  Box,
+  Text,
+  SimpleGrid,
+  Spinner,
+  IconButton,
+  VStack,
+  HStack,
+  Divider,
 } from "@chakra-ui/react";
-import { FaCaretDown, FaCaretUp } from "react-icons/fa";
-import moment from "moment";
+import { FcApproval, FcDatabase } from "react-icons/fc";
 import { MdDeleteOutline, MdEdit, MdOutlineVisibility } from "react-icons/md";
-import { MainColor } from "../../constants/constants";
+import moment from "moment";
 
-interface BOMTableProps {
+interface BOMCardProps {
   boms: Array<{
+    _id: string; // Added
     bom_name: string;
     parts_count: string;
     total_cost: string;
@@ -43,7 +30,7 @@ interface BOMTableProps {
   approveBomHandler?: (id: string) => void;
 }
 
-const BOMTable: React.FC<BOMTableProps> = ({
+const BOMTable: React.FC<BOMCardProps> = ({
   boms,
   isLoadingBoms,
   openUpdateBomDrawerHandler,
@@ -51,228 +38,116 @@ const BOMTable: React.FC<BOMTableProps> = ({
   deleteBomHandler,
   approveBomHandler,
 }) => {
-  const columns = useMemo(
-    () => [
-      { Header: "BOM Name", accessor: "bom_name" },
-      { Header: "Parts Count", accessor: "parts_count" },
-      { Header: "Total Cost", accessor: "total_cost" },
-      { Header: "Created On", accessor: "createdAt" },
-      { Header: "Last Updated", accessor: "updatedAt" },
-    ],
-    []
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    page,
-    nextPage,
-    previousPage,
-    canNextPage,
-    canPreviousPage,
-    state: { pageIndex, pageSize },
-    pageCount,
-    setPageSize,
-  }: TableInstance<{
-    bom_name: string;
-    parts_count: string;
-    total_cost: string;
-    createdAt: string;
-    updatedAt: string;
-  }> = useTable(
-    {
-      columns,
-      data: boms,
-      initialState: { pageIndex: 0 },
-    },
-    useSortBy,
-    usePagination
-  );
-
   return (
-    <div>
-      {isLoadingBoms && <Loading />}
-      {boms.length === 0 && !isLoadingBoms && (
-        <div className="mx-auto w-max">
+    <Box>
+      {isLoadingBoms && (
+        <Box textAlign="center" mt={10}>
+          <Spinner size="lg" />
+          <Text mt={4}>Loading...</Text>
+        </Box>
+      )}
+      {!isLoadingBoms && boms.length === 0 && (
+        <Box textAlign="center" mt={10}>
           <FcDatabase size={100} />
-          <p className="text-lg">No Data Found</p>
-        </div>
+          <Text fontSize="lg">No Data Found</Text>
+        </Box>
       )}
       {!isLoadingBoms && boms.length > 0 && (
-        <div>
-          <div className="flex justify-end mb-2">
-            <Select
-              onChange={(e) => setPageSize(e.target.value)}
-              width="80px"
+        <div className="mt-5">
+          {boms.map((bom) => (
+            <Box
+              key={bom._id}
+              borderWidth="1px"
+              borderRadius="lg"
+              boxShadow="lg"
+              bg="white"
+              p={4}
+              w="100%"
+              position="relative"
             >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-              <option value={100000}>All</option>
-            </Select>
-          </div>
-          <TableContainer maxHeight="600px" overflowY="auto">
-            <Table variant="simple" {...getTableProps()}>
-              <Thead className="text-sm font-semibold">
-                {headerGroups.map(
-                  (
-                    hg: HeaderGroup<{
-                      bom_name: string;
-                      parts_count: string;
-                      total_cost: string;
-                      approved_by: string;
-                      createdAt: string;
-                      updatedAt: string;
-                    }>
-                  ) => {
-                    return (
-                      <Tr {...hg.getHeaderGroupProps()}>
-                        {hg.headers.map((column: any) => {
-                          return (
-                            <Th
-                              textTransform="capitalize"
-                              fontSize="12px"
-                              fontWeight="700"
-                              color="white"
-                              backgroundColor={MainColor}
-                              borderLeft="1px solid #d7d7d7"
-                              borderRight="1px solid #d7d7d7"
-                              {...column.getHeaderProps(
-                                column.getSortByToggleProps()
-                              )}
-                            >
-                              <p className="flex">
-                                {column.render("Header")}
-                                {column.isSorted && (
-                                  <span>
-                                    {column.isSortedDesc ? (
-                                      <FaCaretDown />
-                                    ) : (
-                                      <FaCaretUp />
-                                    )}
-                                  </span>
-                                )}
-                              </p>
-                            </Th>
-                          );
-                        })}
-                        <Th
-                          textTransform="capitalize"
-                          fontSize="12px"
-                          fontWeight="700"
-                          color="white"
-                          backgroundColor={MainColor}
-                          borderLeft="1px solid #d7d7d7"
-                          borderRight="1px solid #d7d7d7"
-                        >
-                          Actions
-                        </Th>
-                      </Tr>
-                    );
-                  }
+              <Box
+                position="absolute"
+                top={0}
+                left={0}
+                h="100%"
+                w={2}
+                bg="blue"
+                borderRadius="md"
+              />
+
+              <HStack justify="space-between" mb={3}>
+                <Text fontWeight="bold" fontSize="lg">
+                  {bom.bom_name}
+                </Text>
+              </HStack>
+
+              <Divider />
+
+              <HStack justify="space-between" spacing={3} mt={3}>
+                <VStack align="start">
+                  <Text fontSize="sm">
+                    <strong>Parts Count:</strong> {bom.parts_count}
+                  </Text>
+                  <Text fontSize="sm">
+                    <strong>Total Cost:</strong> {bom.total_cost} /-
+                  </Text>
+                </VStack>
+                <VStack align="start">
+                  <Text fontSize="sm">
+                    <strong>Created On:</strong>{" "}
+                    {moment(bom.createdAt).format("DD/MM/YYYY")}
+                  </Text>
+                  <Text fontSize="sm">
+                    <strong>Last Updated:</strong>{" "}
+                    {moment(bom.updatedAt).format("DD/MM/YYYY")}
+                  </Text>
+                </VStack>
+              </HStack>
+
+              <Divider my={3} />
+              <HStack justify="start  " mt={3}>
+                {openBomDetailsDrawerHandler && (
+                  <IconButton
+                    icon={<MdOutlineVisibility />}
+                    aria-label="View"
+                    onClick={() =>
+                      openBomDetailsDrawerHandler(bom._id)
+                    }
+                    colorScheme="blue"
+                  />
                 )}
-              </Thead>
-              <Tbody {...getTableBodyProps()}>
-                {page.map((row: any) => {
-                  prepareRow(row);
 
-                  return (
-                    <Tr
-                      className="relative hover:bg-[#e4e4e4] hover:cursor-pointer text-base lg:text-sm"
-                      {...row.getRowProps()}
-                    >
-                      {row.cells.map((cell: Cell) => {
-                        return (
-                          <Td fontWeight="500" {...cell.getCellProps()}>
-                            {cell.column.id !== "createdAt" &&
-                              cell.column.id !== "updatedAt" &&
-                              cell.render("Cell")}
-
-                            {cell.column.id === "createdAt" &&
-                              row.original?.createdAt && (
-                                <span>
-                                  {moment(row.original?.createdAt).format(
-                                    "DD/MM/YYYY"
-                                  )}
-                                </span>
-                              )}
-                            {cell.column.id === "updatedAt" &&
-                              row.original?.updatedAt && (
-                                <span>
-                                  {moment(row.original?.updatedAt).format(
-                                    "DD/MM/YYYY"
-                                  )}
-                                </span>
-                              )}
-                          </Td>
-                        );
-                      })}
-                      <Td className="flex gap-x-2">
-                        {openBomDetailsDrawerHandler && (
-                          <MdOutlineVisibility
-                            className="hover:scale-110"
-                            size={16}
-                            onClick={() =>
-                              openBomDetailsDrawerHandler(row.original?._id)
-                            }
-                          />
-                        )}
-                        {openUpdateBomDrawerHandler && (
-                          <MdEdit
-                            className="hover:scale-110"
-                            size={16}
-                            onClick={() =>
-                              openUpdateBomDrawerHandler(row.original?._id)
-                            }
-                          />
-                        )}
-                        {deleteBomHandler && (
-                          <MdDeleteOutline
-                            className="hover:scale-110"
-                            size={16}
-                            onClick={() => deleteBomHandler(row.original?._id)}
-                          />
-                        )}
-                        {approveBomHandler && (
-                          <FcApproval
-                            className="hover:scale-110"
-                            size={16}
-                            onClick={() => approveBomHandler(row.original?._id)}
-                          />
-                        )}
-                      </Td>
-                    </Tr>
-                  );
-                })}
-              </Tbody>
-            </Table>
-          </TableContainer>
-
-          <div className="w-[max-content] m-auto my-7">
-            <button
-              className="text-sm mt-2 bg-table-color py-1 px-4 text-white border-[1px] border-table-color rounded-3xl disabled:bg-[#b2b2b2] disabled:border-[#b2b2b2] disabled:cursor-not-allowed md:text-lg md:py-1 md:px-4 lg:text-xl lg:py-1 xl:text-base"
-              disabled={!canPreviousPage}
-              onClick={previousPage}
-            >
-              Prev
-            </button>
-            <span className="mx-3 text-sm md:text-lg lg:text-xl xl:text-base">
-              {pageIndex + 1} of {pageCount}
-            </span>
-            <button
-              className="text-sm mt-2 bg-table-color py-1 px-4 text-white border-[1px] border-table-color rounded-3xl disabled:bg-[#b2b2b2] disabled:border-[#b2b2b2] disabled:cursor-not-allowed md:text-lg md:py-1 md:px-4 lg:text-xl lg:py-1 xl:text-base"
-              disabled={!canNextPage}
-              onClick={nextPage}
-            >
-              Next
-            </button>
-          </div>
+                {openUpdateBomDrawerHandler && (
+                  <IconButton
+                    icon={<MdEdit />}
+                    aria-label="Edit"
+                    onClick={() =>
+                      openUpdateBomDrawerHandler(bom._id)
+                    }
+                    colorScheme="yellow"
+                  />
+                )}
+                {deleteBomHandler && (
+                  <IconButton
+                    icon={<MdDeleteOutline />}
+                    aria-label="Delete"
+                    onClick={() => deleteBomHandler(bom._id)}
+                    colorScheme="red"
+                  />
+                )}
+                {approveBomHandler && (
+                  <IconButton
+                    icon={<FcApproval />}
+                    aria-label="Approve"
+                    onClick={() => approveBomHandler(bom._id)}
+                  />
+                )}
+              </HStack>
+            </Box>
+          ))}
         </div>
       )}
-    </div>
+    </Box>
   );
 };
 

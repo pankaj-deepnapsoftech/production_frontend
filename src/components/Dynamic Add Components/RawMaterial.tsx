@@ -185,6 +185,7 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
                       textAlign="center"
                       whiteSpace="nowrap"
                       fontSize={"sm"}
+                      
                       p={4}
                     >
                       {heading}
@@ -196,7 +197,7 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
             <Tbody className="bg-gray-100">
               {inputs.map((input, ind) => (
                 <Tr key={ind} bg={ind % 2 === 0 ? "gray.100" : "white"}>
-                  <Td>
+                  <Td width="200px">
                     <FormControl isRequired>
                       <Select
                         required
@@ -210,7 +211,7 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
                     </FormControl>
                   </Td>
 
-                  <Td>
+                  <Td width="150px">
                     <FormControl isRequired>
                       <Input
                         border="1px"
@@ -221,12 +222,12 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
                         type="number"
                         name="quantity"
                         value={input.quantity}
-                        backgroundColor={"white"}
+                        backgroundColor="white"
                       />
                     </FormControl>
                   </Td>
 
-                  <Td>
+                  <Td width="150px">
                     <FormControl isRequired>
                       <Input
                         isDisabled={true}
@@ -235,11 +236,12 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
                         type="text"
                         name="uom"
                         value={input.uom}
+                         backgroundColor="white"
                       />
                     </FormControl>
                   </Td>
 
-                  <Td>
+                  <Td width="150px">
                     <FormControl isRequired>
                       <Input
                         isDisabled={true}
@@ -248,11 +250,12 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
                         type="text"
                         name="category"
                         value={input.category}
+                         backgroundColor="white"
                       />
                     </FormControl>
                   </Td>
 
-                  <Td>
+                  <Td width="200px">
                     <FormControl>
                       <Input
                         border="1px"
@@ -263,12 +266,12 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
                         type="text"
                         name="comments"
                         value={input.comments}
-                        backgroundColor={"white"}
+                       backgroundColor="white"
                       />
                     </FormControl>
                   </Td>
 
-                  <Td>
+                  <Td width="150px">
                     <FormControl isRequired>
                       <Input
                         isDisabled={true}
@@ -280,11 +283,12 @@ const RawMaterial: React.FC<RawMaterialProps> = ({
                         type="number"
                         name="unit_cost"
                         value={input.unit_cost}
+                         backgroundColor="white"
                       />
                     </FormControl>
                   </Td>
 
-                  <Td>
+                  <Td width="150px">
                     <FormControl>
                       <Input
                         isDisabled={true}

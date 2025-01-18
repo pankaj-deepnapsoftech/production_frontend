@@ -91,7 +91,6 @@ const AddBom: React.FC<AddBomProps> = ({
     },
   ]);
 
-
   const categoryOptions = [
     { value: "finished goods", label: "Finished Goods" },
     { value: "raw materials", label: "Raw Materials" },
@@ -131,7 +130,7 @@ const AddBom: React.FC<AddBomProps> = ({
           }
         );
         const uploadedFile: any = await uploadedFileResponse.json();
-        
+
         if (uploadedFile?.error) {
           throw new Error(uploadedFile?.error);
         }
@@ -163,8 +162,6 @@ const AddBom: React.FC<AddBomProps> = ({
         total_part_cost: material?.total_part_cost,
       }));
 
-
-
     const body = {
       raw_materials: modifiedRawMaterials,
       scrap_materials: modifiedScrapMaterials,
@@ -190,12 +187,12 @@ const AddBom: React.FC<AddBomProps> = ({
 
     try {
       const response = await addBom(body).unwrap();
-      console.log(response)
+      console.log(response);
       toast.success(response?.message);
       fetchBomsHandler();
       closeDrawerHandler();
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
       if (error?.data?.message?.includes("Insufficient stock")) {
         fetchBomsHandler();
         closeDrawerHandler();
@@ -327,7 +324,7 @@ const AddBom: React.FC<AddBomProps> = ({
                       >
                         Finished Goods
                       </Th>
-                   
+
                       <Th
                         bg="teal.500"
                         color="white"
@@ -358,7 +355,7 @@ const AddBom: React.FC<AddBomProps> = ({
                       >
                         Category
                       </Th>
-                     
+
                       <Th
                         bg="teal.500"
                         color="white"
@@ -404,7 +401,7 @@ const AddBom: React.FC<AddBomProps> = ({
                         />
                       </FormControl>
                     </Td>
-                    
+
                     <Td>
                       <FormControl isRequired>
                         <Input
@@ -441,7 +438,7 @@ const AddBom: React.FC<AddBomProps> = ({
                         />
                       </FormControl>
                     </Td>
-                   
+
                     <Td>
                       <FormControl isRequired>
                         <Input
@@ -496,115 +493,68 @@ const AddBom: React.FC<AddBomProps> = ({
 
             <hr className="my-5" />
 
-            <Table variant="simple" size="md">
-              <Thead>
-                <Tr>
-                  <Th>
-                    <Text
-                      bg="teal.500"
-                      color="white"
-                      fontWeight="bold"
-                      textTransform="uppercase"
-                      textAlign="center"
-                      whiteSpace="nowrap"
-                      fontSize={"sm"}
-                      p={4}
-                    >
-                      Charge Type
-                    </Text>
-                  </Th>
-                  <Th>
-                    {" "}
-                    <Text
-                      bg="teal.500"
-                      color="white"
-                      fontWeight="bold"
-                      textTransform="uppercase"
-                      textAlign="center"
-                      whiteSpace="nowrap"
-                      fontSize={"sm"}
-                      p={4}
-                    >
-                      Amount
-                    </Text>
-                  </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Td>
-                    <FormLabel fontWeight="bold">Labour Charges</FormLabel>
-                  </Td>
-                  <Td>
-                    <FormControl>
-                      <Input
-                        border="1px"
-                        borderColor="#a9a9a9"
-                        value={labourCharges}
-                        onChange={(e) => setLabourCharges(+e.target.value)}
-                        type="number"
-                        placeholder="Labour Charges"
-                      />
-                    </FormControl>
-                  </Td>
-                </Tr>
+            <FormLabel fontSize="lg" fontWeight="bold">
+              {" "}
+              Charges
+            </FormLabel>
 
-                <Tr>
-                  <Td>
-                    <FormLabel fontWeight="bold">Machinery Charges</FormLabel>
-                  </Td>
-                  <Td>
-                    <FormControl>
-                      <Input
-                        border="1px"
-                        borderColor="#a9a9a9"
-                        value={machineryCharges}
-                        onChange={(e) => setMachineryCharges(+e.target.value)}
-                        type="number"
-                        placeholder="Machinery Charges"
-                      />
-                    </FormControl>
-                  </Td>
-                </Tr>
+            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
+              <FormControl mb={4}>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Labour Charges
+                </FormLabel>
+                <Input
+                  border="1px"
+                  borderColor="#a9a9a9"
+                  value={labourCharges}
+                  onChange={(e) => setLabourCharges(+e.target.value)}
+                  type="number"
+                  placeholder="Labour Charges"
+                />
+              </FormControl>
 
-                <Tr>
-                  <Td>
-                    <FormLabel fontWeight="bold">Electricity Charges</FormLabel>
-                  </Td>
-                  <Td>
-                    <FormControl>
-                      <Input
-                        border="1px"
-                        borderColor="#a9a9a9"
-                        value={electricityCharges}
-                        onChange={(e) => setElectricityCharges(+e.target.value)}
-                        type="number"
-                        placeholder="Electricity Charges"
-                      />
-                    </FormControl>
-                  </Td>
-                </Tr>
+              <FormControl mb={4}>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Machinery Charges
+                </FormLabel>
+                <Input
+                  border="1px"
+                  borderColor="#a9a9a9"
+                  value={machineryCharges}
+                  onChange={(e) => setMachineryCharges(+e.target.value)}
+                  type="number"
+                  placeholder="Machinery Charges"
+                />
+              </FormControl>
 
-                <Tr>
-                  <Td>
-                    <FormLabel fontWeight="bold">Other Charges</FormLabel>
-                  </Td>
-                  <Td>
-                    <FormControl>
-                      <Input
-                        border="1px"
-                        borderColor="#a9a9a9"
-                        value={otherCharges}
-                        onChange={(e) => setOtherCharges(+e.target.value)}
-                        type="number"
-                        placeholder="Other Charges"
-                      />
-                    </FormControl>
-                  </Td>
-                </Tr>
-              </Tbody>
-            </Table>
+              <FormControl mb={4}>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Electricity Charges
+                </FormLabel>
+                <Input
+                  border="1px"
+                  borderColor="#a9a9a9"
+                  value={electricityCharges}
+                  onChange={(e) => setElectricityCharges(+e.target.value)}
+                  type="number"
+                  placeholder="Electricity Charges"
+                />
+              </FormControl>
 
+              <FormControl mb={4}>
+                <FormLabel fontWeight="bold" color="teal.600">
+                  Other Charges
+                </FormLabel>
+                <Input
+                  border="1px"
+                  borderColor="#a9a9a9"
+                  value={otherCharges}
+                  onChange={(e) => setOtherCharges(+e.target.value)}
+                  type="number"
+                  placeholder="Other Charges"
+                />
+              </FormControl>
+            </Grid>
             <hr className="my-5" />
 
             <Grid templateColumns="repeat(4, 1fr)" gap={4} mb={5}>

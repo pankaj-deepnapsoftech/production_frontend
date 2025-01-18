@@ -147,7 +147,7 @@ const ScrapMaterial: React.FC<ScrapMaterialProps> = ({
               {inputs &&
                 inputs.map((input, ind) => (
                   <Tr key={ind} bg={ind % 2 === 0 ? "gray.100" : "white"}>
-                    <Td>
+                    <Td width="200px">
                       <FormControl className="mb-5">
                         <Select
                           required
@@ -174,6 +174,7 @@ const ScrapMaterial: React.FC<ScrapMaterialProps> = ({
                           type="text"
                           name="description"
                           value={input.description}
+                           backgroundColor="white"
                         ></Input>
                       </FormControl>
                     </Td>
@@ -191,6 +192,7 @@ const ScrapMaterial: React.FC<ScrapMaterialProps> = ({
                           type="number"
                           name="quantity"
                           value={input.quantity}
+                           backgroundColor="white"
                         ></Input>
                       </FormControl>
                     </Td>
@@ -204,6 +206,7 @@ const ScrapMaterial: React.FC<ScrapMaterialProps> = ({
                           type="text"
                           name="uom"
                           value={input.uom}
+                           backgroundColor="white"
                         ></Input>
                       </FormControl>
                     </Td>
@@ -220,6 +223,7 @@ const ScrapMaterial: React.FC<ScrapMaterialProps> = ({
                           type="number"
                           name="unit_cost"
                           value={input.unit_cost}
+                           backgroundColor="white"
                         ></Input>
                       </FormControl>
                     </Td>

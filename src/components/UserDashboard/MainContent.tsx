@@ -17,25 +17,20 @@ const MainContent = () => {
   };
 
   return (
-    <div className="flex overflow-x-hidden bn">
-      {/* Sidebar */}
-      <Sidebar
-        user={user}
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={toggleSidebar}
-      />
-
+    <div className="flex overflow-x-hidden ">
       {/* Main Content Area */}
+      <Sidebar
+            user={user}
+            isSidebarOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+          />
       <div
         className={`${
           isSidebarOpen ? "ml-80" : "ml-0"
         } flex-1 transition-all duration-300`}
       >
-        <div className="cursor-pointer w-full p-3 shadow-md px-10 flex items-center justify-end gap-1">
-          <button
-            className="lg:hidden p-4 fixed top-4 left-4 z-50"
-            onClick={toggleSidebar}
-          >
+        <div className="cursor-pointer w-full p-3 shadow-md px-10 flex items-center justify-between gap-1">
+          <button className="lg:hidden " onClick={toggleSidebar}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-8 h-8 text-blue-800"
@@ -51,11 +46,14 @@ const MainContent = () => {
               />
             </svg>
           </button>
-          <img src="/images/logo.png" alt="logo" className="h-10" />
-          <span className="text-2xl font-bold">ITSYBIZZ</span>
+          <div className="flex items-center justify-center gap-2">
+            <img src="/images/logo.png" alt="logo" className="h-10" />
+            <span className="text-2xl font-bold">ITSYBIZZ</span>
+          </div>
         </div>
 
         <div className="mt-6 p-5">
+         
           <Outlet />
         </div>
       </div>
