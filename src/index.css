@@ -85,4 +85,28 @@ input[type=number] {
       opacity: 1;
     }
   }
+  @keyframes wave {
+    0% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(-10deg);
+    }
+    50% {
+      transform: rotate(10deg);
+    }
+    75% {
+      transform: rotate(-10deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
   
+  .waving-hand {
+    display: inline-block;
+    animation: wave 1.5s ;
+    transform-origin: 70% 70%; /* Adjust origin for natural wave motion */
+  }
+
+ 

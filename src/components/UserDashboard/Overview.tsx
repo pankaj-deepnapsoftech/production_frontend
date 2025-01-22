@@ -56,14 +56,14 @@ const Overview = () => {
   const [cookies] = useCookies(["access_token"]);
   const { role } = useSelector((state: any) => state.auth);
 
-  // Navigate based on role
+
   useEffect(() => {
     if (role === "Security Guard") {
       navigate("/entries");
     }
   }, [role, navigate]);
 
-  // Fetch data for purchases and update state
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -128,53 +128,58 @@ const Overview = () => {
     fetchData();
   }, [cookies.access_token]);
 
-  // Production Status Data
+  
   const productionStatus = {
     title: "Production Status",
     status: "In Progress",
     progress: 75,
   };
-  
 
   return (
-    <div className="md:ml-80 sm:ml-0 overflow-x-hidden mt-10 lg:mt-0">
+    <div className="md:ml-80 sm:ml-0 overflow-x-hidden mt-10 lg:mt-0 ">
       <h3 className="text-2xl mb-6 text-blue-950 font-bold inline-block border-b-2 border-dashed border-black">
         Overview
       </h3>
 
       <div className="mb-8 w-full max-w-4xl sm:max-w-full mx-auto">
-        <div className="h-full">
+        <div className="h-full ">
           <ResponsiveContainer>
-          <Line
-            data={graphData}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: { position: "top" },
-                title: { display: true, text: "Purchases Over the Year" },
-              },
-            }}
-          />
+            <Line
+              data={graphData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: { position: "top" },
+                  title: { display: true, text: "Purchases Over the Year" },
+                },
+              }}
+            />
           </ResponsiveContainer>
         </div>
       </div>
       <hr className="bg-gray-800 border" />
 
-      {/* Purchases Card */}
       <Box
-  bg="green.200"
-  p={4}
-  color="black"
-  borderRadius="md"
-  boxShadow="sm"
-  width="100%" // Full width
-  textAlign="center"
->
-  <Text fontSize="lg" fontWeight="bold" alignContent="center" display="flex" justifyContent="center" gap={2}>
-    No. of Purchases: <Text className="text-red-900">{totalPurchases}</Text>
-  </Text>
-</Box>
-
+        bg="green.200"
+        p={4}
+        color="black"
+        borderRadius="md"
+        boxShadow="sm"
+        width="100%" 
+        textAlign="center"
+      >
+        <Text
+          fontSize="lg"
+          fontWeight="bold"
+          alignContent="center"
+          display="flex"
+          justifyContent="center"
+          gap={2}
+        >
+          No. of Purchases:{" "}
+          <Text className="text-red-900">{totalPurchases}</Text>
+        </Text>
+      </Box>
     </div>
   );
 };

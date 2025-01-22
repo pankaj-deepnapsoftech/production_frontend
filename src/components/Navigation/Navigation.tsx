@@ -6,8 +6,7 @@ import { Fragment, useState } from "react";
 
 const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
   const { allowedroutes, isSuper } = useSelector((state: any) => state.auth);
-  console.log(allowedroutes)
-
+ 
   const [openSubMenus, setOpenSubMenus] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -36,7 +35,7 @@ const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
                   style={{
                     cursor: isAllowed  ? "pointer" : "not-allowed",
                     opacity: isAllowed ? 1 : 0.5,
-                    pointerEvents: isAllowed ? "auto" : "none", // Disable click interaction
+                    pointerEvents: isAllowed ? "auto" : "none", 
                   }}
                 >
                   <span>{route.icon}</span>
@@ -54,7 +53,7 @@ const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
                       style={{
                         cursor: isAllowed ? "pointer" : "not-allowed",
                         opacity: isAllowed ? 1 : 0.5,
-                        pointerEvents: isAllowed ? "auto" : "none", // Disable click interaction
+                        pointerEvents: isAllowed ? "auto" : "none", 
                       }}
                       to={route.path + "/" + sublink.path}
                     >
