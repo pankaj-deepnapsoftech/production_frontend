@@ -197,7 +197,7 @@ const CreateSale: React.FC = ({ onClose }) => {
               }));
             }}
           >
-            <option value="" disabled>
+            <option value="" >
               Select a product
             </option>
             {products.map((product: any) => (

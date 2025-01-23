@@ -57,78 +57,78 @@ const Dashboard: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [approvalsPending, setApprovalsPending] = useState<
     | {
-        unapproved_product_count: number;
-        unapproved_store_count: number;
-        unapproved_merchant_count: number;
-        unapproved_bom_count: number;
-      }
+      unapproved_product_count: number;
+      unapproved_store_count: number;
+      unapproved_merchant_count: number;
+      unapproved_bom_count: number;
+    }
     | undefined
   >();
   const [scrap, setScrap] = useState<
     | {
-        total_product_count: number;
-        total_stock_price: number;
-      }
+      total_product_count: number;
+      total_stock_price: number;
+    }
     | undefined
   >();
   const [inventory, setInventory] = useState<
     | {
-        total_product_count: number;
-        total_stock_price: number;
-      }
+      total_product_count: number;
+      total_stock_price: number;
+    }
     | undefined
   >();
   const [directInventory, setDirectInventory] = useState<
     | {
-        total_low_stock: number;
-        total_excess_stock: number;
-        total_product_count: number;
-        total_stock_price: number;
-      }
+      total_low_stock: number;
+      total_excess_stock: number;
+      total_product_count: number;
+      total_stock_price: number;
+    }
     | undefined
   >();
   const [indirectInventory, setIndirectInventory] = useState<
     | {
-        total_low_stock: number;
-        total_excess_stock: number;
-        total_product_count: number;
-        total_stock_price: number;
-      }
+      total_low_stock: number;
+      total_excess_stock: number;
+      total_product_count: number;
+      total_stock_price: number;
+    }
     | undefined
   >();
   const [stores, setStores] = useState<
     | {
-        total_store_count: number;
-      }
+      total_store_count: number;
+    }
     | undefined
   >();
   const [boms, setBoms] = useState<
     | {
-        total_bom_count: number;
-      }
+      total_bom_count: number;
+    }
     | undefined
   >();
   const [merchants, setMerchants] = useState<
     | {
-        total_supplier_count: number;
-        total_buyer_count: number;
-      }
+      total_supplier_count: number;
+      total_buyer_count: number;
+    }
     | undefined
   >();
   const [employees, setEmployees] = useState<
     | {
-        _id: string;
-        total_employee_count: number;
-      }[]
+      _id: string;
+      total_employee_count: number;
+    }[]
     | undefined
   >();
   const [processes, setProcesses] = useState<
     | {
-        ["raw material approval pending"]?: number;
-        ["raw materials approved"]?: number;
-        completed?: number;
-        "work in progress"?: number;
-      }
+      ["raw material approval pending"]?: number;
+      ["raw materials approved"]?: number;
+      completed?: number;
+      "work in progress"?: number;
+    }
     | undefined
   >();
   const [totalProformaInvoices, setTotalProformaInvoices] = useState<number>(0);
@@ -183,7 +183,7 @@ const Dashboard: React.FC = () => {
     } catch (error: any) {
       toast.error(error?.message || "Something went wrong");
       console.log(error);
-      
+
     } finally {
       setIsLoading(false);
     }
@@ -246,11 +246,14 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchSummaryHandler();
-    fetchCustomers();
-    fetchSales();
-    fetchProcess();
-  }, []);
+    if (firstname) {
+      fetchSummaryHandler();
+      fetchCustomers();
+      fetchSales();
+      fetchProcess();
+    }
+
+  }, [firstname]);
 
   // if (!isAllowed) {
   //   return (
@@ -575,7 +578,7 @@ const Dashboard: React.FC = () => {
                       title="Stock Value"
                       content={"₹ " + directInventory?.total_stock_price + "/-"}
                       icon={<FaRupeeSign color="#ffffff" size={24} />}
-                      // link="product"
+                    // link="product"
                     />
                     <Card
                       primaryColor="#2980b9"
@@ -617,7 +620,7 @@ const Dashboard: React.FC = () => {
                         "₹ " + indirectInventory?.total_stock_price + "/-"
                       }
                       icon={<FaRupeeSign color="#ffffff" size={24} />}
-                      // link="product"
+                    // link="product"
                     />
                     <Card
                       primaryColor="#16a085"
