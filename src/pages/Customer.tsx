@@ -27,8 +27,9 @@ import { toast } from "react-toastify";
 import CreateCustomer from "./CreateCustomer";
 import { useCookies } from "react-cookie";
 import { FaEdit } from "react-icons/fa";
-import { MdOutlineRefresh } from "react-icons/md";
+import { MdDelete, MdOutlineRefresh } from "react-icons/md";
 import Pagination from "./Pagination";
+import UpdateCustomer from "./UpdateCustomer";
 
 const headings = [
   "Full Name",
@@ -37,6 +38,7 @@ const headings = [
   "Customer Type",
   "Company Name",
   "GST No",
+  "Actions",
 ];
 
 const Customer: React.FC = () => {
@@ -45,7 +47,10 @@ const Customer: React.FC = () => {
   const [customers, setCustomers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [page,setpage] = useState(1);
+  const [page, setpage] = useState(1);
+  const [selectedCustomer, SetSelectedCustomer] = useState([]);
+  const createDisclosure = useDisclosure();
+  const updateDisclosure = useDisclosure();
 
   const fetchCustomers = async () => {
     try {
@@ -72,32 +77,36 @@ const Customer: React.FC = () => {
     fetchCustomers();
   }, [page]);
 
+  const handleUpdate = (customer) => {
+    SetSelectedCustomer(customer);
+    updateDisclosure.onOpen();
+  };
+
   return (
     <Box className="max-w-7xl mx-auto p-5">
       <HStack className="flex justify-between items-center mb-5 mt-5">
         <Text className="text-lg font-bold">Customers</Text>
-        <HStack className="space-x-2">
+        <HStack className="space-x-2  w-full center justify-end flex ">
         <Button
-          bgColor="white"
-          _hover={{ bgColor: "blue.500" }}
-          className="border border-blue-500 hover:text-white"
-          onClick={onOpen} // Open the modal
-        >
-          Add New Customer
-        </Button>
-        <Button
-          fontSize={{ base: "14px", md: "14px" }}
-          paddingX={{ base: "10px", md: "12px" }}
-          paddingY={{ base: "0", md: "3px" }}
-          width={{ base: "-webkit-fill-available", md: 100 }}
-          onClick={fetchCustomers}
-          leftIcon={<MdOutlineRefresh />}
-          color="#1640d6"
-          borderColor="#1640d6"
-          variant="outline"
-        >
-          Refresh
-        </Button>
+            width="auto"
+            onClick={createDisclosure.onOpen}
+            colorScheme="blue"
+          >
+            New Customer
+          </Button>
+          <Button
+            fontSize={{ base: "14px", md: "14px" }}
+            paddingX={{ base: "10px", md: "12px" }}
+            paddingY={{ base: "0", md: "3px" }}
+            width={{ base: "-webkit-fill-available", md: 100 }}
+            onClick={fetchCustomers}
+            leftIcon={<MdOutlineRefresh />}
+            color="#1640d6"
+            borderColor="#1640d6"
+            variant="outline"
+          >
+            Refresh
+          </Button>
         </HStack>
       </HStack>
 
@@ -147,6 +156,14 @@ const Customer: React.FC = () => {
                     {customer.type === "company" ? customer.company_name : "-"}
                   </Td>
                   <Td>{customer.type === "company" ? customer.GST_NO : "-"}</Td>
+                  <Td>
+                    <Button
+                      colorScheme="blue"
+                      onClick={() => handleUpdate(customer)}
+                    >
+                      <FaEdit />
+                    </Button>
+                  </Td>
                 </Tr>
               ))}
             </Tbody>
@@ -154,13 +171,16 @@ const Customer: React.FC = () => {
         )}
       </TableContainer>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal
+        isOpen={createDisclosure.isOpen}
+        onClose={createDisclosure.onClose}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Create a New Customer</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <CreateCustomer />
+            <CreateCustomer onClose={createDisclosure.onClose} />
           </ModalBody>
           <ModalFooter>
             <Button
@@ -168,7 +188,35 @@ const Customer: React.FC = () => {
               _hover={{ bgColor: "red.500" }}
               className="border border-red-500 hover:text-white w-full ml-2"
               mr={3}
-              onClick={onClose}
+              onClick={createDisclosure.onClose}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={updateDisclosure.isOpen}
+        onClose={updateDisclosure.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Update Customer</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <UpdateCustomer
+              onClose={updateDisclosure.onClose}
+              customerData={selectedCustomer}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500" }}
+              className="border border-red-500 hover:text-white w-full ml-2"
+              mr={3}
+              onClick={updateDisclosure.onClose}
             >
               Cancel
             </Button>

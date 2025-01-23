@@ -12,14 +12,17 @@ import {
   Select,
   useToast,
   Textarea,
+  HStack,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
+import { FaEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
-const Assign = ({ empData, saleData }) => {
+const Assign = ({ empData, saleData, onClose }) => {
   const tasks = saleData?.assinedto;
-  console.log("tasks", saleData);
+  console.log("assign", tasks);
 
   const [formData, setFormData] = useState({
     sale_id: saleData?._id,
@@ -30,6 +33,7 @@ const Assign = ({ empData, saleData }) => {
 
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
+  const token = cookies?.access_token;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,7 +44,7 @@ const Assign = ({ empData, saleData }) => {
     e.preventDefault();
 
     try {
-      const token = cookies?.access_token;
+     
       //console.log("token", token);
 
       if (!token) {
@@ -70,13 +74,77 @@ const Assign = ({ empData, saleData }) => {
         additionalInfo: "",
       });
 
-      console.log(formData);
+      onClose();
     } catch (error) {
       console.log(error);
 
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const colorChange = (color: any) => {
+    if (color === "Pending" || color === "UnderProcessing") {
+      return "orange";
+    } else if (color === "Design Rejected") {
+      return "red";
+    } else {
+      return "green";
+    }
+  };
+
+  const handleEdit = async(id, e) => {
+    if(e){
+      e.preventDefault();
+    }
+    /*
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_BACKEND_URL}assined/update/${id}`,
+        
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Error",
+        description: "Failed to update assigned task.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }  */
+  };
+
+  const handleDelete = async (id, e:any) => {
+    if(e){
+      e.preventDefault();
+    }
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_BACKEND_URL}assined/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Error",
+        description: "Failed to remove assigned task.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -113,13 +181,33 @@ const Assign = ({ empData, saleData }) => {
                 </Text>
                 <Text>
                   <strong>Assigned To:</strong> {task?.assinedto[0]?.first_name}
+                  -{" "}
+                  {task?.assinedto[0]?.role[0]?.role
+                    ? task?.assinedto[0]?.role[0]?.role
+                    : null}
                 </Text>
                 <Text>
                   <strong>Status:</strong>{" "}
-                  <Badge colorScheme={task?.isCompleted ? "green" : "red"}>
-                    {task?.isCompleted ? "Completed" : "Pending"}
+                  <Badge colorScheme={colorChange(task?.isCompleted)}>
+                    {task?.isCompleted}
                   </Badge>
                 </Text>
+                <HStack>
+                  <Button
+                    bgColor="blue.500"
+                    _hover="blue.400"
+                    onClick={(e) => handleEdit(task._id, e)}
+                  >
+                    <FaEdit className="text-white"/>{" "}
+                  </Button>
+                  <Button
+                    bgColor="red.500"
+                    _hover="red.400"
+                    onClick={(e)=> handleDelete(task?._id, e)}
+                  >
+                    <MdDelete className="text-white"  />{" "}
+                  </Button>
+                </HStack>
               </VStack>
             </Box>
           ))}

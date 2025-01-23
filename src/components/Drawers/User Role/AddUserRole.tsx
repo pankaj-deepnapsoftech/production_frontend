@@ -61,10 +61,14 @@ const AddUserRole: React.FC<AddUserRoleProps> = ({
         description,
         permissions: modifiedPermissions
       }).unwrap();
+      console.log("role", response);
+      
       toast.success(response.message);
       fetchUserRolesHandler();
       closeDrawerHandler();
     } catch (error: any) {
+      console.log(error);
+      
       toast.error(error?.data?.message || "Something went wrong");
     } finally {
       setIsAddingRole(false);

@@ -40,7 +40,7 @@ const CustomerLogin: React.FC = () => {
     window.location.href = "/userboard";
     } catch (error) {
       console.error("Login failed:", error);
-      alert("Login failed!");
+      toast("Login failed!");
     } finally {
       setIsLoginLoading(false);
     }

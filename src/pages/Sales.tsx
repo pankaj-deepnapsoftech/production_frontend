@@ -66,6 +66,7 @@ const Sales = () => {
           },
         }
       );
+      console.log(response.data.data);
       setPurchases(response.data.data);
     } catch (error: any) {
       const errorMessage =
@@ -275,12 +276,15 @@ const Sales = () => {
                     <Text fontSize="sm">
                       <strong>Price:</strong> {purchase?.price}
                     </Text>
-                    <Text
-                      className="text-blue-500 underline cursor-pointer"
-                      onClick={() => handleRemarksClick(purchase?.comment)}
-                    >
-                      Remarks{" "}
-                    </Text>
+                    {purchase?.comment ? (
+                       <Text
+                       className="text-blue-500 underline cursor-pointer"
+                       onClick={() => handleRemarksClick(purchase?.comment)}
+                     >
+                       Remarks{" "}
+                     </Text>
+                    ) : null}
+                   
                   </VStack>
                 </HStack>
 
@@ -323,7 +327,7 @@ const Sales = () => {
           <ModalHeader>Add a new Sale</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <CreateSale />
+            <CreateSale onClose={createDisclosure.onClose}/>
           </ModalBody>
           <ModalFooter>
             <Button
@@ -348,7 +352,7 @@ const Sales = () => {
           <ModalHeader>Edit Sale</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <UpdateSale sale={selectedSale} />
+            <UpdateSale sale={selectedSale} onClose={updateDisclosure.onClose} />
           </ModalBody>
           <ModalFooter>
             <Button
@@ -373,7 +377,7 @@ const Sales = () => {
           <ModalHeader>Assign Employee</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Assign empData={employees} saleData={selectedSale} />
+            <Assign empData={employees} saleData={selectedSale} onClose={assignDisclosure.onClose}/>
           </ModalBody>
           <ModalFooter>
             <Button

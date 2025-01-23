@@ -22,7 +22,7 @@ interface GSTFields {
   IGST?: number;
 }
 
-const UpdateSale: React.FC = ({ sale }) => {
+const UpdateSale: React.FC = ({ sale, onClose }) => {
 
 
   const [formData, setFormData] = useState({
@@ -138,6 +138,8 @@ const UpdateSale: React.FC = ({ sale }) => {
         duration: 5000,
         isClosable: true,
       });
+
+      onClose();
 
       // console.log(response.data);
     } catch (error) {

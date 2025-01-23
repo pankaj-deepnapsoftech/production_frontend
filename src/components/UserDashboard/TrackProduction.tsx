@@ -9,7 +9,27 @@ import {
 const TrackProduction = ({ designProcess, productionProcess }: any) => {
   console.log("designprocess", designProcess);
   
-  
+  const ColorChange = (color:any)=>{
+    if(color === "Pending"){
+      return "orange"
+    } else if(color === "Design Rejected"){
+     return "red"
+    }else{
+      return "green"
+    }
+  }
+
+  const progressChange = (value:any)=>{
+    if(value === "Pending"){
+      return 50
+    } else if(value === "Design Rejected"){
+     return 0
+    }else{
+      return 100
+    }
+  }
+ 
+
   return (
     <Box p={4}>
       {/* Design Process Section */}
@@ -22,6 +42,7 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
         ) : (
           <VStack align="start" spacing={4} className="max-h-[20rem] overflow-y-scroll">
             {designProcess?.map((stage: any, index: number) => (
+              
               <Box
                 key={index}
                 p={4}
@@ -29,20 +50,20 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
                 borderWidth="1px"
                 borderRadius="lg"
                 shadow="md"
-                bg={stage?.isCompleted? "green.50" : "orange.50"}
-                borderColor={stage?.isCompleted? "green.300" : "orange.300"}
+                bg={`${ColorChange(stage?.isCompleted)}.50`}
+                borderColor={ColorChange(stage?.isCompleted)}
               >
                 <Text
                   fontWeight="bold"
                   fontSize="lg"
-                  color={stage?.isCompleted?  "green.700" : "red.700"}
+                  color={ColorChange(stage?.isCompleted) }
                 >
                   {stage?.assined_process}
                 </Text>
                 <Text mt={2} fontSize="md">
                   Status:
-                  <Badge ml={2} colorScheme={stage?.isCompleted? "green" : "red"} variant="solid">
-                    {stage?.isCompleted? "Completed" : "Pending"}
+                  <Badge ml={2} colorScheme={ColorChange(stage?.isCompleted)} variant="solid">
+                    {stage?.isCompleted}
                   </Badge>
                 </Text>
                 <Box mt={2}>
@@ -51,9 +72,9 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
                   </Text>
                   <Box mt={1} w="full">
                     <Progress
-                      value={stage?.isCompleted? 100 : 50} 
+                      value={progressChange(stage?.isCompleted) }
                       size="sm"
-                      colorScheme={stage?.isCompleted? "green" : "red"}
+                      colorScheme={ColorChange(stage?.isCompleted)}
                       borderRadius="md"
                     />
                   </Box>

@@ -18,9 +18,10 @@ import { BiHappyHeartEyes, BiSad } from "react-icons/bi";
 interface ViewDesignProps {
   designUrl: string;
   purchaseData: any;
+  onClose:any;
 }
 
-const ViewDesign: React.FC<ViewDesignProps> = ({ designUrl, purchaseData }) => {
+const ViewDesign: React.FC<ViewDesignProps> = ({ designUrl, purchaseData, onClose }) => {
   const [status, setStatus] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [cookies] = useCookies(["access_token"]);
@@ -43,7 +44,7 @@ const ViewDesign: React.FC<ViewDesignProps> = ({ designUrl, purchaseData }) => {
           headers: { Authorization: `Bearer ${cookies.access_token}` },
         }
       );
-      console.log("design form",response);
+      //console.log("design form",response);
       toast({
         title: response.data.message,
         description: "Response added successfully :) ",
@@ -51,6 +52,7 @@ const ViewDesign: React.FC<ViewDesignProps> = ({ designUrl, purchaseData }) => {
         duration: 3000,
         isClosable: true,
       });
+      onClose();
     } catch (error) {
       console.log(error);
       toast({

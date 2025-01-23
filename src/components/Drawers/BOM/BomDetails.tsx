@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
@@ -74,172 +75,216 @@ const BomDetails: React.FC<BomDetailsProps> = ({
         </h1>
 
         <div className="mt-8 px-5">
-          <h2 className="text-2xl font-semibold py-5 text-center mb-6 border-y bg-[#f9fafc]">
-            BOM Details
-          </h2>
+  <h2 className="text-3xl font-bold py-5 text-center mb-8 bg-gray-100 border-y-2 border-teal-400">
+    BOM Details
+  </h2>
 
-          {isLoadingBom && <Loading />}
-          {!isLoadingBom && (
-            <div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">BOM Name</p>
-                <p>{bomName}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Parts Count</p>
-                <p>{partsCount}</p>
-              </div>
-              <div className="mt-3 mb-5">
-                <p className="font-semibold">Total Cost</p>
-                <p>₹ {totalBomCost}/-</p>
-              </div>
-              <div>
-                <p className="font-semibold">Raw Materials</p>
-                {rawMaterials && (
-                  <ul className="mt-3 mb-5 pl-5 list-decimal">
-                    {rawMaterials.map((material) => (
-                      <li>
-                        <p>
-                          <span className="font-semibold">Item ID</span>:{" "}
-                          {material?.item?.product_id}
-                        </p>
-                        <p>
-                          <span className="font-semibold">Item Name</span>:{" "}
-                          {material?.item?.name}
-                        </p>
-                        <p>
-                          <span className="font-semibold">Quantity</span>:{" "}
-                          {material?.quantity}
-                        </p>
-                        <p>
-                          <span className="font-semibold">UOM</span>:{" "}
-                          {material?.item?.uom}
-                        </p>
-                        <p>
-                          <span className="font-semibold">Total Part Cost</span>
-                          : ₹ {material?.total_part_cost}/-
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              <div>
-                <p className="font-semibold">Processes</p>
-                {processes && (
-                  <ul className="mt-3 mb-5 pl-5 list-decimal">
-                    {processes.map((process: string) => (
-                      <li>{process}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-
-              {finishedGood && (
-                <div className="mt-3 mb-5">
-                  <p className="font-semibold">Finished Good</p>
-                  <ul className="pl-5">
-                    <li>
-                      <span className="font-semibold">Item Id</span>:{" "}
-                      {finishedGood?.item?.product_id}
-                    </li>
-                    <li>
-                      <span className="font-semibold">Item Name</span>:{" "}
-                      {finishedGood?.item?.name}
-                    </li>
-                    <li>
-                      <span className="font-semibold">Quantity</span>:{" "}
-                      {finishedGood.quantity}
-                    </li>
-                    <li>
-                      <span className="font-semibold">UOM</span>:{" "}
-                      {finishedGood?.item?.uom}
-                    </li>
-                    <li>
-                      <span className="font-semibold">Category</span>:{" "}
-                      {finishedGood?.item?.category}
-                    </li>
-                    <li>
-                      <span className="font-semibold">Category</span>:{" "}
-                      {finishedGood.category}
-                    </li>
-                    <li>
-                      <span className="font-semibold">Cost</span>: ₹{" "}
-                      {finishedGood.cost}/-
-                    </li>
-                    <li>
-                      <span className="font-semibold">Supporting Document</span>
-                      :{" "}
-                      {finishedGood.supporting_doc ? (
-                        <a href={finishedGood.supporting_doc} target="_blank">
-                          <button className="underline">Open</button>
-                        </a>
-                      ) : (
-                        "N/A"
-                      )}
-                    </li>
-                  </ul>
-                </div>
-              )}
-
-              {scrapMaterials && (
-                <div>
-                  <p className="font-semibold">Scrap Materials</p>
-
-                  <ul className="mt-3 mb-5 pl-5 list-decimal">
-                    {scrapMaterials.map((material) => (
-                      <li>
-                        <p>
-                          <span className="font-semibold">Item ID</span>:{" "}
-                          {material?.item?.product_id}
-                        </p>
-                        <p>
-                          <span className="font-semibold">Item Name</span>:{" "}
-                          {material?.item?.name}
-                        </p>
-                        <p>
-                          <span className="font-semibold">Quantity</span>:{" "}
-                          {material?.quantity}
-                        </p>
-                        <p>
-                          <span className="font-semibold">UOM</span>:{" "}
-                          {material?.item?.uom}
-                        </p>
-                        <p>
-                          <span className="font-semibold">Total Part Cost</span>
-                          : ₹ {material?.total_part_cost}/-
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {otherCharges && (
-                <div>
-                  <p className="font-semibold">Other Charges</p>
-
-                  <p>
-                    <span className="font-semibold">Labour Charges</span>: ₹{" "}
-                    {otherCharges?.labour_charges}/-
-                  </p>
-                  <p>
-                    <span className="font-semibold">Machinery Charges</span>: ₹{" "}
-                    {otherCharges?.machinery_charges}/-
-                  </p>
-                  <p>
-                    <span className="font-semibold">Electricity Charges</span>: ₹{" "}
-                    {otherCharges?.electricity_charges}/-
-                  </p>
-                  <p>
-                    <span className="font-semibold">Other Charges</span>: ₹{" "}
-                    {otherCharges?.other_charges}/-
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
+  {isLoadingBom ? (
+    <Loading />
+  ) : (
+    <div className="space-y-8">
+      {/* BOM Info Section */}
+      <div className="bg-white p-6 shadow-lg rounded-lg border">
+        <h3 className="text-xl font-semibold mb-4 text-teal-600">
+          General Information
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <p className="font-semibold text-gray-600">BOM Name</p>
+            <p className="text-gray-800">{bomName}</p>
+          </div>
+          <div>
+            <p className="font-semibold text-gray-600">Parts Count</p>
+            <p className="text-gray-800">{partsCount}</p>
+          </div>
+          <div>
+            <p className="font-semibold text-gray-600">Total Cost</p>
+            <p className="text-gray-800 text-lg font-bold">
+              ₹ {totalBomCost}/-
+            </p>
+          </div>
         </div>
+      </div>
+
+      {/* Raw Materials Section */}
+      {rawMaterials && (
+        <div className="bg-blue-50 p-6 shadow-lg rounded-lg border border-blue-300">
+          <h3 className="text-xl font-semibold mb-4 text-blue-600">
+            Raw Materials
+          </h3>
+          <ul className="pl-5 list-disc space-y-4">
+            {rawMaterials.map((material, index) => (
+              <li key={index} className="space-y-1">
+                <p>
+                  <span className="font-semibold text-gray-600">Item ID:</span>{" "}
+                  {material?.item?.product_id}
+                </p>
+                <p>
+                  <span className="font-semibold text-gray-600">
+                    Item Name:
+                  </span>{" "}
+                  {material?.item?.name}
+                </p>
+                <p>
+                  <span className="font-semibold text-gray-600">Quantity:</span>{" "}
+                  {material?.quantity}
+                </p>
+                <p>
+                  <span className="font-semibold text-gray-600">UOM:</span>{" "}
+                  {material?.item?.uom}
+                </p>
+                <p>
+                  <span className="font-semibold text-gray-600">
+                    Total Part Cost:
+                  </span>{" "}
+                  ₹ {material?.total_part_cost}/-
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Processes Section */}
+      {processes && (
+        <div className="bg-green-50 p-6 shadow-lg rounded-lg border border-green-300">
+          <h3 className="text-xl font-semibold mb-4 text-green-600">
+            Processes
+          </h3>
+          <ul className="pl-5 list-disc space-y-2">
+            {processes.map((process, index) => (
+              <li key={index} className="text-gray-800">
+                {process}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Finished Good Section */}
+      {finishedGood && (
+        <div className="bg-yellow-50 p-6 shadow-lg rounded-lg border border-yellow-300">
+          <h3 className="text-xl font-semibold mb-4 text-yellow-600">
+            Finished Good
+          </h3>
+          <ul className="pl-5 space-y-3">
+            <li>
+              <span className="font-semibold text-gray-600">Item ID:</span>{" "}
+              {finishedGood?.item?.product_id}
+            </li>
+            <li>
+              <span className="font-semibold text-gray-600">Item Name:</span>{" "}
+              {finishedGood?.item?.name}
+            </li>
+            <li>
+              <span className="font-semibold text-gray-600">Quantity:</span>{" "}
+              {finishedGood.quantity}
+            </li>
+            <li>
+              <span className="font-semibold text-gray-600">UOM:</span>{" "}
+              {finishedGood?.item?.uom}
+            </li>
+            <li>
+              <span className="font-semibold text-gray-600">Category:</span>{" "}
+              {finishedGood?.item?.category}
+            </li>
+            <li>
+              <span className="font-semibold text-gray-600">Cost:</span> ₹{" "}
+              {finishedGood.cost}/-
+            </li>
+            <li>
+              <span className="font-semibold text-gray-600">
+                Supporting Document:
+              </span>{" "}
+              {finishedGood.supporting_doc ? (
+                <a
+                  href={finishedGood.supporting_doc}
+                  target="_blank"
+                  className="underline text-teal-600"
+                >
+                  Open
+                </a>
+              ) : (
+                "N/A"
+              )}
+            </li>
+          </ul>
+        </div>
+      )}
+
+      {/* Scrap Materials Section */}
+      {scrapMaterials && (
+        <div className="bg-red-50 p-6 shadow-lg rounded-lg border border-red-300">
+          <h3 className="text-xl font-semibold mb-4 text-red-600">
+            Scrap Materials
+          </h3>
+          <ul className="pl-5 list-disc space-y-4">
+            {scrapMaterials.map((material, index) => (
+              <li key={index} className="space-y-1">
+                <p>
+                  <span className="font-semibold text-gray-600">Item ID:</span>{" "}
+                  {material?.item?.product_id}
+                </p>
+                <p>
+                  <span className="font-semibold text-gray-600">
+                    Item Name:
+                  </span>{" "}
+                  {material?.item?.name}
+                </p>
+                <p>
+                  <span className="font-semibold text-gray-600">Quantity:</span>{" "}
+                  {material?.quantity}
+                </p>
+                <p>
+                  <span className="font-semibold text-gray-600">UOM:</span>{" "}
+                  {material?.item?.uom}
+                </p>
+                <p>
+                  <span className="font-semibold text-gray-600">
+                    Total Part Cost:
+                  </span>{" "}
+                  ₹ {material?.total_part_cost}/-
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Other Charges Section */}
+      {otherCharges && (
+        <div className="bg-purple-50 p-6 shadow-lg rounded-lg border border-purple-300">
+          <h3 className="text-xl font-semibold mb-4 text-purple-600">
+            Other Charges
+          </h3>
+          <div className="space-y-3">
+            <p>
+              <span className="font-semibold text-gray-600">Labour Charges:</span> ₹{" "}
+              {otherCharges?.labour_charges}/-
+            </p>
+            <p>
+              <span className="font-semibold text-gray-600">
+                Machinery Charges:
+              </span>{" "}
+              ₹ {otherCharges?.machinery_charges}/-
+            </p>
+            <p>
+              <span className="font-semibold text-gray-600">
+                Electricity Charges:
+              </span>{" "}
+              ₹ {otherCharges?.electricity_charges}/-
+            </p>
+            <p>
+              <span className="font-semibold text-gray-600">Other Charges:</span>{" "}
+              ₹ {otherCharges?.other_charges}/-
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  )}
+</div>
+
       </div>
     </Drawer>
   );

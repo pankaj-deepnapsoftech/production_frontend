@@ -22,9 +22,9 @@ import {
   useColorModeValue,
   Select,
 } from "@chakra-ui/react";
-import { FaUpload } from "react-icons/fa";
+import { FaCheck, FaUpload } from "react-icons/fa";
 import { MdOutlineRefresh } from "react-icons/md";
-import axios from "axios";
+import axios, { Axios } from "axios";
 import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
 import Pagination from "./Pagination";
@@ -60,11 +60,13 @@ const Task = () => {
           }
         );
 
+        console.log("task", response.data.data);
+
         const tasks = response.data.data.map((task) => {
           // Ensure that sale_id, product_id, and user_id are valid and have values
           const sale = task?.sale_id?.[0];
           const product = task?.sale_id?.[0].product_id?.[0];
-          const user = task?.sale_id?.[0].user_id?.[0];
+          const assign = task?.assined_by?.[0];
 
           return {
             id: task?._id,
@@ -72,12 +74,16 @@ const Task = () => {
             productName: product?.name || "No product name",
             productQuantity: sale?.product_qty || 0,
             productPrice: `${sale?.price || 0} /-`,
-            assignedBy: `${user?.first_name || ""} ${user?.last_name || ""}`,
-            design_status: task?.isCompleted ? "Completed" : "Pending",
-            design_approval: sale?.customer_approve || "Not Approved",
+            assignedBy: `${assign?.first_name}`,
+            role: `${assign?.role}`,
+            design_status: task?.isCompleted,
+            design_approval: sale?.customer_approve,
+            customer_design_comment: sale?.customer_design_comment,
             sale_id: sale?._id,
             designFile: sale?.designFile,
             assinedby_comment: task?.assinedby_comment,
+            assined_process: task?.assined_process,
+
           };
         });
 
@@ -94,6 +100,16 @@ const Task = () => {
   // Handle filter change
   const handleFilterChange = (field, value) => {
     setFilters({ ...filters, [field]: value });
+  };
+
+  const colorChange = (color) => {
+    if (color === "Pending") {
+      return "orange";
+    } else if (color === "Design Rejected") {
+      return "red";
+    } else {
+      return "green";
+    }
   };
 
   // Filter tasks based on selected filters
@@ -168,6 +184,28 @@ const Task = () => {
     }
   };
 
+  const handleAccept = async(id)=>{
+    try {
+      const response = await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}assined/update-status/${id}`,
+        {isCompleted: "UnderProcessing" } ,
+        {
+          headers: {
+            Authorization: `Bearer ${cookies?.access_token}`,
+          },
+        }
+      )
+      console.log(response);
+      
+      toast.success(response.data.message);
+    } catch (error) {
+      console.log(error);
+      
+      toast.error(error);
+      
+    }
+  }
+
   console.log(tasks);
 
   return (
@@ -225,7 +263,7 @@ const Task = () => {
               left={0}
               h="100%"
               w={2}
-              bg={task.design_status === "Pending" ? "orange" : "green"}
+              bg={colorChange(task.design_status)}
               borderRadius="md"
             />
 
@@ -235,12 +273,11 @@ const Task = () => {
                 {task.productName}
               </Text>
               <Badge
-                colorScheme={
-                  task.design_status === "Pending" ? "orange" : "green"
-                }
+                colorScheme={colorChange(task.design_status)}
                 fontSize="sm"
               >
-                {task.design_status}
+                <strong>Task:</strong>
+                {task?.design_status}
               </Badge>
             </HStack>
 
@@ -261,36 +298,52 @@ const Task = () => {
                 <Text fontSize="sm">
                   <strong>Assigned By:</strong> {task.assignedBy}
                 </Text>
+
                 <Text fontSize="sm">
-                  <strong>Remarks:</strong> {task?.assinedby_comment}
+                  <strong>Assigned Process: </strong> {task?.assined_process}
                 </Text>
+
+                {task?.assinedby_comment ? (
+                  <Text fontSize="sm">
+                    <strong>Remarks:</strong> {task?.assinedby_comment}
+                  </Text>
+                ) : null}
               </VStack>
             </HStack>
 
             {/* Footer */}
             <Divider my={3} />
             <HStack justify="space-between" mt={3}>
-              {task.design_approval === "Reject" ? (
-                <>
-                  <VStack align="start">
-                    <Badge
-                      colorScheme={
-                        task.design_approval === "rejected" ? "orange" : "green"
-                      }
-                      fontSize="sm"
-                    >
-                      <strong>Customer Approval:</strong> {task.design_approval}
-                    </Badge>
-                    <Text fontSize="sm" color="red.500">
-                      <strong>Feedback:</strong> {task.rejection_comment}
-                    </Text>
-                  </VStack>
-                  <Badge colorScheme="green" fontSize="sm">
+             
+              {task?.design_status === "Pending" ? (
+                 <Button
+                 leftIcon={<FaCheck  />}
+                 colorScheme="teal"
+                 size="sm"
+                 onClick={() => handleAccept(task?.id)}
+               >
+                 Accept Task
+               </Button>
+              ) : task?.design_status === "UnderProcessing" ? (
+                <Button
+                leftIcon={<FaUpload />}
+                colorScheme="teal"
+                size="sm"
+                onClick={() => handleOpenModal(task)}
+              >
+                Upload File
+              </Button>
+              ): task?.design_approval === "Approve" ? (
+                <Badge colorScheme="green" fontSize="sm">
+                  Customer Approval : {task.design_approval}
+                </Badge>
+              ) : task?.design_approval === "Reject" ? (
+                <VStack>
+                  <Badge colorScheme="red" fontSize="sm">
                     Customer Approval : {task.design_approval}
                   </Badge>
-                  <Text fontSize="sm">
-                  <strong>Feedback: </strong>
-                  {task?.customer_design_comment}
+                  <Text className="text-red-500">
+                    Feedback : {task.customer_design_comment}
                   </Text>
                   <Button
                     leftIcon={<FaUpload />}
@@ -298,22 +351,9 @@ const Task = () => {
                     size="sm"
                     onClick={() => handleOpenModal(task)}
                   >
-                    Re-upload Design
+                    Re-Upload File
                   </Button>
-                </>
-              ) : task?.design_status === "Pending" ? (
-                <Button
-                  leftIcon={<FaUpload />}
-                  colorScheme="teal"
-                  size="sm"
-                  onClick={() => handleOpenModal(task)}
-                >
-                  Upload File
-                </Button>
-              ) : task?.design_approval === "Approve" ? (
-                <Badge colorScheme="green" fontSize="sm">
-                  Customer Approval : {task.design_approval}
-                </Badge>
+                </VStack>
               ) : (
                 <Text fontSize="sm">
                   <strong>Uploaded File: </strong>

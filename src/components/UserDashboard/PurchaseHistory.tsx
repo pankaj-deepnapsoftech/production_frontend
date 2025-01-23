@@ -49,7 +49,7 @@ interface Purchase {
 
 const PurchaseHistory = () => {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
-  const [status, setStatus] = useState<string>(""); 
+  const [status, setStatus] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
   const [selectedProcess, setSelectedProcess] = useState<any>([]);
@@ -83,6 +83,7 @@ const PurchaseHistory = () => {
         }
       );
       setPurchases(response.data.data);
+      console.log("purchase data: ", response.data.data);
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
@@ -127,7 +128,7 @@ const PurchaseHistory = () => {
 
   const openDesignModal = (designFile: string, purchase: object) => {
     setSelectedDesign(designFile);
-    setSelectedData(purchase)
+    setSelectedData(purchase);
     onImageOpen();
   };
 
@@ -191,7 +192,7 @@ const PurchaseHistory = () => {
                     Time: {new Date(purchase?.createdAt).toLocaleTimeString()}
                   </Text>
                 </VStack>
-                <VStack>
+                <VStack align="flex-end">
                   {purchase?.Status === "Pending" ? (
                     <Button
                       size="sm"
@@ -204,9 +205,27 @@ const PurchaseHistory = () => {
                     </Button>
                   ) : (
                     <Badge colorScheme="green" fontSize="sm">
-                      Status: {purchase?.Status}
+                      Sale: {purchase?.Status}
                     </Badge>
                   )}
+
+                  {purchase?.customer_approve === "Reject" ? (
+                    <>
+                      <Badge colorScheme="red" fontSize="sm">
+                        Design: {purchase?.customer_approve}
+                      </Badge>
+
+                      <Text className="text-red-500">
+                        {" "}
+                        <strong>Feedback:</strong>{" "}
+                        {purchase?.customer_design_comment}
+                      </Text>
+                    </>
+                  ) : purchase?.customer_approve === "Approve" ? (
+                    <Badge colorScheme="green" fontSize="sm">
+                      Design: {purchase?.customer_approve}
+                    </Badge>
+                  ) : null}
                 </VStack>
               </HStack>
               <Divider my={2} />
@@ -256,21 +275,20 @@ const PurchaseHistory = () => {
                     Track Production
                   </Button>
                 )}
-                {purchase?.designFile && (
-                  <Button
-                    size="sm"
-                    bgColor="white"
-                    _hover={{ bgColor: "green.500" }}
-                    className="border border-green-500 hover:text-white"
-                    onClick={() => {
-                      openDesignModal(purchase?.designFile, purchase )
-                    }
-
-                    }
-                  >
-                    View Design
-                  </Button>
-                )}
+                {purchase?.designFile &&
+                  purchase?.customer_approve != "Reject" && (
+                    <Button
+                      size="sm"
+                      bgColor="white"
+                      _hover={{ bgColor: "green.500" }}
+                      className="border border-green-500 hover:text-white"
+                      onClick={() => {
+                        openDesignModal(purchase?.designFile, purchase);
+                      }}
+                    >
+                      View Design
+                    </Button>
+                  )}
               </div>
             </Box>
           ))
@@ -300,7 +318,11 @@ const PurchaseHistory = () => {
           <ModalCloseButton />
           <ModalBody>
             {selectedDesign && selectedData && (
-             <ViewDesign  designUrl={selectedDesign} purchaseData = {selectedData}/>
+              <ViewDesign
+                designUrl={selectedDesign}
+                purchaseData={selectedData}
+                onClose={onImageClose}
+              />
             )}
           </ModalBody>
         </ModalContent>

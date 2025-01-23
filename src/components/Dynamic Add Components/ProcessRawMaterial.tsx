@@ -172,7 +172,7 @@ const ProcessRawMaterial: React.FC<ProcessRawMaterialProps> = ({
                     </Td>
 
                     <Td>
-                      <FormControl isRequired>
+                      <FormControl>
                         <Input
                           border="1px"
                           borderColor="#a9a9a9"

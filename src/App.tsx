@@ -21,6 +21,7 @@ import Entries from "./components/UserDashboard/Entries";
 import NewEntry from "./components/UserDashboard/NewEntry";
 import { useCookies } from "react-cookie";
 import CustomerLogin from "./components/Authentication/CustomerLogin";
+import EmployeeDashboard from "./pages/EmployeeDashboard";
 
 const App: React.FC = () => {
 
@@ -54,9 +55,9 @@ const App: React.FC = () => {
           <Route element={<Main />} >
             <Route path="/home" element={<Home />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/about" element={<About />} />
+            <Route path="/about" element={<About />} />          
           </Route>
-          <Route path="/customer-login" element={<CustomerLogin />} />
+          <Route path="/customer-login" element={<CustomerLogin />} />      
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           {userRole !== "user" && userRole !== "Security Guard" ? <Route path="/" element={<Layout />}>

@@ -12,14 +12,15 @@ import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 
-const CreateCustomer: React.FC = ({ onClose }) => {
-  const [customerType, setCustomerType] = useState("Individual");
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phoneNo, setPhoneNo] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [gstNo, setGstNo] = useState("");
+const UpdateCustomer: React.FC = ({ onClose, customerData }) => {
+  const [customerType, setCustomerType] = useState(customerData?.type || "");
+  const [fullName, setFullName] = useState(customerData?.full_name || "");
+  const [email, setEmail] = useState(customerData?.email || "");
+  const [phoneNo, setPhoneNo] = useState(customerData?.phone || "");
+  const [companyName, setCompanyName] = useState(
+    customerData?.company_name || ""
+  );
+  const [gstNo, setGstNo] = useState(customerData?.GST_NO || "");
   const [cookies] = useCookies();
   const toast = useToast();
 
@@ -30,7 +31,6 @@ const CreateCustomer: React.FC = ({ onClose }) => {
       type: customerType,
       full_name: fullName,
       email,
-      password,
       phone: phoneNo,
       ...(customerType === "company" && {
         company_name: companyName,
@@ -39,14 +39,15 @@ const CreateCustomer: React.FC = ({ onClose }) => {
     };
 
     try {
-      
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}customer/create`,
+      const response = await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}customer/update/${customerData?._id}`,
         payload,
-        
+        {
+          headers: {
+            Authorization: `Bearer ${cookies.access_token}`,
+          },
+        }
       );
-      
-      console.log(response);
 
       toast({
         title: "Customer Created",
@@ -60,20 +61,16 @@ const CreateCustomer: React.FC = ({ onClose }) => {
       setCustomerType("individual");
       setFullName("");
       setEmail("");
-      setPassword("");
       setPhoneNo("");
       setCompanyName("");
       setGstNo("");
 
       onClose();
-
     } catch (error: any) {
-      console.log(error);
-      
       toast({
         title: "Error",
         description:
-          error.response?.data?.message || "Failed to create customer.",
+          error.response?.data?.message || "Failed to update customer.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -114,17 +111,6 @@ const CreateCustomer: React.FC = ({ onClose }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             type="email"
-            placeholder="Enter email"
-            className="border-2 border-gray-300 rounded-md p-2"
-          />
-        </FormControl>
-
-        <FormControl id="password" isRequired>
-          <FormLabel className="text-lg font-medium">password</FormLabel>
-          <Input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
             placeholder="Enter email"
             className="border-2 border-gray-300 rounded-md p-2"
           />
@@ -179,11 +165,11 @@ const CreateCustomer: React.FC = ({ onClose }) => {
           width="full"
           className="bg-teal-600 text-white"
         >
-          Create Customer
+          Update Customer
         </Button>
       </form>
     </Box>
   );
 };
 
-export default CreateCustomer;
+export default UpdateCustomer;

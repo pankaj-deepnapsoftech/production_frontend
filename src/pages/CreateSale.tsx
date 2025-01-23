@@ -21,7 +21,7 @@ interface GSTFields {
   IGST?: number;
 }
 
-const CreateSale: React.FC = () => {
+const CreateSale: React.FC = ({ onClose }) => {
   const [formData, setFormData] = useState({
     customer_id: "",
     product_id:"",
@@ -143,7 +143,8 @@ const CreateSale: React.FC = () => {
         isClosable: true,
       });
 
-       console.log(response.data);
+      onClose();
+       //console.log(response.data);
     } catch (error) {
       toast({
         title: "Error",

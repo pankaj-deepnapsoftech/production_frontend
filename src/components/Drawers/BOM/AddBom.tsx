@@ -440,7 +440,7 @@ const AddBom: React.FC<AddBomProps> = ({
                     </Td>
 
                     <Td>
-                      <FormControl isRequired>
+                      <FormControl>
                         <Input
                           border="1px"
                           borderColor="#a9a9a9"
