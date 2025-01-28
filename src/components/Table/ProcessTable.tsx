@@ -245,16 +245,16 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                               )}
                             {cell.column.id === "creator" && (
                               <span>
-                                {row.original.creator.first_name +
+                                {row.original?.creator?.first_name +
                                   " " +
-                                  row.original.creator.last_name}
+                                  row.original?.creator?.last_name}
                               </span>
                             )}
                             {cell.column.id === "item" && (
-                              <span>{row.original.item.name}</span>
+                              <span>{row.original?.item?.name}</span>
                             )}
                             {cell.column.id === "rm_store" && (
-                              <span>{row.original.rm_store.name}</span>
+                              <span>{row.original?.rm_store?.name}</span>
                             )}
                             {cell.column.id === "fg_store" && (
                               <span>{row.original.fg_store.name}</span>

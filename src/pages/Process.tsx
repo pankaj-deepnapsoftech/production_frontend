@@ -102,7 +102,7 @@ const Process: React.FC = () => {
     const searchText = searchKey?.toLowerCase();
     const results = data.filter(
       (p: any) =>
-        p.creator.first_name?.toLowerCase()?.includes(searchText) ||
+        p.creator?.first_name?.toLowerCase()?.includes(searchText) ||
         p?.creator?.last_name?.toLowerCase()?.includes(searchText) ||
         p?.item?.name?.toLowerCase()?.includes(searchText) ||
         p?.status?.toLowerCase()?.includes(searchText) ||

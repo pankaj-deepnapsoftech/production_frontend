@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -47,8 +48,8 @@ interface GraphData {
 
 const Overview = () => {
   const navigate = useNavigate();
-  const [purchases, setPurchases] = useState<Purchase[]>([]); // Store purchase objects
-  const [totalPurchases, setTotalPurchases] = useState<number>(0); // Store the total number of purchases
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [totalPurchases, setTotalPurchases] = useState<number>(0);
   const [graphData, setGraphData] = useState<GraphData>({
     labels: [],
     datasets: [],
@@ -56,14 +57,12 @@ const Overview = () => {
   const [cookies] = useCookies(["access_token"]);
   const { role } = useSelector((state: any) => state.auth);
 
-
   useEffect(() => {
     if (role === "Security Guard") {
       navigate("/entries");
     }
   }, [role, navigate]);
 
- 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -82,15 +81,17 @@ const Overview = () => {
           }
         );
 
-        const fetchedPurchases = response.data.data;
-        setPurchases(fetchedPurchases);
+        const filteredPurchases = response.data.data.filter(
+          (purchase) => purchase?.payment_verify === true
+        );
 
-        // Process data for the graph
-        const monthlyData = Array(12).fill(0); // Initialize array to store count for each month
-        fetchedPurchases.forEach((purchase) => {
+        setPurchases(filteredPurchases);
+
+        const monthlyData = Array(12).fill(0);
+        filteredPurchases.forEach((purchase) => {
           const purchaseDate = new Date(purchase.createdAt);
-          const month = purchaseDate.getMonth(); // Get the month (0-indexed)
-          monthlyData[month] += 1; // Increment the count for the month
+          const month = purchaseDate.getMonth();
+          monthlyData[month] += 1;
         });
 
         setGraphData({
@@ -119,7 +120,7 @@ const Overview = () => {
         });
 
         // Set the total purchases count
-        setTotalPurchases(fetchedPurchases.length);
+        setTotalPurchases(filteredPurchases.length);
       } catch (error) {
         console.error("Error fetching purchase history:", error);
       }
@@ -128,7 +129,6 @@ const Overview = () => {
     fetchData();
   }, [cookies.access_token]);
 
-  
   const productionStatus = {
     title: "Production Status",
     status: "In Progress",
@@ -143,18 +143,21 @@ const Overview = () => {
 
       <div className="mb-8 w-full max-w-4xl sm:max-w-full mx-auto">
         <div className="h-full ">
-          <ResponsiveContainer>
-            <Line
-              data={graphData}
-              options={{
-                responsive: true,
-                plugins: {
-                  legend: { position: "top" },
-                  title: { display: true, text: "Purchases Over the Year" },
-                },
-              }}
-            />
-          </ResponsiveContainer>
+         
+             <ResponsiveContainer>
+             <Line
+               data={graphData}
+               options={{
+                 responsive: true,
+                 plugins: {
+                   legend: { position: "top" },
+                   title: { display: true, text: "Purchases Over the Year" },
+                 },
+               }}
+             />
+           </ResponsiveContainer>
+         
+         
         </div>
       </div>
       <hr className="bg-gray-800 border" />
@@ -165,7 +168,7 @@ const Overview = () => {
         color="black"
         borderRadius="md"
         boxShadow="sm"
-        width="100%" 
+        width="100%"
         textAlign="center"
       >
         <Text

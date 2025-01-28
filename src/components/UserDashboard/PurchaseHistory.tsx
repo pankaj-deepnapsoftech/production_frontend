@@ -24,11 +24,15 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
-import { MdOutlineRefresh } from "react-icons/md";
+import { MdOutlineRefresh, MdOutlineTaskAlt } from "react-icons/md";
 import TrackProduction from "./TrackProduction";
 import Pagination from "../../pages/Pagination";
 import { BiHappyHeartEyes, BiSad } from "react-icons/bi";
 import ViewDesign from "./ViewDesign";
+import { FaCloudUploadAlt } from "react-icons/fa";
+import { IoEyeSharp } from "react-icons/io5";
+import UploadPayment from "./UploadPayment";
+import DeliveryProof from "./DeliveryProof";
 
 interface Purchase {
   GST: {
@@ -53,10 +57,18 @@ const PurchaseHistory = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
   const [selectedProcess, setSelectedProcess] = useState<any>([]);
+  const [payment, setPayment] = useState("");
+  const [purchaseId, setPurchaseId] = useState("");
   const [selectedData, setSelectedData] = useState<any>([]);
   const [designProcess, setDesignProcess] = useState<any>([]);
   const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
+  const [trackingId, setTrackingId] = useState("");
+  const [orderFile, setOrderFile] = useState("");
+  const [webLink, setWebLink] = useState("");
   const [pages, setPages] = useState(1);
+  const [assignedData, setAssignedData] = useState([]);
+  
+
   const {
     isOpen: isProductionModalOpen,
     onOpen: onProductionOpen,
@@ -66,6 +78,23 @@ const PurchaseHistory = () => {
     isOpen: isImageModalOpen,
     onOpen: onImageOpen,
     onClose: onImageClose,
+  } = useDisclosure();
+  const {
+    isOpen: isPaymentOpen,
+    onOpen: onPaymentOpen,
+    onClose: onPaymentClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isDeliveryOpen,
+    onOpen: onDeliveryOpen,
+    onClose: onDeliveryClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isProofOpen,
+    onOpen: onProofOpen,
+    onClose: onProofClose,
   } = useDisclosure();
 
   const fetchPurchases = async () => {
@@ -120,17 +149,38 @@ const PurchaseHistory = () => {
     }
   };
 
-  const calculateTotalPrice = (purchase: Purchase): number => {
-    const { price, product_qty, GST } = purchase;
-    const gstMultiplier = 1 + (GST.CGST + GST.SGST + GST.IGST) / 100;
-    return price * product_qty * gstMultiplier;
-  };
+
 
   const openDesignModal = (designFile: string, purchase: object) => {
     setSelectedDesign(designFile);
-    setSelectedData(purchase);
+    setSelectedData(purchase);  
     onImageOpen();
   };
+
+  const handlePayment = (id: any, payment_ss: string) => {
+    setPurchaseId(id);
+    setPayment(payment_ss);
+    onPaymentOpen();
+  };
+
+  const handleDelivery = (trackingId: string, link: string) => {
+    setTrackingId(trackingId);
+    setWebLink(link);
+    onDeliveryOpen();
+  };
+
+  const handleProof = (id: any, file: any) => {
+    setPurchaseId(id);
+    setOrderFile(file);
+    onProofOpen();
+  };
+
+  const calculateTotalPrice = (price:number, qty:number, gst:number)=>{
+    const basePrice = price * qty;
+    const gstVal = (basePrice * gst)/100;
+    const totalPrice = basePrice + gstVal;
+    return totalPrice;
+  }
 
   useEffect(() => {
     fetchPurchases();
@@ -177,22 +227,30 @@ const PurchaseHistory = () => {
               boxShadow="lg"
               bg="white"
               className="relative p-4 mt-3"
+              w={{ base: "100%", md: "auto" }} // Full width on smaller screens, auto on medium screens
             >
               <Box
                 className={`absolute top-0 left-0 h-full w-2 ${
                   purchase?.Status === "Pending" ? "bg-red-500" : "bg-green-500"
                 }`}
               ></Box>
-              <HStack justifyContent="space-between">
-                <VStack align="flex-start" spacing={1}>
-                  <Text fontSize="sm" fontWeight="bold">
+
+              <HStack justify="space-between" mb={3} flexWrap="wrap" gap={4}>
+                <VStack align="start" w={{ base: "100%", md: "48%" }}>
+                  <Text fontSize={{ base: "xs", sm: "sm" }} fontWeight="bold">
                     Date: {new Date(purchase?.createdAt).toLocaleDateString()}
                   </Text>
-                  <Text fontSize="sm" className="text-gray-500">
+                  <Text
+                    fontSize={{ base: "xs", sm: "sm" }}
+                    className="text-gray-500"
+                  >
                     Time: {new Date(purchase?.createdAt).toLocaleTimeString()}
                   </Text>
                 </VStack>
-                <VStack align="flex-end">
+                <VStack
+                  align={{ base: "start", md: "end" }}
+                  w={{ base: "100%", md: "48%" }}
+                >
                   {purchase?.Status === "Pending" ? (
                     <Button
                       size="sm"
@@ -216,7 +274,6 @@ const PurchaseHistory = () => {
                       </Badge>
 
                       <Text className="text-red-500">
-                        {" "}
                         <strong>Feedback:</strong>{" "}
                         {purchase?.customer_design_comment}
                       </Text>
@@ -226,44 +283,106 @@ const PurchaseHistory = () => {
                       Design: {purchase?.customer_approve}
                     </Badge>
                   ) : null}
+
+                  {purchase && purchase?.paymet_status ? (
+                    <Badge
+                      colorScheme={
+                        purchase?.paymet_status === "Pending"
+                          ? "orange"
+                          : "green"
+                      }
+                      fontSize="sm"
+                    >
+                      Payment:{" "}
+                      {purchase?.paymet_status === "Paied"
+                        ? "Paid"
+                        : purchase?.paymet_status}
+                    </Badge>
+                  ) : null}
+
+                  {purchase?.tracking_id && purchase?.tracking_web ? (
+                    <Text
+                      className="text-blue-500 underline cursor-pointer"
+                      onClick={() =>
+                        handleDelivery(
+                          purchase?.tracking_id,
+                          purchase?.tracking_web
+                        )
+                      }
+                    >
+                      Track
+                    </Text>
+                  ) : null}
+
+                  {purchase?.product_status ? (
+                    <Badge
+                      colorScheme={
+                        purchase?.product_status === "Dispatch"
+                          ? "orange"
+                          : "green"
+                      }
+                      fontSize="sm"
+                    >
+                      Product Status: {purchase?.product_status}
+                    </Badge>
+                  ) : null}
                 </VStack>
               </HStack>
+
               <Divider my={2} />
-              <HStack justifyContent="space-between">
-                <VStack align="flex-start" spacing={2}>
-                  <Text fontSize="sm" fontWeight="bold">
+              <HStack
+                justify="space-between"
+                spacing={3}
+                mt={3}
+                flexWrap="wrap"
+                gap={4}
+              >
+                <VStack align="start" w={{ base: "100%", md: "48%" }}>
+                  <Text fontSize={{ base: "xs", sm: "sm" }} fontWeight="bold">
                     Product Name:{" "}
                     <span className="font-normal">
                       {purchase?.product_id?.[0]?.name}
                     </span>
                   </Text>
 
-                  <Text fontSize="sm" fontWeight="bold">
+                  <Text fontSize={{ base: "xs", sm: "sm" }} fontWeight="bold">
                     Quantity:{" "}
                     <span className="font-normal">{purchase?.product_qty}</span>
                   </Text>
                 </VStack>
-                <VStack align="flex-end" spacing={2}>
-                  <Text fontSize="sm" fontWeight="bold">
+
+                <VStack
+                  align={{ base: "start", md: "end" }}
+                  w={{ base: "100%", md: "48%" }}
+                >
+                  {" "}
+                  {/* Change to flex-start for alignment on smaller screens */}
+                  <Text fontSize={{ base: "xs", sm: "sm" }} fontWeight="bold">
                     Price:{" "}
-                    <span className="font-normal">{purchase?.price}</span>
+                    <span className="font-normal">{purchase?.price * purchase?.product_qty}</span>
                   </Text>
-                  <Text fontSize="sm" fontWeight="bold">
+                  <Text fontSize={{ base: "xs", sm: "sm" }} fontWeight="bold">
+                    GST:{" "}
+                    <span className="font-normal">{purchase?.GST} %</span>
+                  </Text>
+                  <Text fontSize={{ base: "xs", sm: "sm" }} fontWeight="bold">
                     Total Price:{" "}
                     <span className="font-normal">
-                      {calculateTotalPrice(purchase).toFixed(2)}
+                      {calculateTotalPrice(purchase?.price, purchase?.product_qty, purchase?.GST).toFixed(2)}
                     </span>
                   </Text>
                 </VStack>
               </HStack>
+
               <Divider my={2} />
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {purchase.Status === "Approved" && (
                   <Button
-                    size="sm"
+                    size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
                     bgColor="white"
+                    leftIcon={<MdOutlineTaskAlt />}
                     _hover={{ bgColor: "green.500" }}
-                    className="border border-green-500 hover:text-white"
+                    className="border border-green-500 hover:text-white w-full sm:w-auto" // Full width on small screens, auto width on larger screens
                     onClick={() => {
                       onProductionOpen();
                       setDesignProcess(purchase?.empprocess);
@@ -275,20 +394,73 @@ const PurchaseHistory = () => {
                     Track Production
                   </Button>
                 )}
+
                 {purchase?.designFile &&
-                  purchase?.customer_approve != "Reject" && (
+                  purchase?.customer_approve !== "Reject" && (
                     <Button
-                      size="sm"
+                      size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
+                      leftIcon={<IoEyeSharp />}
                       bgColor="white"
-                      _hover={{ bgColor: "green.500" }}
-                      className="border border-green-500 hover:text-white"
-                      onClick={() => {
-                        openDesignModal(purchase?.designFile, purchase);
-                      }}
+                      _hover={{ bgColor: "orange.500" }}
+                      className="border border-orange-500 hover:text-white w-full sm:w-auto"
+                      onClick={() =>
+                        openDesignModal(purchase?.designFile, purchase, purchase?.customer_approve)
+                      }
                     >
                       View Design
                     </Button>
                   )}
+
+                {purchase?.invoice && (
+                  <>
+                    <Button
+                      size={{ base: "xs", sm: "sm" }}
+                      leftIcon={<IoEyeSharp />}
+                      bgColor="white"
+                      _hover={{ bgColor: "blue.500" }}
+                      className="border border-blue-500 hover:text-white w-full sm:w-auto"
+                    >
+                      <a
+                        href={purchase?.invoice}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View Invoice
+                      </a>
+                    </Button>
+
+                    <Button
+                      size={{ base: "xs", sm: "sm" }}
+                      leftIcon={<FaCloudUploadAlt />}
+                      bgColor="white"
+                      _hover={{ bgColor: "blue.500" }}
+                      className="border border-blue-500 hover:text-white w-full sm:w-auto"
+                      onClick={() =>
+                        handlePayment(
+                          purchase?._id,
+                          purchase?.customer_pyement_ss
+                        )
+                      }
+                    >
+                      Attach Payment
+                    </Button>
+                  </>
+                )}
+
+                {purchase?.tracking_id && purchase?.tracking_web && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }}
+                    leftIcon={<FaCloudUploadAlt />}
+                    bgColor="white"
+                    _hover={{ bgColor: "blue.500" }}
+                    className="border border-blue-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      handleProof(purchase?._id, purchase?.customer_order_ss)
+                    }
+                  >
+                    Attach Delivery Proof
+                  </Button>
+                )}
               </div>
             </Box>
           ))
@@ -322,6 +494,86 @@ const PurchaseHistory = () => {
                 designUrl={selectedDesign}
                 purchaseData={selectedData}
                 onClose={onImageClose}
+              />
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* payment modal */}
+      <Modal isOpen={isPaymentOpen} onClose={onPaymentClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Payment</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {purchaseId && (
+              <UploadPayment
+                id={purchaseId}
+                paymentFile={payment}
+                onClose={onPaymentClose}
+              />
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* delivery modal */}
+      <Modal isOpen={isDeliveryOpen} onClose={onDeliveryClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Track Delivery</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack
+              align="start"
+              spacing={4}
+              p={4}
+              bg="white"
+              rounded="md"
+              boxShadow="lg"
+              maxWidth="lg"
+              w="full"
+              className="border border-gray-300"
+            >
+              <Text
+                fontSize="xl"
+                fontWeight="bold"
+                color="orange.500"
+                className="text-center"
+              >
+                Here is the link and tracking ID of the delivery
+              </Text>
+
+              <Text
+                color="red.600"
+                className=" flex items-start w-full justify-start flex-col"
+              >
+                <strong className="text-black">Website Link:</strong>
+                <span className=" w-full ">{webLink}</span>
+              </Text>
+
+              <Text color="red.600">
+                <strong className="text-black">Tracking ID:</strong>{" "}
+                {trackingId}
+              </Text>
+            </VStack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* delivery proof modal */}
+      <Modal isOpen={isProofOpen} onClose={onProofClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Delivery</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {purchaseId && (
+              <DeliveryProof
+                id={purchaseId}
+                orderfile={orderFile}
+                onClose={onProofClose}
               />
             )}
           </ModalBody>

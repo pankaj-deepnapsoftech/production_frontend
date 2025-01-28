@@ -147,6 +147,8 @@ import {
       ],
       []
     );
+
+    //console.log("Products:", products); // Check if `products` is an array
   
     const inventoryCategoryStyles = {
       indirect: {

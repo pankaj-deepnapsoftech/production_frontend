@@ -15,23 +15,17 @@ import {
 import axios from "axios";
 import { useCookies } from "react-cookie";
 
-interface GSTFields {
-  CGST?: number;
-  SGST?: number;
-  IGST?: number;
-}
-
 const CreateSale: React.FC = ({ onClose }) => {
   const [formData, setFormData] = useState({
     customer_id: "",
-    product_id:"",
+    product_id: "",
     product_type: "finished goods",
     price: "",
     product_qty: "",
-    GST: { CGST: 0, SGST: 0, IGST: 0 },
-    comment: ""
+    GST: 0,
+    comment: "",
   });
-  console.log(formData)
+  console.log(formData);
 
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
@@ -50,7 +44,7 @@ const CreateSale: React.FC = ({ onClose }) => {
           axios.get(`${process.env.REACT_APP_BACKEND_URL}product/all`, {
             headers: { Authorization: `Bearer ${cookies.access_token}` },
           }),
-          
+
           axios.get(`${process.env.REACT_APP_BACKEND_URL}auth/all`, {
             headers: { Authorization: `Bearer ${cookies.access_token}` },
           }),
@@ -60,7 +54,6 @@ const CreateSale: React.FC = ({ onClose }) => {
           (user: any) => user.role
         );
 
-        
         const filteredProducts = (productRes.data.products || []).filter(
           (product: any) => product.category == "finished goods"
         );
@@ -91,25 +84,16 @@ const CreateSale: React.FC = ({ onClose }) => {
   };
 
   const handleGSTChange = (value: string) => {
-    if (value === "IGST") {
-      setFormData((prevData) => ({
-        ...prevData,
-        GST: { IGST: 18, CGST: 0, SGST: 0 },
-      }));
-    } else if (value === "CGST_SGST") {
-      setFormData((prevData) => ({
-        ...prevData,
-        GST: { IGST: 0, CGST: 9, SGST: 9 },
-      }));
-    }
+    setFormData((prevData) => ({
+      ...prevData,
+      GST: Number(value), // Update GST as a number in the formData
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      
-      
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}purchase/create`,
         formData,
@@ -118,12 +102,10 @@ const CreateSale: React.FC = ({ onClose }) => {
             Authorization: `Bearer ${cookies.access_token}`,
           },
         }
-      ); 
+      );
 
       console.log("sales", response.data);
-      
-      
-      
+
       setFormData({
         customer_id: "",
         product_id: "",
@@ -132,8 +114,8 @@ const CreateSale: React.FC = ({ onClose }) => {
         product_qty: "",
         GST: { CGST: 0, SGST: 0, IGST: 0 },
         customer_approve: "Pending",
-        comment: ""
-      })
+        comment: "",
+      });
 
       toast({
         title: "Purchase Created",
@@ -144,7 +126,7 @@ const CreateSale: React.FC = ({ onClose }) => {
       });
 
       onClose();
-       //console.log(response.data);
+      //console.log(response.data);
     } catch (error) {
       toast({
         title: "Error",
@@ -197,9 +179,7 @@ const CreateSale: React.FC = ({ onClose }) => {
               }));
             }}
           >
-            <option value="" >
-              Select a product
-            </option>
+            <option value="">Select a product</option>
             {products.map((product: any) => (
               <option key={product._id} value={product._id}>
                 {product.name}
@@ -210,7 +190,12 @@ const CreateSale: React.FC = ({ onClose }) => {
 
         <FormControl id="price" isRequired>
           <FormLabel>Price</FormLabel>
-          <Input type="number" name="price" value={formData.price}  onChange={handleInputChange} />
+          <Input
+            type="number"
+            name="price"
+            value={formData.price}
+            onChange={handleInputChange}
+          />
         </FormControl>
 
         <FormControl id="product_qty" isRequired>
@@ -226,15 +211,16 @@ const CreateSale: React.FC = ({ onClose }) => {
 
         <FormControl id="GST" isRequired>
           <FormLabel>GST Type</FormLabel>
-          <RadioGroup onChange={handleGSTChange}>
-            <Stack direction="row">
-              <Radio value="IGST">IGST (18%)</Radio>
-              <Radio value="CGST_SGST">CGST (9%) & SGST (9%)</Radio>
-            </Stack>
-          </RadioGroup>
+          <RadioGroup onChange={handleGSTChange} value={formData.GST.toString()}>
+        <Stack direction="row">
+          <Radio value="18">GST (18%)</Radio>
+          <Radio value="12">GST (12%)</Radio>
+          <Radio value="5">GST (5%)</Radio>
+        </Stack>
+      </RadioGroup>
         </FormControl>
-        <FormControl id="comment" >
-        <FormLabel>Remarks</FormLabel>
+        <FormControl id="comment">
+          <FormLabel>Remarks</FormLabel>
           <Input
             type="text"
             name="comment"

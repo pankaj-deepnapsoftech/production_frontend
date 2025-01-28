@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { useState } from "react";
+import logo from "../../assets/images/logo/logo.png";
 
 const MainContent = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -23,6 +24,7 @@ const MainContent = () => {
             user={user}
             isSidebarOpen={isSidebarOpen}
             toggleSidebar={toggleSidebar}
+            setIsSidebarOpen = {setIsSidebarOpen}
           />
       <div
         className={`${
@@ -47,8 +49,8 @@ const MainContent = () => {
             </svg>
           </button>
           <div className="flex items-center justify-center gap-2">
-            <img src="/images/logo.png" alt="logo" className="h-10" />
-            <span className="text-2xl font-bold">ITSYBIZZ</span>
+            <img src={logo} alt="logo" className="h-12" />
+            
           </div>
         </div>
 

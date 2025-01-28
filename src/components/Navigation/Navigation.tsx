@@ -25,6 +25,10 @@ const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
           const isAllowed =
             isSuper || allowedroutes.includes(route.path.replaceAll("/", ""));
 
+            if (route.name === "Task" && isSuper) {
+              return null; 
+            }
+            
           if (route.isSublink) {
             return (
               <Fragment key={ind} >

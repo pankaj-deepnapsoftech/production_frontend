@@ -58,9 +58,9 @@ const Entries: React.FC = () => {
   const [cookies] = useCookies(["access_token"]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-
-  const {update} = useSelector(state => state.Common);
-  const dispatch = useDispatch()
+  const [pages, setPages] = useState(1);
+  const { update } = useSelector((state) => state.Common);
+  const dispatch = useDispatch();
 
   // Fetch entries from the backend
   useEffect(() => {
@@ -70,7 +70,7 @@ const Entries: React.FC = () => {
 
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}gard/get-all`,
+          `${process.env.REACT_APP_BACKEND_URL}gard/get-all?page=${pages}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -191,10 +191,10 @@ const Entries: React.FC = () => {
   const handleOut = async (entry: Entry) => {
     const token = cookies.access_token;
     if (!token) return;
-  
+
     // Update the status to "out"
     const updatedEntry = { ...entry, status: "out" };
-  
+
     try {
       // Send PUT request to update the entry status
       await axios.put(
@@ -207,8 +207,8 @@ const Entries: React.FC = () => {
         }
       );
 
-      dispatch(updateData(1))
-  
+      dispatch(updateData(1));
+
       toast({
         title: "Success",
         description: "Entry status updated to 'Out'.",
@@ -216,7 +216,7 @@ const Entries: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
-  
+
       // Update state to reflect changes
       setEntries((prevEntries) =>
         prevEntries.map((e) => (e._id === entry._id ? updatedEntry : e))
@@ -231,7 +231,6 @@ const Entries: React.FC = () => {
       });
     }
   };
-  
 
   // Render a person card
   const renderPersonCard = (entry: Entry) => (
@@ -240,12 +239,21 @@ const Entries: React.FC = () => {
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
-      bosmhadow="lg"
+      boxShadow="lg"
       bg="white"
-      className=" relative p-4 mt-3"
+      className="relative p-4 mt-3"
     >
+      {/* Left colored bar */}
       <Box className="absolute top-0 left-0 h-full w-2 bg-green-500"></Box>
-      <HStack justifyContent="space-between">
+
+      {/* Header */}
+      <HStack
+        justifyContent="space-between"
+        flexWrap="wrap"
+        align="start"
+        mb={2}
+        gap={4}
+      >
         <VStack align="flex-start" spacing={1}>
           <Text fontSize="sm" fontWeight="bold">
             Date: {new Date(entry.createdAt).toLocaleDateString()}
@@ -274,47 +282,79 @@ const Entries: React.FC = () => {
           )}
         </VStack>
       </HStack>
+
+      {/* Divider */}
       <Divider my={2} />
-      <HStack justifyContent="space-between">
-        <VStack align="flex-start" spacing={2}>
-          <Text fontSize="sm" fontWeight="bold">Name: <span className="font-normal">{entry.name}</span></Text>
-          <Text fontSize="sm" fontWeight="bold">Address: <span className="font-normal">{entry.address}</span></Text>
-          <Text fontSize="sm" fontWeight="bold">Phone: <span className="font-normal">{entry.phone}</span></Text>
+
+      {/* Content */}
+      <HStack
+        justifyContent="space-between"
+        flexWrap="wrap"
+        align="start"
+        gap={4}
+        mb={2}
+      >
+        <VStack align="flex-start" spacing={2} w={{ base: "100%", md: "48%" }}>
+          <Text fontSize="sm" fontWeight="bold">
+            Name: <span className="font-normal">{entry.name}</span>
+          </Text>
+          <Text fontSize="sm" fontWeight="bold">
+            Address: <span className="font-normal">{entry.address}</span>
+          </Text>
+          <Text fontSize="sm" fontWeight="bold">
+            Phone: <span className="font-normal">{entry.phone}</span>
+          </Text>
         </VStack>
-        <VStack align="flex-end" spacing={2}>
-          <Text fontSize="sm" fontWeight="bold">Whom To Meet: <span className="font-normal">{entry.contact_persone}</span></Text>
-          <Text fontSize="sm" fontWeight="bold">Purpose: <span className="font-normal">{entry.purpose}</span></Text>
+        <VStack
+          align={{ base: "start", md: "end" }}
+          spacing={2}
+          w={{ base: "100%", md: "48%" }}
+        >
+          <Text fontSize="sm" fontWeight="bold">
+            Whom To Meet:{" "}
+            <span className="font-normal">{entry.contact_persone}</span>
+          </Text>
+          <Text fontSize="sm" fontWeight="bold">
+            Purpose: <span className="font-normal">{entry.purpose}</span>
+          </Text>
         </VStack>
       </HStack>
+
+      {/* Divider */}
       <Divider my={2} />
-      <HStack justifyContent="space-between">
-        <VStack>
-          <HStack>
-            <Button
-              size="sm"
-              bgColor="white"
-              _hover={{ bgColor: "blue.500" }}
-              className=" border border-blue-500  hover:text-white"
-              onClick={() => handleEdit(entry)}
-            >
-              <MdEdit />
-            </Button>
-            <Button
-              size="sm"
-              bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className=" border border-red-500  hover:text-white"
-              onClick={() => handleDelete(entry)}
-            >
-              <ImBin />
-            </Button>
-          </HStack>
-        </VStack>
+
+      {/* Footer */}
+      <HStack
+        justifyContent="space-between"
+        flexWrap="wrap"
+        align="center"
+        gap={4}
+      >
+        <HStack gap={2}>
+          <Button
+            size="sm"
+            bgColor="white"
+            _hover={{ bgColor: "blue.500" }}
+            className="border border-blue-500 hover:text-white"
+            onClick={() => handleEdit(entry)}
+          >
+            <MdEdit />
+          </Button>
+          <Button
+            size="sm"
+            bgColor="white"
+            _hover={{ bgColor: "red.500" }}
+            className="border border-red-500 hover:text-white"
+            onClick={() => handleDelete(entry)}
+          >
+            <ImBin />
+          </Button>
+        </HStack>
         {entry.status === "out" && (
-        <Text fontSize="sm" className="text-gray-500">
-          Exit Time: {new Date(entry.updatedAt).toLocaleTimeString()}
-        </Text>
-           )}
+          <Text fontSize="sm" className="text-gray-500">
+            Exit Time: {new Date(entry.updatedAt).toLocaleTimeString()}
+          </Text>
+        )}
         <FaPersonWalkingArrowRight className="text-orange-700 text-4xl" />
       </HStack>
     </Box>
@@ -327,21 +367,28 @@ const Entries: React.FC = () => {
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
-      bosmhadow="lg"
+      boxShadow="lg"
       bg="white"
       className="relative p-4 mt-3"
     >
+      {/* Left colored bar */}
       <Box className="absolute top-0 left-0 h-full w-2 bg-blue-500"></Box>
-      <HStack justifyContent="space-between">
+
+      {/* Header */}
+      <HStack
+        justifyContent="space-between"
+        flexWrap="wrap"
+        align="start"
+        gap={4}
+        mb={2}
+      >
         <VStack align="flex-start" spacing={1}>
           <Text fontSize="sm" fontWeight="bold">
             Date: {new Date(entry.createdAt).toLocaleDateString()}
           </Text>
-          
           <Text fontSize="sm" className="text-gray-500">
             Entry Time: {new Date(entry.updatedAt).toLocaleTimeString()}
           </Text>
-       
         </VStack>
         <VStack>
           <Badge
@@ -363,48 +410,78 @@ const Entries: React.FC = () => {
           )}
         </VStack>
       </HStack>
+
+      {/* Divider */}
       <Divider my={2} />
-      <HStack justifyContent="space-between">
-        <VStack align="flex-start" spacing={2}>
-          <Text fontSize="sm" fontWeight="bold">Name:  <span className="font-normal">{entry.name}</span></Text>
-          <Text fontSize="sm" fontWeight="bold">Address:  <span className="font-normal">{entry.address}</span></Text>
-          <Text fontSize="sm" fontWeight="bold">Phone:  <span className="font-normal">{entry.phone}</span></Text>
+
+      {/* Content */}
+      <HStack
+        justifyContent="space-between"
+        flexWrap="wrap"
+        align="start"
+        gap={4}
+        mb={2}
+      >
+        <VStack align="flex-start" spacing={2} w={{ base: "100%", md: "48%" }}>
+          <Text fontSize="sm" fontWeight="bold">
+            Name: <span className="font-normal">{entry.name}</span>
+          </Text>
+          <Text fontSize="sm" fontWeight="bold">
+            Address: <span className="font-normal">{entry.address}</span>
+          </Text>
+          <Text fontSize="sm" fontWeight="bold">
+            Phone: <span className="font-normal">{entry.phone}</span>
+          </Text>
         </VStack>
-        <VStack align="flex-end" spacing={2}>
-          <Text fontSize="sm" fontWeight="bold">Vehicle Details:  <span className="font-normal">{entry.details}</span></Text>
-          <Text fontSize="sm" fontWeight="bold">Material:  <span className="font-normal">{entry.material}</span></Text>
-          <Text fontSize="sm" fontWeight="bold">Comment:  <span className="font-normal">{entry.comment}</span></Text>
+        <VStack   align={{ base: "start", md: "end" }} spacing={2} w={{ base: "100%", md: "48%" }}>
+          <Text fontSize="sm" fontWeight="bold">
+            Vehicle Details:{" "}
+            <span className="font-normal">{entry.details}</span>
+          </Text>
+          <Text fontSize="sm" fontWeight="bold">
+            Material: <span className="font-normal">{entry.material}</span>
+          </Text>
+          <Text fontSize="sm" fontWeight="bold">
+            Comment: <span className="font-normal">{entry.comment}</span>
+          </Text>
         </VStack>
       </HStack>
+
+      {/* Divider */}
       <Divider my={2} />
-      <HStack justifyContent="space-between">
-        <VStack>
-          <HStack>
-            <Button
-              size="sm"
-              bgColor="white"
-              _hover={{ bgColor: "blue.500" }}
-              className=" border border-blue-500  hover:text-white"
-              onClick={() => handleEdit(entry)}
-            >
-              <MdEdit />
-            </Button>
-            <Button
-              size="sm"
-              bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className=" border border-red-500  hover:text-white"
-              onClick={() => handleDelete(entry)}
-            >
-              <ImBin />
-            </Button>
-          </HStack>
-        </VStack>
+
+      {/* Footer */}
+      <HStack
+        justifyContent="space-between"
+        flexWrap="wrap"
+        align="center"
+        gap={4}
+      >
+        <HStack gap={2}>
+          <Button
+            size="sm"
+            bgColor="white"
+            _hover={{ bgColor: "blue.500" }}
+            className="border border-blue-500 hover:text-white"
+            onClick={() => handleEdit(entry)}
+          >
+            <MdEdit />
+          </Button>
+          <Button
+            size="sm"
+            bgColor="white"
+            _hover={{ bgColor: "red.500" }}
+            className="border border-red-500 hover:text-white"
+            onClick={() => handleDelete(entry)}
+          >
+            <ImBin />
+          </Button>
+        </HStack>
         {entry.status === "out" && (
-        <Text fontSize="sm" className="text-gray-500">
-          Exit Time: {new Date(entry.updatedAt).toLocaleTimeString()}
-        </Text>
-           )}
+          <Text fontSize="sm" className="text-gray-500">
+            Exit Time: {new Date(entry.updatedAt).toLocaleTimeString()}
+          </Text>
+        )}
         <TbTruckDelivery className="text-orange-700 text-4xl" />
       </HStack>
     </Box>
@@ -456,7 +533,9 @@ const Entries: React.FC = () => {
             )}
           </Box>
         </Box>
+        <Pagination page={pages} setPage={setPages} length={entries.length} />
       </Box>
+
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -473,8 +552,6 @@ const Entries: React.FC = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-
-      <Pagination />
     </ChakraProvider>
   );
 };

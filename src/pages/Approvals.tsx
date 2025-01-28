@@ -279,8 +279,12 @@ const Approvals: React.FC = () => {
         }
       );
       const data = await response.json();
-      setBomRMs(data.unapproved);
-      setFilteredBomRMs(data.unapproved);
+      console.log("bom", data);;
+      
+      setBomRMs(data?.unapproved);
+      setFilteredBomRMs(data?.unapproved);
+     // console.log(data.unapproved);
+
     } catch (err: any) {
       toast.error(err?.data?.message || "Something went wrong");
     } finally {

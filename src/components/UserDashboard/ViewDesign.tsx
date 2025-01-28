@@ -69,7 +69,8 @@ const ViewDesign: React.FC<ViewDesignProps> = ({ designUrl, purchaseData, onClos
     <Box>
       <Image src={designUrl} alt="Design File" mb={4} />
 
-      <form onSubmit={handleSubmit}>
+  
+        <form onSubmit={handleSubmit}>
         <HStack align="center" justify="space-between" mb={4}>
           <RadioGroup onChange={setStatus} value={status}>
             <HStack spacing="24px">
@@ -143,6 +144,9 @@ const ViewDesign: React.FC<ViewDesignProps> = ({ designUrl, purchaseData, onClos
           Submit
         </Button>
       </form>
+   
+
+  
     </Box>
   );
 };

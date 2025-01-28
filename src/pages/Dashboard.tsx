@@ -42,9 +42,10 @@ import {
 } from "@chakra-ui/react";
 import Card2 from "../components/Dashboard/Card2";
 import SalesGraph from "../components/graphs/SalesGraph";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { MdWavingHand } from "react-icons/md";
 import axios from "axios";
+import DispatchOverview from "../components/Dashboard/DispatchOverview";
 
 const Dashboard: React.FC = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
@@ -57,78 +58,78 @@ const Dashboard: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [approvalsPending, setApprovalsPending] = useState<
     | {
-      unapproved_product_count: number;
-      unapproved_store_count: number;
-      unapproved_merchant_count: number;
-      unapproved_bom_count: number;
-    }
+        unapproved_product_count: number;
+        unapproved_store_count: number;
+        unapproved_merchant_count: number;
+        unapproved_bom_count: number;
+      }
     | undefined
   >();
   const [scrap, setScrap] = useState<
     | {
-      total_product_count: number;
-      total_stock_price: number;
-    }
+        total_product_count: number;
+        total_stock_price: number;
+      }
     | undefined
   >();
   const [inventory, setInventory] = useState<
     | {
-      total_product_count: number;
-      total_stock_price: number;
-    }
+        total_product_count: number;
+        total_stock_price: number;
+      }
     | undefined
   >();
   const [directInventory, setDirectInventory] = useState<
     | {
-      total_low_stock: number;
-      total_excess_stock: number;
-      total_product_count: number;
-      total_stock_price: number;
-    }
+        total_low_stock: number;
+        total_excess_stock: number;
+        total_product_count: number;
+        total_stock_price: number;
+      }
     | undefined
   >();
   const [indirectInventory, setIndirectInventory] = useState<
     | {
-      total_low_stock: number;
-      total_excess_stock: number;
-      total_product_count: number;
-      total_stock_price: number;
-    }
+        total_low_stock: number;
+        total_excess_stock: number;
+        total_product_count: number;
+        total_stock_price: number;
+      }
     | undefined
   >();
   const [stores, setStores] = useState<
     | {
-      total_store_count: number;
-    }
+        total_store_count: number;
+      }
     | undefined
   >();
   const [boms, setBoms] = useState<
     | {
-      total_bom_count: number;
-    }
+        total_bom_count: number;
+      }
     | undefined
   >();
   const [merchants, setMerchants] = useState<
     | {
-      total_supplier_count: number;
-      total_buyer_count: number;
-    }
+        total_supplier_count: number;
+        total_buyer_count: number;
+      }
     | undefined
   >();
   const [employees, setEmployees] = useState<
     | {
-      _id: string;
-      total_employee_count: number;
-    }[]
+        _id: string;
+        total_employee_count: number;
+      }[]
     | undefined
   >();
   const [processes, setProcesses] = useState<
     | {
-      ["raw material approval pending"]?: number;
-      ["raw materials approved"]?: number;
-      completed?: number;
-      "work in progress"?: number;
-    }
+        ["raw material approval pending"]?: number;
+        ["raw materials approved"]?: number;
+        completed?: number;
+        "work in progress"?: number;
+      }
     | undefined
   >();
   const [totalProformaInvoices, setTotalProformaInvoices] = useState<number>(0);
@@ -136,7 +137,8 @@ const Dashboard: React.FC = () => {
   const [totalPayments, setTotalPayments] = useState<number>(0);
   const [totalCustomers, setTotalCustomers] = useState<number>(0);
   const [totalSales, setTotalSales] = useState<number>(0);
-  const [productionprocess, setProductionPorcess] = useState([]);
+  const role = cookies?.role;
+  const navigate = useNavigate();
 
   const fetchSummaryHandler = async () => {
     try {
@@ -183,7 +185,6 @@ const Dashboard: React.FC = () => {
     } catch (error: any) {
       toast.error(error?.message || "Something went wrong");
       console.log(error);
-
     } finally {
       setIsLoading(false);
     }
@@ -232,41 +233,32 @@ const Dashboard: React.FC = () => {
     setTotalSales(response.data.total);
   };
 
-  const fetchProcess = async () => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_BACKEND_URL}purchase/topSales`,
-      {
-        headers: {
-          Authorization: `Bearer ${cookies?.access_token}`,
-        },
-      }
-    );
-
-    setProductionPorcess(response.data?.data);
-  };
-
   useEffect(() => {
     if (firstname) {
       fetchSummaryHandler();
       fetchCustomers();
       fetchSales();
-      fetchProcess();
     }
-
-  }, [firstname]);
-
-  // if (!isAllowed) {
-  //   return (
-  //     <div className="text-center text-red-500">
-  //       You are not allowed to access this route.
-  //     </div>
-  //   );
-  // }
+  }, [firstname, role]);
 
   const totalEmployees = employees?.reduce(
     (total, item) => total + item.total_employee_count,
     0
   );
+
+  /*
+  if (!isAllowed) {
+    return (
+      <div className="text-center text-red-500">
+      You are not allowed to access this route.
+      </div>
+    );
+ }
+    */
+
+  if (!role) {
+    navigate("/login");
+  }
 
   return (
     <div>
@@ -275,54 +267,56 @@ const Dashboard: React.FC = () => {
           <MdWavingHand className="text-orange-500 waving-hand" />
           <i>Hi {firstname || ""},</i>
         </div>
-        <div>
-          <form
-            onSubmit={applyFilterHandler}
-            className="flex items-end justify-between gap-2 flex-wrap lg:flex-nowrap"
-          >
-            <FormControl>
-              <FormLabel>From</FormLabel>
-              <Input
-                value={from}
-                onChange={(e) => setFrom(e.target.value)}
-                backgroundColor="white"
-                type="date"
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>To</FormLabel>
-              <Input
-                value={to}
-                onChange={(e) => setTo(e.target.value)}
-                backgroundColor="white"
-                type="date"
-              />
-            </FormControl>
-            <Button
-              type="submit"
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 150 }}
-              color="white"
-              backgroundColor="#e67e22"
-              _hover={{ backgroundColor: "#e67e22" }}
+        <div className="mt-6">
+          {role && role === "admin" ? (
+            <form
+              onSubmit={applyFilterHandler}
+              className="flex items-end justify-between gap-2 flex-wrap lg:flex-nowrap"
             >
-              Apply
-            </Button>
-            <Button
-              type="submit"
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 150 }}
-              onClick={resetFilterHandler}
-              color="white"
-              backgroundColor="#319795"
-            >
-              Reset
-            </Button>
-          </form>
+              <FormControl>
+                <FormLabel>From</FormLabel>
+                <Input
+                  value={from}
+                  onChange={(e) => setFrom(e.target.value)}
+                  backgroundColor="white"
+                  type="date"
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>To</FormLabel>
+                <Input
+                  value={to}
+                  onChange={(e) => setTo(e.target.value)}
+                  backgroundColor="white"
+                  type="date"
+                />
+              </FormControl>
+              <Button
+                type="submit"
+                fontSize={{ base: "14px", md: "14px" }}
+                paddingX={{ base: "10px", md: "12px" }}
+                paddingY={{ base: "0", md: "3px" }}
+                width={{ base: "-webkit-fill-available", md: 150 }}
+                color="white"
+                backgroundColor="#e67e22"
+                _hover={{ backgroundColor: "#e67e22" }}
+              >
+                Apply
+              </Button>
+              <Button
+                type="submit"
+                fontSize={{ base: "14px", md: "14px" }}
+                paddingX={{ base: "10px", md: "12px" }}
+                paddingY={{ base: "0", md: "3px" }}
+                width={{ base: "-webkit-fill-available", md: 150 }}
+                onClick={resetFilterHandler}
+                color="white"
+                backgroundColor="#319795"
+              >
+                Reset
+              </Button>
+            </form>
+          ) : null}
         </div>
       </div>
 
@@ -344,21 +338,29 @@ const Dashboard: React.FC = () => {
                 <GridItem>
                   <NavLink to="/employee">
                     <Box
-                      p={4}
+                      p={{ base: 2, md: 4 }} // Adjust padding for small and medium screens
                       borderRadius="md"
                       boxShadow="md"
                       className="bg-white flex items-center justify-around gap-4 cursor-pointer hover:scale-105 transition-all ease-in"
                     >
-                      <div>
-                        <Text fontSize="lg">Employees</Text>
-                        <Text fontSize="lg" fontWeight="bold">
-                          {totalEmployees}
+                      <div className="text-center md:text-left">
+                        {" "}
+                        {/* Center text on small screens */}
+                        <Text fontSize={{ base: "md", md: "lg" }}>
+                          Employee
+                        </Text>{" "}
+                        {/* Font size responsive */}
+                        <Text
+                          fontSize={{ base: "md", md: "lg" }}
+                          fontWeight="bold"
+                        >
+                          {role && role === "admin" ? totalEmployees : 0}
                         </Text>
                       </div>
                       <img
                         src="/images/graph.svg"
                         alt="Total Employees"
-                        className="w-20 h-20"
+                        className="w-16 h-16 md:w-20 md:h-20" // Adjust image size for smaller screens
                       />
                     </Box>
                   </NavLink>
@@ -374,15 +376,20 @@ const Dashboard: React.FC = () => {
                       className="bg-white flex items-center justify-around gap-4 cursor-pointer hover:scale-105 transition-all ease-in"
                     >
                       <div>
-                        <Text fontSize="lg">Customers</Text>
+                        <Text fontSize="lg">Customer</Text>
                         <Text fontWeight="bold" fontSize="lg">
-                          {totalCustomers}
+                          {role &&
+                          ["admin", "sale", "sales_manager"].includes(
+                            role.toLowerCase()
+                          )
+                            ? totalCustomers
+                            : 0}
                         </Text>
                       </div>
                       <img
                         src="/images/graph2.svg"
                         alt="Total Employees"
-                        className="w-20 h-20"
+                        className="w-16 h-16 md:w-20 md:h-20"
                       />
                     </Box>
                   </NavLink>
@@ -400,13 +407,18 @@ const Dashboard: React.FC = () => {
                       <div>
                         <Text fontSize="lg">Sales</Text>
                         <Text fontWeight="bold" fontSize="lg">
-                          {totalSales}
+                          {role &&
+                          ["admin", "sale", "account"].includes(
+                            role.toLowerCase()
+                          )
+                            ? totalSales
+                            : 0}
                         </Text>
                       </div>
                       <img
                         src="/images/graph.svg"
                         alt="Total Employees"
-                        className="w-20 h-20"
+                        className="w-16 h-16 md:w-20 md:h-20"
                       />
                     </Box>
                   </NavLink>
@@ -414,83 +426,20 @@ const Dashboard: React.FC = () => {
               </Grid>
 
               <NavLink to="/sales" className="mt-5">
-                <SalesGraph />
+                {role &&
+                ["admin", "account"].includes(role.toLowerCase()) ?  (
+                  <SalesGraph />
+                ):null }
               </NavLink>
 
               <div className="mt-5 p-3 bg-white shadow-md">
                 <HStack className="flex items-center justify-between mb-2 w-full">
-                  <Text className="text-lg">Production Insights</Text>
-                  <HStack className="flex items-end justify-end   gap-4">
-                    <Box className="flex items-center">
-                      <FiAlertTriangle className="w-5 h-5 text-yellow-600" />
-                      <Text>Pending</Text>
-                    </Box>
-
-                    <Box className="flex items-center">
-                      <FiCheckCircle className="w-5 h-5 text-green-500" />
-                      <Text>Green</Text>
-                    </Box>
-                  </HStack>
+                  <Text className="text-lg font-bold">Production Insights</Text>
                 </HStack>
                 <Divider />
-
-                {/** */}
-                {productionprocess && (
-                  <VStack spacing={4} align="stretch" className="mb-3">
-                    <Box p={3}>
-                      <HStack
-                        spacing={6}
-                        align="center"
-                        className="w-full justify-around"
-                      >
-                        <NavLink
-                          to="/production/production-track"
-                          fontSize="sm"
-                          fontWeight="semibold"
-                          className="underline"
-                        >
-                          {productionprocess[0]?.product[0]?.name}
-                        </NavLink>
-
-                        {/* Loop through each process of the product */}
-                        <HStack
-                          className="items-center justify-center flex w-2/3"
-                          spacing={4}
-                        >
-                          {productionprocess[0]?.product[0]?.process[0]?.processes?.map(
-                            (process, processIndex) => (
-                              <Box key={processIndex} w="full">
-                                <Box>
-                                  <Text fontSize="sm" mb={1}>
-                                    {/* Process Name Displayed Above the Progress Bar */}
-                                    {process?.process}
-                                  </Text>
-
-                                  {/* Progress Bar */}
-                                  <Progress
-                                    value={process?.done ? 100 : 50} // Assuming 50% for incomplete processes
-                                    colorScheme={
-                                      process?.done ? "green" : "yellow"
-                                    }
-                                    size="lg"
-                                    borderRadius="full" // Rounded pill shape
-                                    hasStripe
-                                    isAnimated
-                                  />
-                                </Box>
-                              </Box>
-                            )
-                          )}
-                        </HStack>
-                      </HStack>
-                      <HStack className="w-full mt-5 underline flex items-center justify-center text-blue-500">
-                        <NavLink to="/production/production-track">
-                          See More
-                        </NavLink>
-                      </HStack>
-                    </Box>
-                  </VStack>
-                )}
+                <NavLink to="/production/production-track">
+                  <DispatchOverview />
+                </NavLink>
               </div>
 
               <div className="mt-5 p-3 bg-white shadow-md">
@@ -500,7 +449,13 @@ const Dashboard: React.FC = () => {
                     secondaryColor="#21A86C"
                     textColor="white"
                     title="BOMs"
-                    content={boms?.total_bom_count}
+                    content={
+                      role &&
+                      (role === "admin" ||
+                        role.toLowerCase()?.includes("product"))
+                        ? boms?.total_bom_count
+                        : 0
+                    }
                     link="/production/bom"
                     icon={<IoIosDocument color="#ffffff" size={28} />}
                   />
@@ -510,7 +465,13 @@ const Dashboard: React.FC = () => {
                   secondaryColor="#E56F27"
                   textColor="white"
                   title="Inventory Approval Pending"
-                  content={processes?.["raw material approval pending"] || 0}
+                  content={
+                    role &&
+                    (role === "admin" ||
+                      role.toLowerCase()?.includes("product"))
+                      ? processes?.["raw material approval pending"] || 0
+                      : 0
+                  }
                   link="/inventory/approval"
                   icon={<FaStoreAlt color="#ffffff" size={28} />}
                 />
@@ -519,7 +480,13 @@ const Dashboard: React.FC = () => {
                   secondaryColor="#E56F27"
                   textColor="white"
                   title="Inventory Approved"
-                  content={processes?.["raw materials approved"] || 0}
+                  content={
+                    role &&
+                    (role === "admin" ||
+                      role.toLowerCase()?.includes("product"))
+                      ? processes?.["raw materials approved"] || 0
+                      : 0
+                  }
                   link="/inventory/approval"
                   icon={<FaStoreAlt color="#ffffff" size={28} />}
                 />
@@ -528,7 +495,13 @@ const Dashboard: React.FC = () => {
                   secondaryColor="#E56F27"
                   textColor="white"
                   title="Work In Progress"
-                  content={processes?.["work in progress"] || 0}
+                  content={
+                    role &&
+                    (role === "admin" ||
+                      role.toLowerCase()?.includes("product"))
+                      ? processes?.["work in progress"] || 0
+                      : 0
+                  }
                   link="/inventory/wip"
                   icon={<FaStoreAlt color="#ffffff" size={28} />}
                 />
@@ -537,7 +510,13 @@ const Dashboard: React.FC = () => {
                   secondaryColor="#E56F27"
                   textColor="white"
                   title="Completed"
-                  content={processes?.completed || 0}
+                  content={
+                    role &&
+                    (role === "admin" ||
+                      role.toLowerCase()?.includes("product"))
+                      ? processes?.completed || 0
+                      : 0
+                  }
                   link="production/production-process"
                   icon={<FaStoreAlt color="#ffffff" size={28} />}
                 />
@@ -545,16 +524,17 @@ const Dashboard: React.FC = () => {
             </GridItem>
 
             <GridItem>
-              <Box
-                p={4}
-                borderRadius="md"
-                boxShadow="md"
-                className=" shadow-md"
-              >
-                <Button onClick={onOpen}>View Pending Approvals</Button>
-              </Box>
+              {role && role === "admin" ? (
+                <Box
+                  p={4}
+                  borderRadius="md"
+                  boxShadow="md"
+                  className=" shadow-md flex items-center justify-center"
+                >
+                  <Button onClick={onOpen}>View Pending Approvals</Button>
+                </Box>
+              ) : null}
 
-              {/* inventory insights */}
               <div className="mt-5 p-3 bg-white shadow-md">
                 <Text className="text-lg mb-3 font-bold">
                   Inventory Insights
@@ -567,7 +547,13 @@ const Dashboard: React.FC = () => {
                       secondaryColor="#32A1E7"
                       textColor="white"
                       title="Direct Inventory"
-                      content={directInventory?.total_product_count}
+                      content={
+                        role &&
+                        (role === "admin" ||
+                          role.toLowerCase()?.includes("product"))
+                          ? directInventory?.total_product_count
+                          : 0
+                      }
                       link="inventory/direct"
                       icon={<IoMdCart color="#ffffff" size={28} />}
                     />
@@ -576,17 +562,27 @@ const Dashboard: React.FC = () => {
                       secondaryColor="#32A1E7"
                       textColor="white"
                       title="Stock Value"
-                      content={"₹ " + directInventory?.total_stock_price + "/-"}
+                      content={
+                        role &&
+                        (role === "admin" ||
+                          role.toLowerCase()?.includes("product"))
+                          ? `₹ ${directInventory?.total_stock_price}/-`
+                          : 0
+                      }
                       icon={<FaRupeeSign color="#ffffff" size={24} />}
-                    // link="product"
                     />
                     <Card
                       primaryColor="#2980b9"
                       secondaryColor="#32A1E7"
                       textColor="white"
                       title="Excess Stock"
-                      content={directInventory?.total_excess_stock}
-                      // link="product"
+                      content={
+                        role &&
+                        (role === "admin" ||
+                          role.toLowerCase()?.includes("product"))
+                          ? directInventory?.total_excess_stock
+                          : 0
+                      }
                       icon={<AiFillProduct color="#ffffff" size={28} />}
                     />
                     <Card
@@ -594,8 +590,13 @@ const Dashboard: React.FC = () => {
                       secondaryColor="#32A1E7"
                       textColor="white"
                       title="Low Stock"
-                      content={directInventory?.total_low_stock}
-                      // link="product"
+                      content={
+                        role &&
+                        (role === "admin" ||
+                          role.toLowerCase()?.includes("product"))
+                          ? directInventory?.total_low_stock
+                          : 0
+                      }
                       icon={<AiFillProduct color="#ffffff" size={28} />}
                     />
                   </div>
@@ -607,7 +608,13 @@ const Dashboard: React.FC = () => {
                       secondaryColor="#32A1E7"
                       textColor="white"
                       title="Indirect Inventory"
-                      content={indirectInventory?.total_product_count}
+                      content={
+                        role &&
+                        (role === "admin" ||
+                          role.toLowerCase()?.includes("product"))
+                          ? indirectInventory?.total_product_count
+                          : 0
+                      }
                       link="/inventory/indirect"
                       icon={<IoMdCart color="#ffffff" size={28} />}
                     />
@@ -617,18 +624,26 @@ const Dashboard: React.FC = () => {
                       textColor="white"
                       title="Stock Value"
                       content={
-                        "₹ " + indirectInventory?.total_stock_price + "/-"
+                        role &&
+                        (role === "admin" ||
+                          role.toLowerCase()?.includes("product"))
+                          ? `₹ ${indirectInventory?.total_stock_price}/-`
+                          : 0
                       }
                       icon={<FaRupeeSign color="#ffffff" size={24} />}
-                    // link="product"
                     />
                     <Card
                       primaryColor="#16a085"
                       secondaryColor="#32A1E7"
                       textColor="white"
                       title="Excess Stock"
-                      content={indirectInventory?.total_excess_stock}
-                      // link="product"
+                      content={
+                        role &&
+                        (role === "admin" ||
+                          role.toLowerCase()?.includes("product"))
+                          ? indirectInventory?.total_excess_stock
+                          : 0
+                      }
                       icon={<AiFillProduct color="#ffffff" size={28} />}
                     />
                     <Card
@@ -636,8 +651,13 @@ const Dashboard: React.FC = () => {
                       secondaryColor="#32A1E7"
                       textColor="white"
                       title="Low Stock"
-                      content={indirectInventory?.total_low_stock}
-                      // link="product"
+                      content={
+                        role &&
+                        (role === "admin" ||
+                          role.toLowerCase()?.includes("product"))
+                          ? indirectInventory?.total_low_stock
+                          : 0
+                      }
                       icon={<AiFillProduct color="#ffffff" size={28} />}
                     />
                   </div>
@@ -648,7 +668,13 @@ const Dashboard: React.FC = () => {
                     secondaryColor="#32A1E7"
                     textColor="white"
                     title="Scrap Materials"
-                    content={scrap?.total_product_count?.toString() || ""}
+                    content={
+                      role &&
+                      (role === "admin" ||
+                        role.toLowerCase()?.includes("product"))
+                        ? scrap?.total_product_count?.toString() || ""
+                        : 0
+                    }
                     link="/scrap"
                     icon={<IoMdCart color="#ffffff" size={28} />}
                   />
@@ -657,7 +683,13 @@ const Dashboard: React.FC = () => {
                     secondaryColor="#32A1E7"
                     textColor="white"
                     title="Scrap Value"
-                    content={"₹ " + scrap?.total_stock_price + "/-"}
+                    content={
+                      role &&
+                      (role === "admin" ||
+                        role.toLowerCase()?.includes("product"))
+                        ? `₹ ${scrap?.total_stock_price}/-`
+                        : 0
+                    }
                     icon={<FaRupeeSign color="#ffffff" size={24} />}
                     link="product"
                   />
@@ -666,7 +698,13 @@ const Dashboard: React.FC = () => {
                     secondaryColor="#32A1E7"
                     textColor="white"
                     title="WIP Inventory"
-                    content={inventory?.total_product_count?.toString() || ""}
+                    content={
+                      role &&
+                      (role === "admin" ||
+                        role.toLowerCase()?.includes("product"))
+                        ? inventory?.total_product_count?.toString() || ""
+                        : 0
+                    }
                     link="product"
                     icon={<IoMdCart color="#ffffff" size={28} />}
                   />
@@ -675,7 +713,13 @@ const Dashboard: React.FC = () => {
                     secondaryColor="#32A1E7"
                     textColor="white"
                     title="WIP Inventory Value"
-                    content={"₹ " + inventory?.total_stock_price + "/-"}
+                    content={
+                      role &&
+                      (role === "admin" ||
+                        role.toLowerCase()?.includes("product"))
+                        ? `₹ ${inventory?.total_stock_price}/-`
+                        : 0
+                    }
                     icon={<FaRupeeSign color="#ffffff" size={24} />}
                     link="product"
                   />

@@ -31,7 +31,7 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
     product_type: sale?.product_type || "finished goods",
     price: sale?.price || "",
     product_qty: sale?.product_qty || "",
-    GST: sale?.GST || { CGST: 0, SGST: 0, IGST: 0 },
+    GST: sale?.GST,
     comment: sale?.comment || "",
   });
 
@@ -90,17 +90,10 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
   };
 
   const handleGSTChange = (value: string) => {
-    if (value === "IGST") {
-      setFormData((prevData) => ({
-        ...prevData,
-        GST: { IGST: 18, CGST: 0, SGST: 0 },
-      }));
-    } else if (value === "CGST_SGST") {
-      setFormData((prevData) => ({
-        ...prevData,
-        GST: { IGST: 0, CGST: 9, SGST: 9 },
-      }));
-    }
+    setFormData((prevData) => ({
+      ...prevData,
+      GST: Number(value), // Update GST as a number in the formData
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -221,15 +214,16 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
           />
         </FormControl>
 
-        <FormControl id="GST" isRequired>
-          <FormLabel>GST Type</FormLabel>
-          <RadioGroup onChange={handleGSTChange}>
-            <Stack direction="row">
-              <Radio value="IGST">IGST (18%)</Radio>
-              <Radio value="CGST_SGST">CGST (9%) & SGST (9%)</Radio>
-            </Stack>
-          </RadioGroup>
-        </FormControl>
+       <FormControl id="GST" isRequired>
+               <FormLabel>GST Type</FormLabel>
+               <RadioGroup onChange={handleGSTChange} value={formData.GST.toString()}>
+             <Stack direction="row">
+               <Radio value="18">GST (18%)</Radio>
+               <Radio value="12">GST (12%)</Radio>
+               <Radio value="5">GST (5%)</Radio>
+             </Stack>
+           </RadioGroup>
+             </FormControl>
 
         <FormControl id="assined_to" isRequired>
           <FormLabel>Assigned To</FormLabel>

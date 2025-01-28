@@ -63,7 +63,7 @@ const Productions = () => {
           },
         }
       );
-      //console.log("sales",response.data.data);
+      console.log("sales", response.data.data);
       setPurchases(response.data.data);
     } catch (error: any) {
       const errorMessage =
@@ -80,7 +80,10 @@ const Productions = () => {
     const total = processes.length;
     const completed = processes.filter((process) => process.done).length;
 
-    if (completed === total) {
+    if(completed === 0 && total === 0){
+      return { status: "Pending", color: "red" };
+    }
+    else if (completed === total) {
       return { status: "Completed", color: "green" };
     } else if (completed > 0) {
       return { status: "Under Process", color: "yellow" };
@@ -227,8 +230,54 @@ const Productions = () => {
                         }
                         fontSize="sm"
                       >
-                        Customer Sale Approval: {purchase?.Status}
+                        Sale Approval: {purchase?.Status}
                       </Badge>
+
+                      {purchase?.Status === "Approved" &&
+                      purchase?.customer_approve ? (
+                        <Badge
+                          colorScheme={
+                            purchase?.customer_approve === "Approve"
+                              ? "green"
+                              : purchase?.customer_approve === "Pending"
+                              ? "orange"
+                              : "red"
+                          }
+                          fontSize="sm"
+                        >
+                          Design Approval: {purchase?.customer_approve}
+                        </Badge>
+                      ) : null}
+
+                      {purchase?.paymet_status ? (
+                        <Badge
+                          colorScheme={
+                            purchase?.paymet_status === "Pending"
+                              ? "orange"
+                              : "green"
+                          }
+                          fontSize="sm"
+                        >
+                          Pament Status:{" "}
+                          {purchase?.paymet_status === "Paied"
+                            ? "Paid"
+                            : purchase?.paymet_status}
+                        </Badge>
+                      ) : null}
+
+                      {purchase?.product_status ? (
+                        <Badge
+                          colorScheme={
+                            purchase?.product_status === "Dispatch"
+                              ? "orange"
+                              : "green"
+                          }
+                          fontSize="sm"
+                        >
+                          Product Status:{" "}
+                          {purchase?.product_status}
+                        </Badge>
+                      ) : null}
                     </VStack>
                   </HStack>
 

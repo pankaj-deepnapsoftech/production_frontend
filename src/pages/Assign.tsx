@@ -1,5 +1,5 @@
 //@ts-nocheck
-
+import React, { useState } from "react";
 import {
   Box,
   Text,
@@ -15,7 +15,6 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -31,47 +30,78 @@ const Assign = ({ empData, saleData, onClose }) => {
     assinedby_comment: "",
   });
 
+  const [isEditMode, setIsEditMode] = useState(false); // Track if it's an edit operation
+  const [editTaskId, setEditTaskId] = useState(null); // Track the task being edited
+
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
   const token = cookies?.access_token;
 
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleReassign = async (e) => {
+  // Handle task creation or update
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     try {
-     
-      //console.log("token", token);
-
       if (!token) {
         throw new Error("Authentication token not found");
       }
 
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}assined/create`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      // console.log(response);
-      toast({
-        title: "Task Reassigned",
-        description: "The task has been successfully reassigned.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+      // If it's edit mode, send update request
+      if (isEditMode && editTaskId) {
+        const response = await axios.patch(
+          `${process.env.REACT_APP_BACKEND_URL}assined/update/${editTaskId}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        toast({
+          title: "Task Updated",
+          description: "The task has been successfully updated.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+
+        // Reset form after update
+        setIsEditMode(false);
+        setEditTaskId(null);
+      } else {
+        // Otherwise, create a new task
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}assined/create`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        toast({
+          title: "Task Created",
+          description: "The task has been successfully assigned.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+
+      // Clear form
       setFormData({
-        selectedTaskId: "",
-        processName: "",
-        additionalInfo: "",
+        sale_id: saleData?._id,
+        assined_to: "",
+        assined_process: "",
+        assinedby_comment: "",
       });
 
       onClose();
@@ -88,48 +118,25 @@ const Assign = ({ empData, saleData, onClose }) => {
     }
   };
 
-  const colorChange = (color: any) => {
-    if (color === "Pending" || color === "UnderProcessing") {
-      return "orange";
-    } else if (color === "Design Rejected") {
-      return "red";
-    } else {
-      return "green";
-    }
+  // Handle edit button click
+  const handleEdit = async(id, taskData) => {
+    setIsEditMode(true);
+    setEditTaskId(id);
+
+    // Pre-fill form with the task data
+    setFormData({
+      sale_id: saleData?._id,
+      assined_to: taskData?.assinedto[0]?._id || "",
+      assined_process: taskData?.assined_process || "",
+      assinedby_comment: taskData?.assinedby_comment || "",
+    });
+
   };
 
-  const handleEdit = async(id, e) => {
-    if(e){
-      e.preventDefault();
-    }
-    /*
-    try {
-      const response = await axios.delete(
-        `${process.env.REACT_APP_BACKEND_URL}assined/update/${id}`,
-        
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-      toast({
-        title: "Error",
-        description: "Failed to update assigned task.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }  */
-  };
-
-  const handleDelete = async (id, e:any) => {
-    if(e){
-      e.preventDefault();
-    }
+  // Handle delete
+  const handleDelete = async (id) => {
+    console.log(id);
+    
     try {
       const response = await axios.delete(
         `${process.env.REACT_APP_BACKEND_URL}assined/delete/${id}`,
@@ -139,7 +146,17 @@ const Assign = ({ empData, saleData, onClose }) => {
           },
         }
       );
-      console.log(response);
+
+      
+
+      toast({
+        title: "Task Deleted",
+        description: "The task has been successfully deleted.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      onClose();
     } catch (error) {
       console.log(error);
       toast({
@@ -149,6 +166,16 @@ const Assign = ({ empData, saleData, onClose }) => {
         duration: 3000,
         isClosable: true,
       });
+    }
+  };
+
+  const colorChange = (color: any) => {
+    if (color === "Pending" || color === "UnderProcessing") {
+      return "orange";
+    } else if (color === "Design Rejected") {
+      return "red";
+    } else {
+      return "green";
     }
   };
 
@@ -180,11 +207,9 @@ const Assign = ({ empData, saleData, onClose }) => {
                   <strong>Task:</strong> {task?.assined_process}
                 </Text>
                 <Text>
-                  <strong>Assigned To:</strong> {task?.assinedto[0]?.first_name}
-                  -{" "}
-                  {task?.assinedto[0]?.role[0]?.role
-                    ? task?.assinedto[0]?.role[0]?.role
-                    : null}
+                  <strong>Assigned To:</strong>{" "}
+                  {task?.assinedto[0]?.first_name} -{" "}
+                  {task?.assinedto[0]?.role[0]?.role || ""}
                 </Text>
                 <Text>
                   <strong>Status:</strong>{" "}
@@ -196,16 +221,16 @@ const Assign = ({ empData, saleData, onClose }) => {
                   <Button
                     bgColor="blue.500"
                     _hover="blue.400"
-                    onClick={(e) => handleEdit(task._id, e)}
+                    onClick={() => handleEdit(task._id, task)}
                   >
-                    <FaEdit className="text-white"/>{" "}
+                    <FaEdit className="text-white" />
                   </Button>
                   <Button
                     bgColor="red.500"
                     _hover="red.400"
-                    onClick={(e)=> handleDelete(task?._id, e)}
+                    onClick={() => handleDelete(task?._id)}
                   >
-                    <MdDelete className="text-white"  />{" "}
+                    <MdDelete className="text-white" />
                   </Button>
                 </HStack>
               </VStack>
@@ -214,7 +239,7 @@ const Assign = ({ empData, saleData, onClose }) => {
         </Box>
       )}
 
-      {/* Reassignment Form */}
+      {/* Assign/Update Form */}
       <Box
         p={4}
         borderWidth="1px"
@@ -223,7 +248,7 @@ const Assign = ({ empData, saleData, onClose }) => {
         className="bg-blue-50 border border-blue-500"
       >
         <Text fontWeight="bold" fontSize="lg" color="teal.500" mb={4}>
-          Assign Task
+          {isEditMode ? "Update Task" : "Assign Task"}
         </Text>
         <FormControl mb={4}>
           <FormLabel>Select Employee</FormLabel>
@@ -245,7 +270,7 @@ const Assign = ({ empData, saleData, onClose }) => {
           <FormLabel>Define Process</FormLabel>
           <Input
             name="assined_process"
-            placeholder="Enter new process name"
+            placeholder="Enter process name"
             value={formData.assined_process}
             onChange={handleChange}
             bgColor="white"
@@ -261,8 +286,12 @@ const Assign = ({ empData, saleData, onClose }) => {
             bgColor="white"
           />
         </FormControl>
-        <Button colorScheme="blue" onClick={handleReassign} className="w-full">
-          Assign
+        <Button
+          colorScheme="blue"
+          onClick={handleFormSubmit}
+          className="w-full"
+        >
+          {isEditMode ? "Update" : "Assign"}
         </Button>
       </Box>
     </Box>

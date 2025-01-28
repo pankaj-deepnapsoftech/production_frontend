@@ -18,6 +18,7 @@ import {
   Badge,
   Divider,
   Input,
+  Select,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -42,30 +43,37 @@ const Sales = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
   const [selectedSale, setSelectedSale] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [cookies] = useCookies(["access_token"]);
+  const [cookies] = useCookies(["access_token", "role"]);
   const [pages, setPages] = useState(1);
   const [comment, setComment] = useState("");
   const [filterText, setFilterText] = useState("");
   const [filterDate, setFilterDate] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string>("");
   const [filteredPurchases, setFilteredPurchases] = useState<any[]>([]);
+  const role = cookies?.role;
+  const token = cookies.access_token;
 
   const fetchPurchases = async () => {
     try {
       setIsLoading(true);
-      const token = cookies.access_token;
 
       if (!token) {
         throw new Error("Authentication token not found");
       }
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}purchase/getAll?page=${pages}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      let url = "";
+      if (role === "admin") {
+        url = `${process.env.REACT_APP_BACKEND_URL}purchase/getAll?page=${pages}`;
+      } else {
+        url = `${process.env.REACT_APP_BACKEND_URL}purchase/getOne?page=${pages}`;
+      }
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       console.log(response.data.data);
       setPurchases(response.data.data);
     } catch (error: any) {
@@ -74,6 +82,7 @@ const Sales = () => {
         error.message ||
         "Failed to fetch purchase data";
       toast.error(errorMessage);
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -121,25 +130,34 @@ const Sales = () => {
       setFilteredPurchases([]);
       return;
     }
-  
+
     const filteredData = purchases.filter((purchase) => {
-      const matchesText = !filterText || [
-        purchase?.user_id?.[0]?.first_name,
-        purchase?.product_id?.[0]?.name,
-        purchase?.customer_id[0]?.full_name,
-      ]
-        .filter(Boolean) // Filter out undefined/null values
-        .some((field) => field.toLowerCase().includes(filterText.toLowerCase()));
-  
+      const matchesText =
+        !filterText ||
+        [
+          purchase?.user_id?.[0]?.first_name,
+          purchase?.product_id?.[0]?.name,
+          purchase?.customer_id[0]?.full_name,
+        ]
+          .filter(Boolean)
+          .some((field) =>
+            field.toLowerCase().includes(filterText.toLowerCase())
+          );
+
       const matchesDate =
         !filterDate ||
-        new Date(purchase?.createdAt).toISOString().split("T")[0] === filterDate;
-  
-      return matchesText && matchesDate;
+        new Date(purchase?.createdAt).toISOString().split("T")[0] ===
+          filterDate;
+
+      const matchesStatus =
+        !filterStatus ||
+        purchase?.Status?.toLowerCase() === filterStatus.toLowerCase();
+
+      return matchesText && matchesDate && matchesStatus;
     });
-  
+
     setFilteredPurchases(filteredData);
-  }, [filterText, filterDate, purchases]);
+  }, [filterText, filterDate, filterStatus, purchases]);
 
   const handleEditClick = (sale: any) => {
     setSelectedSale(sale);
@@ -154,27 +172,55 @@ const Sales = () => {
     setComment(comment);
     remarksDisclosure.onOpen();
   };
+
+  const calculateTotalPrice = (price: number, qty: number, gst: number) => {
+    const basePrice = price * qty;
+    const gstVal = (basePrice * gst) / 100;
+    const totalPrice = basePrice + gstVal;
+    return totalPrice;
+  };
+
   return (
     <div className="overflow-x-hidden">
       <Box p={5}>
-      <Text className="text-lg font-bold">Sales</Text>
-        <HStack className="flex justify-between items-center mb-5 mt-5">
-          <Input
+        <Text className="text-lg font-bold">Sales</Text>
+        <HStack className="flex-wrap justify-between items-center mb-5 mt-5 space-y-4 md:space-y-0">
+          <Box
+            display="grid"
+            gridTemplateColumns={{ base: "1fr", lg: "repeat(3, 1fr)" }}
+            gap={4}
+            width="100%"
+          >
+             <Input
             type="text"
             placeholder="Search Sale..."
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
+            className="w-full md:w-auto"
           />
           <Input
             type="date"
             value={filterDate}
             onChange={(e) => setFilterDate(e.target.value)}
+            className="w-full md:w-auto"
           />
-          <HStack className="space-x-2">
+          <Select
+            placeholder="Filter by Sale Status"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="w-full md:w-auto"
+          >
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+          </Select>
+
+          </Box>
+         
+          <HStack className="space-x-2 w-full md:w-auto justify-end">
             <Button
               bgColor="white"
               _hover={{ bgColor: "blue.500" }}
-              className="border border-blue-500 hover:text-white px-5"
+              className="border border-blue-500 hover:text-white px-5 w-full md:w-auto"
               onClick={createDisclosure.onOpen}
             >
               Add New Sale
@@ -183,7 +229,7 @@ const Sales = () => {
               fontSize={{ base: "14px", md: "14px" }}
               paddingX={{ base: "10px", md: "12px" }}
               paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 100 }}
+              width={{ base: "full", md: 100 }}
               onClick={fetchPurchases}
               leftIcon={<MdOutlineRefresh />}
               color="#1640d6"
@@ -204,6 +250,10 @@ const Sales = () => {
           >
             <Spinner size="xl" />
           </Box>
+        ) : filteredPurchases.length === 0 ? (
+          <Text className="text-red-500 text-center">
+            No Sale Data to show...
+          </Text>
         ) : (
           <Box
             maxW="100%"
@@ -211,6 +261,7 @@ const Sales = () => {
             borderWidth="1px"
             borderRadius="md"
             borderColor="gray.200"
+            p={4}
           >
             {filteredPurchases?.map((purchase: any) => (
               <Box
@@ -222,6 +273,7 @@ const Sales = () => {
                 p={4}
                 w="100%"
                 position="relative"
+                mb={4}
               >
                 {/* Left colored bar */}
                 <Box
@@ -235,8 +287,8 @@ const Sales = () => {
                 />
 
                 {/* Header */}
-                <HStack justify="space-between" mb={3}>
-                  <VStack align="start">
+                <HStack justify="space-between" mb={3} flexWrap="wrap" gap={3}>
+                  <VStack align="start" w={{ base: "100%", md: "auto" }}>
                     <Text fontWeight="bold" fontSize="lg">
                       Created By: {purchase?.user_id[0]?.first_name || "N/A"}
                     </Text>
@@ -244,22 +296,75 @@ const Sales = () => {
                       Date: {new Date(purchase?.createdAt).toLocaleDateString()}
                     </Text>
                   </VStack>
-                  <Badge
-                    colorScheme={
-                      purchase?.Status === "Pending" ? "orange" : "green"
-                    }
-                    fontSize="sm"
-                  >
-                    Customer Sale Approval: {purchase?.Status}
-                  </Badge>
+
+                  <VStack align="start" w={{ base: "100%", md: "auto" }}>
+                    <Badge
+                      colorScheme={
+                        purchase?.Status === "Pending" ? "orange" : "green"
+                      }
+                      fontSize="sm"
+                    >
+                      Sale Approval: {purchase?.Status}
+                    </Badge>
+
+                    {purchase?.Status === "Approved" &&
+                      purchase?.customer_approve &&
+                      purchase?.designFile && (
+                        <Badge
+                          colorScheme={
+                            purchase?.customer_approve === "Approve"
+                              ? "green"
+                              : "red"
+                          }
+                          fontSize="sm"
+                        >
+                          Design Approval: {purchase?.customer_approve}
+                        </Badge>
+                      )}
+
+                    {purchase?.paymet_status && (
+                      <Badge
+                        colorScheme={
+                          purchase?.paymet_status === "Pending"
+                            ? "orange"
+                            : "green"
+                        }
+                        fontSize="sm"
+                      >
+                        Payment:{" "}
+                        {purchase?.paymet_status === "Paied"
+                          ? "Paid"
+                          : purchase?.paymet_status}
+                      </Badge>
+                    )}
+
+                    {purchase?.product_status && (
+                      <Badge
+                        colorScheme={
+                          purchase?.product_status === "Dispatch"
+                            ? "orange"
+                            : "green"
+                        }
+                        fontSize="sm"
+                      >
+                        Product Status: {purchase?.product_status}
+                      </Badge>
+                    )}
+                  </VStack>
                 </HStack>
 
                 {/* Divider */}
                 <Divider />
 
                 {/* Task Details */}
-                <HStack justify="space-between" spacing={3} mt={3}>
-                  <VStack align="start">
+                <HStack
+                  justify="space-between"
+                  spacing={3}
+                  mt={3}
+                  flexWrap="wrap"
+                  gap={3}
+                >
+                  <VStack align="start" w={{ base: "100%", md: "auto" }}>
                     <Text fontSize="sm">
                       <strong>Customer:</strong>{" "}
                       {purchase?.customer_id[0]?.full_name || "N/A"}
@@ -272,29 +377,41 @@ const Sales = () => {
                       <strong>Quantity:</strong> {purchase?.product_qty}
                     </Text>
                   </VStack>
-                  <VStack align="start">
+                  <VStack align="start" w={{ base: "100%", md: "auto" }}>
                     <Text fontSize="sm">
-                      <strong>Price:</strong> {purchase?.price}
+                      <strong>Price:</strong>{" "}
+                      {purchase?.price * purchase?.product_qty}
                     </Text>
-                    {purchase?.comment ? (
-                       <Text
-                       className="text-blue-500 underline cursor-pointer"
-                       onClick={() => handleRemarksClick(purchase?.comment)}
-                     >
-                       Remarks{" "}
-                     </Text>
-                    ) : null}
-                   
+                    <Text fontSize="sm">
+                      <strong>GST :</strong> {purchase?.GST}%
+                    </Text>
+                    <Text fontSize="sm">
+                      <strong>Total Price :</strong>{" "}
+                      {calculateTotalPrice(
+                        purchase?.price,
+                        purchase?.product_qty,
+                        purchase?.GST
+                      ).toFixed(2)}
+                    </Text>
+                    {purchase?.comment && (
+                      <Text
+                        className="text-blue-500 underline cursor-pointer"
+                        onClick={() => handleRemarksClick(purchase?.comment)}
+                      >
+                        Remarks{" "}
+                      </Text>
+                    )}
                   </VStack>
                 </HStack>
 
                 {/* Footer */}
                 <Divider my={3} />
-                <HStack justify="space-between" mt={3}>
+                <HStack justify="space-between" mt={3} flexWrap="wrap" gap={3}>
                   <Button
                     bgColor="white"
                     _hover={{ bgColor: "blue.500" }}
                     className="border border-blue-500 hover:text-white"
+                    w={{ base: "100%", md: "auto" }}
                     onClick={() => handleEditClick(purchase)}
                   >
                     Edit{" "}
@@ -303,6 +420,7 @@ const Sales = () => {
                     bgColor="white"
                     _hover={{ bgColor: "orange.500" }}
                     className="border border-orange-500 hover:text-white"
+                    w={{ base: "100%", md: "auto" }}
                     onClick={() => {
                       handleAssignClick();
                       setSelectedSale(purchase);
@@ -327,7 +445,7 @@ const Sales = () => {
           <ModalHeader>Add a new Sale</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <CreateSale onClose={createDisclosure.onClose}/>
+            <CreateSale onClose={createDisclosure.onClose} />
           </ModalBody>
           <ModalFooter>
             <Button
@@ -352,7 +470,10 @@ const Sales = () => {
           <ModalHeader>Edit Sale</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <UpdateSale sale={selectedSale} onClose={updateDisclosure.onClose} />
+            <UpdateSale
+              sale={selectedSale}
+              onClose={updateDisclosure.onClose}
+            />
           </ModalBody>
           <ModalFooter>
             <Button
@@ -377,7 +498,11 @@ const Sales = () => {
           <ModalHeader>Assign Employee</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Assign empData={employees} saleData={selectedSale} onClose={assignDisclosure.onClose}/>
+            <Assign
+              empData={employees}
+              saleData={selectedSale}
+              onClose={assignDisclosure.onClose}
+            />
           </ModalBody>
           <ModalFooter>
             <Button

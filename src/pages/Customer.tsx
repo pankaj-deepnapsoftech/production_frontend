@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-nocheck
 import React, { useEffect, useState } from "react";
 import {
   Table,
@@ -21,13 +21,15 @@ import {
   ModalFooter,
   useDisclosure,
   Spinner,
+  Input,
+  Select,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CreateCustomer from "./CreateCustomer";
 import { useCookies } from "react-cookie";
 import { FaEdit } from "react-icons/fa";
-import { MdDelete, MdOutlineRefresh } from "react-icons/md";
+import { MdOutlineRefresh } from "react-icons/md";
 import Pagination from "./Pagination";
 import UpdateCustomer from "./UpdateCustomer";
 
@@ -45,17 +47,21 @@ const Customer: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [cookies] = useCookies();
   const [customers, setCustomers] = useState<any[]>([]);
+  const [filteredCustomers, setFilteredCustomers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [page, setpage] = useState(1);
-  const [selectedCustomer, SetSelectedCustomer] = useState([]);
+  const [page, setPage] = useState(1);
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
   const createDisclosure = useDisclosure();
   const updateDisclosure = useDisclosure();
 
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filterType, setFilterType] = useState<string>("");
+
   const fetchCustomers = async () => {
     try {
-      setIsLoading(true); // Start loading
-      setError(null); // Reset error
+      setIsLoading(true);
+      setError(null);
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}customer/get-all?page=${page}`,
         {
@@ -65,6 +71,7 @@ const Customer: React.FC = () => {
         }
       );
       setCustomers(response.data.data);
+      setFilteredCustomers(response.data.data); // Initialize filtered customers
     } catch (err: any) {
       setError(err.message || "Failed to fetch customers");
       toast.error(err.response?.data?.message || "Failed to fetch customers");
@@ -77,8 +84,21 @@ const Customer: React.FC = () => {
     fetchCustomers();
   }, [page]);
 
+  // Filter customers based on search query and type
+  useEffect(() => {
+    const filtered = customers.filter((customer) => {
+      const matchesSearch =
+        customer.full_name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesType =
+        filterType === "" || customer.type.toLowerCase() === filterType.toLowerCase();
+      return matchesSearch && matchesType;
+    });
+
+    setFilteredCustomers(filtered);
+  }, [searchQuery, filterType, customers]);
+
   const handleUpdate = (customer) => {
-    SetSelectedCustomer(customer);
+    setSelectedCustomer(customer);
     updateDisclosure.onOpen();
   };
 
@@ -86,8 +106,8 @@ const Customer: React.FC = () => {
     <Box className="max-w-7xl mx-auto p-5">
       <HStack className="flex justify-between items-center mb-5 mt-5">
         <Text className="text-lg font-bold">Customers</Text>
-        <HStack className="space-x-2  w-full center justify-end flex ">
-        <Button
+        <HStack className="space-x-2 w-full justify-end">
+          <Button
             width="auto"
             onClick={createDisclosure.onOpen}
             colorScheme="blue"
@@ -110,7 +130,22 @@ const Customer: React.FC = () => {
         </HStack>
       </HStack>
 
-      {/* Table to display customers */}
+      <HStack spacing={4} mb={5}>
+        <Input
+          placeholder="Search by customer name"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <Select
+          placeholder="Filter by type"
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+        >
+          <option value="individual">Individual</option>
+          <option value="company">Company</option>
+        </Select>
+      </HStack>
+
       <TableContainer className="mt-10">
         {isLoading ? (
           <Box
@@ -146,7 +181,7 @@ const Customer: React.FC = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {customers.map((customer) => (
+              {filteredCustomers.map((customer) => (
                 <Tr key={customer._id}>
                   <Td>{customer.full_name}</Td>
                   <Td>{customer.email}</Td>
@@ -155,7 +190,9 @@ const Customer: React.FC = () => {
                   <Td>
                     {customer.type === "company" ? customer.company_name : "-"}
                   </Td>
-                  <Td>{customer.type === "company" ? customer.GST_NO : "-"}</Td>
+                  <Td>
+                    {customer.type === "company" ? customer.GST_NO : "-"}
+                  </Td>
                   <Td>
                     <Button
                       colorScheme="blue"
@@ -224,7 +261,7 @@ const Customer: React.FC = () => {
         </ModalContent>
       </Modal>
 
-      <Pagination page={page} setPage={setpage} length={customers.length} />
+      <Pagination page={page} setPage={setPage} length={customers.length} />
     </Box>
   );
 };

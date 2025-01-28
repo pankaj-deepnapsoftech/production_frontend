@@ -14,6 +14,8 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
       return "orange"
     } else if(color === "Design Rejected"){
      return "red"
+    }else if(color === "UnderProcessing"){
+       return "blue"
     }else{
       return "green"
     }
@@ -21,10 +23,14 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
 
   const progressChange = (value:any)=>{
     if(value === "Pending"){
-      return 50
+      return 20
     } else if(value === "Design Rejected"){
      return 0
-    }else{
+    }
+    else if(value === "UnderProcessing"){
+      return 50
+     }
+    else{
       return 100
     }
   }
@@ -90,7 +96,7 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
         <Text fontWeight="bold" fontSize="2xl" color="blue.600" mb={4}>
           Production Process
         </Text>
-        {productionProcess?.length === 0 ? (
+        {productionProcess?.length === 0 || designProcess?.length === 0 ? (
           <Box>No production process data available.</Box>
         ) : (
           <VStack align="start" spacing={4} className="max-h-[20rem] overflow-y-scroll">

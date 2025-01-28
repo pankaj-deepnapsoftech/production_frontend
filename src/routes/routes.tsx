@@ -2,7 +2,7 @@ import { FaRegCheckCircle } from "react-icons/fa";
 import { IoDocumentTextOutline, IoStorefrontOutline } from "react-icons/io5";
 import { MdOutlineShoppingCart, MdOutlineSpeed, MdOutlineSell, MdOutlineAttachMoney, MdOutlinePayment, MdOutlineProductionQuantityLimits } from "react-icons/md";
 import { RiBillLine, RiUserAddFill } from "react-icons/ri";
-import { TbLockAccess, TbUsersGroup } from "react-icons/tb";
+import { TbLockAccess, TbTruckDelivery, TbUsersGroup } from "react-icons/tb";
 import { SlDirection } from "react-icons/sl";
 import { FaHandsHelping } from "react-icons/fa";
 import { SiScrapy } from "react-icons/si";
@@ -31,6 +31,9 @@ import Sales from "../pages/Sales";
 import Customer from "../pages/Customer";
 import Task from "../pages/Task";
 import Production from "../pages/Productions";
+import Dispatch from "../pages/Dispatch";
+
+
 
 const routes = [
   {
@@ -75,6 +78,8 @@ const routes = [
     element: <Task />,
     isSublink: false
   },
+  
+  /*
   {
     name: "Sales & Purchase",
     path: "sales-purchase",
@@ -101,6 +106,7 @@ const routes = [
     ],
     isSublink: true
   },
+  */
   {
     name: "Inventory",
     icon: <MdOutlineShoppingCart />,
@@ -201,7 +207,13 @@ const routes = [
     ],
     isSublink: true
   },
- 
+  {
+    name: "Dispatch",
+    icon: <TbTruckDelivery   />,
+    path: "/dispatch",
+    element: <Dispatch />,
+    isSublink: false
+  },
 
 ];
 
