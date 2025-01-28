@@ -18,6 +18,7 @@ import AddBom from "../components/Drawers/BOM/AddBom";
 import BomDetails from "../components/Drawers/BOM/BomDetails";
 import UpdateBom from "../components/Drawers/BOM/UpdateBom";
 import { MainColor } from "../constants/constants";
+import { useLocation } from "react-router-dom";
 
 const BOM: React.FC = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
@@ -28,6 +29,8 @@ const BOM: React.FC = () => {
   const [isLoadingBoms, setIsLoadingBoms] = useState<boolean>(false);
   const [boms, setBoms] = useState<any[]>([]);
   const [filteredBoms, setFilteredBoms] = useState<any[]>([]);
+  const location = useLocation();
+  console.log(location.state)
 
   const [deleteBom] = useDeleteBomMutation();
 
@@ -133,7 +136,7 @@ const BOM: React.FC = () => {
       {isAddBomDrawerOpened && (
         <AddBom
           closeDrawerHandler={closeAddBomDrawerHandler}
-          fetchBomsHandler={fetchBomsHandler}
+          fetchBomsHandler={fetchBomsHandler}      
         />
       )}
       {/* BOM Details */}

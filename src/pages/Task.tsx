@@ -29,7 +29,7 @@ import axios, { Axios } from "axios";
 import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
 import Pagination from "./Pagination";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Task = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -42,6 +42,7 @@ const Task = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
   const role = cookies?.role;
+  const navigate = useNavigate();
  // console.log(role);
   
 
@@ -235,6 +236,11 @@ const Task = () => {
     }
   };
 
+  const handleBOM = (id)=>{
+    //console.log(id);
+    navigate('/production/bom', {state: {id}});
+
+  }
   //console.log(tasks);
 
   return (
@@ -394,14 +400,15 @@ const Task = () => {
                    
                    {task?.design_status === "UnderProcessing" ? (
                     <>
-                    <NavLink to="/production/bom">
+                   
                     <Button                   
                     colorScheme="teal"
                     size="sm"
+                    onClick={()=>handleBOM(task?.sale_id)}
                     >
                     Create BOM
                     </Button>    
-                    </NavLink>
+                   
                     {task?.design_status != "Completed" ? (
                       <Button                   
                       colorScheme="orange"

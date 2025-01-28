@@ -22,10 +22,12 @@ import RawMaterial from "../../Dynamic Add Components/RawMaterial";
 import Process from "../../Dynamic Add Components/Process";
 import { useCookies } from "react-cookie";
 import ScrapMaterial from "../../Dynamic Add Components/ScrapMaterial";
+import { useLocation } from "react-router-dom";
 
 interface AddBomProps {
   closeDrawerHandler: () => void;
   fetchBomsHandler: () => void;
+
 }
 
 const AddBom: React.FC<AddBomProps> = ({
@@ -63,6 +65,9 @@ const AddBom: React.FC<AddBomProps> = ({
   const [otherCharges, setOtherCharges] = useState<number | undefined>();
 
   const [addBom] = useAddBomMutation();
+  const location = useLocation();
+
+
 
   const [rawMaterials, setRawMaterials] = useState<any[]>([
     {
@@ -79,7 +84,7 @@ const AddBom: React.FC<AddBomProps> = ({
       total_part_cost: "",
     },
   ]);
-
+ 
   const [scrapMaterials, setScrapMaterials] = useState<any[]>([
     {
       item_name: "",
@@ -110,6 +115,7 @@ const AddBom: React.FC<AddBomProps> = ({
     { value: "inch", label: "inch" },
     { value: "mtr", label: "mtr" },
   ];
+
 
   const addBomHandler = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -183,6 +189,7 @@ const AddBom: React.FC<AddBomProps> = ({
         electricity_charges: electricityCharges || 0,
         other_charges: otherCharges || 0,
       },
+      sale_id: location?.state?.id
     };
 
     try {
