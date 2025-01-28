@@ -33,6 +33,7 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import { IoEyeSharp } from "react-icons/io5";
 import UploadPayment from "./UploadPayment";
 import DeliveryProof from "./DeliveryProof";
+import moment from "moment";
 
 interface Purchase {
   GST: {
@@ -67,7 +68,6 @@ const PurchaseHistory = () => {
   const [webLink, setWebLink] = useState("");
   const [pages, setPages] = useState(1);
   const [assignedData, setAssignedData] = useState([]);
-  
 
   const {
     isOpen: isProductionModalOpen,
@@ -149,11 +149,9 @@ const PurchaseHistory = () => {
     }
   };
 
-
-
   const openDesignModal = (designFile: string, purchase: object) => {
     setSelectedDesign(designFile);
-    setSelectedData(purchase);  
+    setSelectedData(purchase);
     onImageOpen();
   };
 
@@ -175,12 +173,12 @@ const PurchaseHistory = () => {
     onProofOpen();
   };
 
-  const calculateTotalPrice = (price:number, qty:number, gst:number)=>{
+  const calculateTotalPrice = (price: number, qty: number, gst: number) => {
     const basePrice = price * qty;
-    const gstVal = (basePrice * gst)/100;
+    const gstVal = (basePrice * gst) / 100;
     const totalPrice = basePrice + gstVal;
     return totalPrice;
-  }
+  };
 
   useEffect(() => {
     fetchPurchases();
@@ -280,7 +278,7 @@ const PurchaseHistory = () => {
                     </>
                   ) : purchase?.customer_approve === "Approve" ? (
                     <Badge colorScheme="green" fontSize="sm">
-                      Design: {purchase?.customer_approve}
+                      Design: {purchase?.customer_approve} 
                     </Badge>
                   ) : null}
 
@@ -359,16 +357,21 @@ const PurchaseHistory = () => {
                   {/* Change to flex-start for alignment on smaller screens */}
                   <Text fontSize={{ base: "xs", sm: "sm" }} fontWeight="bold">
                     Price:{" "}
-                    <span className="font-normal">{purchase?.price * purchase?.product_qty}</span>
+                    <span className="font-normal">
+                      {purchase?.price * purchase?.product_qty}
+                    </span>
                   </Text>
                   <Text fontSize={{ base: "xs", sm: "sm" }} fontWeight="bold">
-                    GST:{" "}
-                    <span className="font-normal">{purchase?.GST} %</span>
+                    GST: <span className="font-normal">{purchase?.GST} %</span>
                   </Text>
                   <Text fontSize={{ base: "xs", sm: "sm" }} fontWeight="bold">
                     Total Price:{" "}
                     <span className="font-normal">
-                      {calculateTotalPrice(purchase?.price, purchase?.product_qty, purchase?.GST).toFixed(2)}
+                      {calculateTotalPrice(
+                        purchase?.price,
+                        purchase?.product_qty,
+                        purchase?.GST
+                      ).toFixed(2)}
                     </span>
                   </Text>
                 </VStack>
@@ -395,21 +398,24 @@ const PurchaseHistory = () => {
                   </Button>
                 )}
 
-                {purchase?.designFile &&
-                  purchase?.customer_approve !== "Reject" && (
-                    <Button
-                      size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
-                      leftIcon={<IoEyeSharp />}
-                      bgColor="white"
-                      _hover={{ bgColor: "orange.500" }}
-                      className="border border-orange-500 hover:text-white w-full sm:w-auto"
-                      onClick={() =>
-                        openDesignModal(purchase?.designFile, purchase, purchase?.customer_approve)
-                      }
-                    >
-                      View Design
-                    </Button>
-                  )}
+                {purchase?.designFile && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
+                    leftIcon={<IoEyeSharp />}
+                    bgColor="white"
+                    _hover={{ bgColor: "orange.500" }}
+                    className="border border-orange-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      openDesignModal(
+                        purchase?.designFile,
+                        purchase,
+                        purchase?.customer_approve
+                      )
+                    }
+                  >
+                    View Design
+                  </Button>
+                )}
 
                 {purchase?.invoice && (
                   <>
