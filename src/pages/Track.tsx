@@ -13,13 +13,15 @@ import {
 import { FaCheckCircle, FaHourglassHalf, FaCircle } from "react-icons/fa";
 
 const Track = ({ sale }) => {
+
   const [processes, setProcesses] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    const fetchedProcesses = sale?.product_id[0]?.process[0]?.processes || [];
+    const fetchedProcesses = sale?.boms[0]?.production_processes[0]?.processes || [];
     setProcesses(fetchedProcesses);
   }, [sale]);
+
 
   return (
     <Box p={6} bg="gray.50" borderRadius="lg" boxShadow="md" className="mb-5">

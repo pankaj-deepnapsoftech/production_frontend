@@ -23,11 +23,11 @@ import Process from "../../Dynamic Add Components/Process";
 import { useCookies } from "react-cookie";
 import ScrapMaterial from "../../Dynamic Add Components/ScrapMaterial";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 interface AddBomProps {
   closeDrawerHandler: () => void;
   fetchBomsHandler: () => void;
-
 }
 
 const AddBom: React.FC<AddBomProps> = ({
@@ -42,6 +42,7 @@ const AddBom: React.FC<AddBomProps> = ({
     { value: string; label: string } | undefined
   >();
   const [description, setDescription] = useState<string | undefined>();
+  const [bomData, setBomData] = useState<any>();
   const [quantity, setQuantity] = useState<number | undefined>();
   const [uom, setUom] = useState<string | undefined>();
   const [category, setCategory] = useState<string | undefined>();
@@ -67,8 +68,6 @@ const AddBom: React.FC<AddBomProps> = ({
   const [addBom] = useAddBomMutation();
   const location = useLocation();
 
-
-
   const [rawMaterials, setRawMaterials] = useState<any[]>([
     {
       item_name: "",
@@ -84,7 +83,7 @@ const AddBom: React.FC<AddBomProps> = ({
       total_part_cost: "",
     },
   ]);
- 
+
   const [scrapMaterials, setScrapMaterials] = useState<any[]>([
     {
       item_name: "",
@@ -115,7 +114,6 @@ const AddBom: React.FC<AddBomProps> = ({
     { value: "inch", label: "inch" },
     { value: "mtr", label: "mtr" },
   ];
-
 
   const addBomHandler = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -189,7 +187,7 @@ const AddBom: React.FC<AddBomProps> = ({
         electricity_charges: electricityCharges || 0,
         other_charges: otherCharges || 0,
       },
-      sale_id: location?.state?.id
+      sale_id: location?.state?.id,
     };
 
     try {
@@ -232,7 +230,7 @@ const AddBom: React.FC<AddBomProps> = ({
     }
   };
 
-  const onFinishedGoodChangeHandler = (d: any) => {
+  const onFinishedGoodChangeHandler = async (d: any) => {
     setFinishedGood(d);
     const product: any = products.filter((prd: any) => prd._id === d.value)[0];
     setCategory(product.category);
@@ -242,6 +240,32 @@ const AddBom: React.FC<AddBomProps> = ({
       setCost(product.price * +quantity);
     }
   };
+
+  //api call to get bom data
+  const fetchBomData = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}bom/all`
+      );
+
+      const filteredData = response.data.boms.filter(
+        (bom: any) => bom.finished_good.item.name === finishedGood?.label
+      );
+
+      setBomData(filteredData[0]);
+    } catch (error: any) {
+      toast.error(`Failed to fetch the data ${error}`);
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBomData();
+  }, [finishedGood]);
+
+  useEffect(() => {
+    setProcesses(bomData?.processes.length > 0 ? bomData?.processes : [""]);
+  }, [bomData]);
 
   const onFinishedGoodQntyChangeHandler = (qty: number) => {
     setQuantity(qty);
@@ -276,6 +300,8 @@ const AddBom: React.FC<AddBomProps> = ({
     setProductOptions(modifiedProducts);
   }, [products]);
 
+  console.log(bomData);
+
   return (
     <Drawer closeDrawerHandler={closeDrawerHandler}>
       <div
@@ -290,10 +316,190 @@ const AddBom: React.FC<AddBomProps> = ({
           Bill Of Materials (BOM)
         </h1>
 
-        <div className="mt-8 px-5">
+        {location.state?.id ? (
+          <div className="mt-8 px-5">
           <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
             Add New BOM
           </h2>
+
+          
+          <div className="py-3">
+            <FormControl isRequired>
+              <FormLabel fontWeight="bold">Finished Good</FormLabel>
+              <Table
+                variant="simple"
+                size="sm"
+                mt={4}
+                sx={{ tableLayout: "auto" }}
+              >
+                <Thead>
+                  <Tr>
+                    <Th
+                      bg="teal.500"
+                      color="white"
+                      fontWeight="bold"
+                      textTransform="uppercase"
+                      textAlign="center"
+                      whiteSpace="nowrap"
+                      p={4}
+                    >
+                      Finished Goods
+                    </Th>
+
+                    <Th
+                      bg="teal.500"
+                      color="white"
+                      fontWeight="bold"
+                      textTransform="uppercase"
+                      textAlign="center"
+                      p={4}
+                    >
+                      Quantity
+                    </Th>
+                    <Th
+                      bg="teal.500"
+                      color="white"
+                      fontWeight="bold"
+                      textTransform="uppercase"
+                      textAlign="center"
+                      p={4}
+                    >
+                      UOM
+                    </Th>
+                    <Th
+                      bg="teal.500"
+                      color="white"
+                      fontWeight="bold"
+                      textTransform="uppercase"
+                      textAlign="center"
+                      p={4}
+                    >
+                      Category
+                    </Th>
+
+                    <Th
+                      bg="teal.500"
+                      color="white"
+                      fontWeight="bold"
+                      textTransform="uppercase"
+                      textAlign="center"
+                      p={4}
+                    >
+                      Comments
+                    </Th>
+                    <Th
+                      bg="teal.500"
+                      color="white"
+                      fontWeight="bold"
+                      textTransform="uppercase"
+                      textAlign="center"
+                      p={4}
+                    >
+                      Unit Cost
+                    </Th>
+                    <Th
+                      bg="teal.500"
+                      color="white"
+                      fontWeight="bold"
+                      textTransform="uppercase"
+                      textAlign="center"
+                      p={4}
+                    >
+                      Cost
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Td>
+                    <FormControl isRequired>
+                      <Select
+                        className="rounded mt-2 border border-[#a9a9a9]"
+                        options={productOptions}
+                        placeholder="Select"
+                        value={finishedGood}
+                        name="assembly_phase"
+                        onChange={onFinishedGoodChangeHandler}
+                      />
+                    </FormControl>
+                  </Td>
+
+                  <Td>
+                    <FormControl isRequired>
+                      <Input
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        value={quantity}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          onFinishedGoodQntyChangeHandler(+e.target.value)
+                        }
+                        type="number"
+                        placeholder="Quantity"
+                      />
+                    </FormControl>
+                  </Td>
+                  <Td>
+                    <FormControl isRequired>
+                      <Input
+                        isDisabled={true}
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        value={uom}
+                        type="text"
+                      />
+                    </FormControl>
+                  </Td>
+                  <Td>
+                    <FormControl isRequired>
+                      <Input
+                        isDisabled={true}
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        value={category}
+                        type="text"
+                      />
+                    </FormControl>
+                  </Td>
+
+                  <Td>
+                    <FormControl>
+                      <Input
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        value={comments}
+                        onChange={(e) => setComments(e.target.value)}
+                        type="text"
+                        placeholder="Comments"
+                      />
+                    </FormControl>
+                  </Td>
+                  <Td>
+                    <FormControl isRequired>
+                      <Input
+                        isDisabled={true}
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        value={unitCost}
+                        type="number"
+                      />
+                    </FormControl>
+                  </Td>
+                  <Td>
+                    <FormControl isRequired>
+                      <Input
+                        isDisabled={true}
+                        border="1px"
+                        borderColor="#a9a9a9"
+                        value={cost}
+                        onChange={(e) => setCost(+e.target.value)}
+                        type="number"
+                        placeholder="Cost"
+                      />
+                    </FormControl>
+                  </Td>
+                </Tbody>
+              </Table>
+            </FormControl>
+          </div>
 
           <form onSubmit={addBomHandler}>
             <RawMaterial
@@ -308,184 +514,6 @@ const AddBom: React.FC<AddBomProps> = ({
             <Process inputs={processes} setInputs={setProcesses} />
 
             <hr className="my-5" />
-
-            <div className="py-3">
-              <FormControl isRequired>
-                <FormLabel fontWeight="bold">Finished Good</FormLabel>
-                <Table
-                  variant="simple"
-                  size="sm"
-                  mt={4}
-                  sx={{ tableLayout: "auto" }}
-                >
-                  <Thead>
-                    <Tr>
-                      <Th
-                        bg="teal.500"
-                        color="white"
-                        fontWeight="bold"
-                        textTransform="uppercase"
-                        textAlign="center"
-                        whiteSpace="nowrap"
-                        p={4}
-                      >
-                        Finished Goods
-                      </Th>
-
-                      <Th
-                        bg="teal.500"
-                        color="white"
-                        fontWeight="bold"
-                        textTransform="uppercase"
-                        textAlign="center"
-                        p={4}
-                      >
-                        Quantity
-                      </Th>
-                      <Th
-                        bg="teal.500"
-                        color="white"
-                        fontWeight="bold"
-                        textTransform="uppercase"
-                        textAlign="center"
-                        p={4}
-                      >
-                        UOM
-                      </Th>
-                      <Th
-                        bg="teal.500"
-                        color="white"
-                        fontWeight="bold"
-                        textTransform="uppercase"
-                        textAlign="center"
-                        p={4}
-                      >
-                        Category
-                      </Th>
-
-                      <Th
-                        bg="teal.500"
-                        color="white"
-                        fontWeight="bold"
-                        textTransform="uppercase"
-                        textAlign="center"
-                        p={4}
-                      >
-                        Comments
-                      </Th>
-                      <Th
-                        bg="teal.500"
-                        color="white"
-                        fontWeight="bold"
-                        textTransform="uppercase"
-                        textAlign="center"
-                        p={4}
-                      >
-                        Unit Cost
-                      </Th>
-                      <Th
-                        bg="teal.500"
-                        color="white"
-                        fontWeight="bold"
-                        textTransform="uppercase"
-                        textAlign="center"
-                        p={4}
-                      >
-                        Cost
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Td>
-                      <FormControl isRequired>
-                        <Select
-                          className="rounded mt-2 border border-[#a9a9a9]"
-                          options={productOptions}
-                          placeholder="Select"
-                          value={finishedGood}
-                          name="assembly_phase"
-                          onChange={onFinishedGoodChangeHandler}
-                        />
-                      </FormControl>
-                    </Td>
-
-                    <Td>
-                      <FormControl isRequired>
-                        <Input
-                          border="1px"
-                          borderColor="#a9a9a9"
-                          value={quantity}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            onFinishedGoodQntyChangeHandler(+e.target.value)
-                          }
-                          type="number"
-                          placeholder="Quantity"
-                        />
-                      </FormControl>
-                    </Td>
-                    <Td>
-                      <FormControl isRequired>
-                        <Input
-                          isDisabled={true}
-                          border="1px"
-                          borderColor="#a9a9a9"
-                          value={uom}
-                          type="text"
-                        />
-                      </FormControl>
-                    </Td>
-                    <Td>
-                      <FormControl isRequired>
-                        <Input
-                          isDisabled={true}
-                          border="1px"
-                          borderColor="#a9a9a9"
-                          value={category}
-                          type="text"
-                        />
-                      </FormControl>
-                    </Td>
-
-                    <Td>
-                      <FormControl>
-                        <Input
-                          border="1px"
-                          borderColor="#a9a9a9"
-                          value={comments}
-                          onChange={(e) => setComments(e.target.value)}
-                          type="text"
-                          placeholder="Comments"
-                        />
-                      </FormControl>
-                    </Td>
-                    <Td>
-                      <FormControl isRequired>
-                        <Input
-                          isDisabled={true}
-                          border="1px"
-                          borderColor="#a9a9a9"
-                          value={unitCost}
-                          type="number"
-                        />
-                      </FormControl>
-                    </Td>
-                    <Td>
-                      <FormControl isRequired>
-                        <Input
-                          isDisabled={true}
-                          border="1px"
-                          borderColor="#a9a9a9"
-                          value={cost}
-                          onChange={(e) => setCost(+e.target.value)}
-                          type="number"
-                          placeholder="Cost"
-                        />
-                      </FormControl>
-                    </Td>
-                  </Tbody>
-                </Table>
-              </FormControl>
-            </div>
 
             <hr className="my-5" />
 
@@ -633,6 +661,13 @@ const AddBom: React.FC<AddBomProps> = ({
             </Button>
           </form>
         </div>
+        ) : (
+          <div>
+            <p className="text-center text-red-500 mt-5">Please Go to task page then create a BOM of particular sale...</p>
+          </div>
+        )}
+
+        
       </div>
     </Drawer>
   );

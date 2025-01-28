@@ -278,8 +278,15 @@ const PurchaseHistory = () => {
                     </>
                   ) : purchase?.customer_approve === "Approve" ? (
                     <Badge colorScheme="green" fontSize="sm">
-                      Design: {purchase?.customer_approve} 
+                      Design: {purchase?.customer_approve}
                     </Badge>
+                  ) : null}
+
+                  {purchase?.boms[0]?.is_production_started ? (
+                      <Badge colorScheme="green" fontSize="sm">
+                      Production : {purchase?.boms[0]?.is_production_started ? "Started" : "Pending"}
+                    </Badge>
+
                   ) : null}
 
                   {purchase && purchase?.paymet_status ? (
@@ -385,12 +392,12 @@ const PurchaseHistory = () => {
                     bgColor="white"
                     leftIcon={<MdOutlineTaskAlt />}
                     _hover={{ bgColor: "green.500" }}
-                    className="border border-green-500 hover:text-white w-full sm:w-auto" // Full width on small screens, auto width on larger screens
+                    className="border border-green-500 hover:text-white w-full sm:w-auto" 
                     onClick={() => {
                       onProductionOpen();
                       setDesignProcess(purchase?.empprocess);
                       setSelectedProcess(
-                        purchase?.product_id?.[0]?.process?.[0]?.processes
+                        purchase?.boms[0]?.production_processes[0]?.processes
                       );
                     }}
                   >

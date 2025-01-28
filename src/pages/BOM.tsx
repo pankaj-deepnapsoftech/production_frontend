@@ -30,7 +30,6 @@ const BOM: React.FC = () => {
   const [boms, setBoms] = useState<any[]>([]);
   const [filteredBoms, setFilteredBoms] = useState<any[]>([]);
   const location = useLocation();
-  console.log(location.state)
 
   const [deleteBom] = useDeleteBomMutation();
 
@@ -75,6 +74,8 @@ const BOM: React.FC = () => {
         }
       );
       const data = await response.json();
+      
+    
       if (!data.success) {
         throw new Error(data.message);
       }
@@ -129,6 +130,7 @@ const BOM: React.FC = () => {
     setFilteredBoms(results);
   }, [searchKey]);
 
+  
 
   return (
     <div>

@@ -63,8 +63,8 @@ const Productions = () => {
           },
         }
       );
-      console.log("sales", response.data.data);
       setPurchases(response.data.data);
+      console.log(response.data.data);
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
@@ -80,10 +80,9 @@ const Productions = () => {
     const total = processes.length;
     const completed = processes.filter((process) => process.done).length;
 
-    if(completed === 0 && total === 0){
+    if (completed === 0 && total === 0) {
       return { status: "Pending", color: "red" };
-    }
-    else if (completed === total) {
+    } else if (completed === total) {
       return { status: "Completed", color: "green" };
     } else if (completed > 0) {
       return { status: "Under Process", color: "yellow" };
@@ -182,7 +181,7 @@ const Productions = () => {
           >
             {filteredPurchases?.map((purchase: any) => {
               const { status, color } = calculateProcessStatus(
-                purchase?.product_id[0]?.process[0]?.processes || []
+                purchase?.boms[0]?.production_processes[0]?.processes || []
               );
 
               return (
@@ -249,6 +248,19 @@ const Productions = () => {
                         </Badge>
                       ) : null}
 
+                      {purchase?.boms[0]?.is_production_started ? (
+                        <Badge
+                          colorScheme={
+                            purchase?.boms[0]?.is_production_started 
+                              ? "green"                             
+                              : "orange"
+                          }
+                          fontSize="sm"
+                        >
+                         Production : {purchase?.boms[0]?.is_production_started ? "Started": "Pending"}
+                        </Badge>
+                      ) : null}
+
                       {purchase?.paymet_status ? (
                         <Badge
                           colorScheme={
@@ -274,8 +286,7 @@ const Productions = () => {
                           }
                           fontSize="sm"
                         >
-                          Product Status:{" "}
-                          {purchase?.product_status}
+                          Product Status: {purchase?.product_status}
                         </Badge>
                       ) : null}
                     </VStack>

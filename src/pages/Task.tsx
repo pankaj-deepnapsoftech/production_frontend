@@ -90,11 +90,13 @@ const Task = () => {
           designFile: sale?.designFile,
           assinedby_comment: task?.assinedby_comment,
           assined_process: task?.assined_process,
+          bom: sale?.bom
+         
         };
       });
 
       setTasks(tasks);
-      console.log(tasks);
+      console.log("new",tasks);           
     } catch (error) {
       console.log(error);
     }finally {
@@ -308,6 +310,7 @@ const Task = () => {
       ) : (
         <VStack spacing={5}>
           {tasks.map((task) => (
+          
             <Box
               key={task._id}
               borderWidth="1px"
@@ -400,14 +403,23 @@ const Task = () => {
                    
                    {task?.design_status === "UnderProcessing" ? (
                     <>
-                   
-                    <Button                   
-                    colorScheme="teal"
-                    size="sm"
-                    onClick={()=>handleBOM(task?.sale_id)}
-                    >
-                    Create BOM
-                    </Button>    
+                    {task?.bom.length > 0 ? (
+                       <Badge
+                       colorScheme="green"
+                       fontSize="sm"
+                     >
+                       <strong>BOM:</strong> Created
+                     </Badge>
+                    ) : (
+                       <Button                   
+                       colorScheme="teal"
+                       size="sm"
+                       onClick={()=>handleBOM(task?.sale_id)}
+                       >
+                       Create BOM
+                       </Button>  
+                    )}
+                     
                    
                     {task?.design_status != "Completed" ? (
                       <Button                   

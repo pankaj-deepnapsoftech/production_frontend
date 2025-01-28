@@ -151,8 +151,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                   ) => {
                     return (
                       <Tr {...hg.getHeaderGroupProps()}>
-                        {hg.headers.map((column: any) => {
-                          console.log(column.Header)
+                        {hg.headers.map((column: any) => {                    
                           return (
                             <Th
                             className={

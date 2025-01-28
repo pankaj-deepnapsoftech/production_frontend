@@ -321,6 +321,18 @@ const Sales = () => {
                           Design Approval: {purchase?.customer_approve}
                         </Badge>
                       )}
+                      {purchase?.boms[0]?.is_production_started ? (
+                        <Badge
+                        colorScheme={
+                          purchase?.boms[0]?.is_production_started 
+                            ? "green"
+                            : "red"
+                        }
+                        fontSize="sm"
+                      >
+                        Production: {purchase?.boms[0]?.is_production_started ? "Started" : "Pending"}
+                      </Badge>
+                      ) : null}
 
                     {purchase?.paymet_status && (
                       <Badge

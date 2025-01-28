@@ -55,7 +55,7 @@ const AddProcess: React.FC<AddProcess> = ({
     };
 
     try {
-      setIsAdding(true);
+      setIsAdding(true);            
       const response = await addProcess(data).unwrap();
       if (!response.success) {
         throw new Error(response.message);
