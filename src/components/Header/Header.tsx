@@ -38,7 +38,7 @@ const Header: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
         <span onClick={setShowSideBar} className="flex rounded-full px-1 hover:bg-gray-200 cursor-pointer md:hidden">
           <IoReorderThreeOutline className="h-10 w-8" />
         </span>
-        <img src={logo} className="w-[150px]"></img>
+        <img src={logo} className="w-36 h-24"></img>
 
       </div>
 

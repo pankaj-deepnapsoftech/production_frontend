@@ -66,7 +66,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
   );
 
   const statusStyles = {
-    'raw material approval pending': {
+    "raw material approval pending": {
       bg: "#F03E3E",
       text: "#ffffff",
     },
@@ -81,7 +81,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
     completed: {
       bg: "#409503",
       text: "#ffffff",
-    }
+    },
   };
 
   const {
@@ -125,10 +125,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
       {!isLoadingProcess && process.length > 0 && (
         <div>
           <div className="flex justify-end mb-2">
-            <Select
-              onChange={(e) => setPageSize(e.target.value)}
-              width="80px"
-            >
+            <Select onChange={(e) => setPageSize(e.target.value)} width="80px">
               <option value={10}>10</option>
               <option value={20}>20</option>
               <option value={50}>50</option>
@@ -151,14 +148,14 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                   ) => {
                     return (
                       <Tr {...hg.getHeaderGroupProps()}>
-                        {hg.headers.map((column: any) => {                    
+                        {hg.headers.map((column: any) => {
                           return (
                             <Th
-                            className={
-                              column.Header === "Created By"
-                                ? "sticky top-0 left-[-2px] bg-table-color"
-                                : "bg-table-color"
-                            }
+                              className={
+                                column.Header === "Created By"
+                                  ? "sticky top-0 left-[-2px] bg-table-color"
+                                  : "bg-table-color"
+                              }
                               textTransform="capitalize"
                               fontSize="12px"
                               fontWeight="700"
@@ -211,11 +208,15 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                     >
                       {row.cells.map((cell: Cell) => {
                         return (
-                          <Td  className={
-                            cell.column.Header === "Created By"
-                              ? "sticky top-0 left-[-2px] bg-white"
-                              : ""
-                          } fontWeight="500" {...cell.getCellProps()}>
+                          <Td
+                            className={
+                              cell.column.Header === "Created By"
+                                ? "sticky top-0 left-[-2px] bg-white"
+                                : ""
+                            }
+                            fontWeight="500"
+                            {...cell.getCellProps()}
+                          >
                             {cell.column.id !== "createdAt" &&
                               cell.column.id !== "updatedAt" &&
                               cell.column.id !== "creator" &&
@@ -244,9 +245,9 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                               )}
                             {cell.column.id === "creator" && (
                               <span>
-                                {row.original?.creator?.first_name +
-                                  " " +
-                                  row.original?.creator?.last_name}
+                                {`${row.original?.creator?.first_name ?? ""} ${
+                                  row.original?.creator?.last_name ?? ""
+                                }`.trim()}
                               </span>
                             )}
                             {cell.column.id === "item" && (
@@ -262,9 +263,16 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                               <span>{row.original.scrap_store.name}</span>
                             )}
                             {cell.column.id === "status" && (
-                              <span className="px-2 py-1 rounded-md" style={{
-                                backgroundColor: statusStyles[row.original.status].bg,
-                                color: statusStyles[row.original.status].text}}>{row.original.status.toUpperCase()}</span>
+                              <span
+                                className="px-2 py-1 rounded-md"
+                                style={{
+                                  backgroundColor:
+                                    statusStyles[row.original.status].bg,
+                                  color: statusStyles[row.original.status].text,
+                                }}
+                              >
+                                {row.original.status.toUpperCase()}
+                              </span>
                             )}
                           </Td>
                         );

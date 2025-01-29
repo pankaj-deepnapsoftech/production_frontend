@@ -43,8 +43,7 @@ const Task = () => {
   const [page, setPage] = useState(1);
   const role = cookies?.role;
   const navigate = useNavigate();
- // console.log(role);
-  
+  // console.log(role);
 
   const [filters, setFilters] = useState({
     status: "",
@@ -67,13 +66,10 @@ const Task = () => {
         }
       );
 
-      console.log("task", response.data.data);
-
       const tasks = response.data.data.map((task) => {
-        // Ensure that sale_id, product_id, and user_id are valid and have values
-        const sale = task?.sale_id?.[0];
-        const product = task?.sale_id?.[0].product_id?.[0];
-        const assign = task?.assined_by?.[0];
+        const sale = task?.sale_id?.length ? task.sale_id[0] : null;
+        const product = sale?.product_id?.length ? sale.product_id[0] : null;
+        const assign = task?.assined_by?.length ? task.assined_by[0] : null;
 
         return {
           id: task?._id,
@@ -81,25 +77,25 @@ const Task = () => {
           productName: product?.name || "No product name",
           productQuantity: sale?.product_qty || 0,
           productPrice: `${sale?.price || 0} /-`,
-          assignedBy: `${assign?.first_name}`,
-          role: `${assign?.role}`,
-          design_status: task?.isCompleted,
-          design_approval: sale?.customer_approve,
-          customer_design_comment: sale?.customer_design_comment,
-          sale_id: sale?._id,
-          designFile: sale?.designFile,
-          assinedby_comment: task?.assinedby_comment,
-          assined_process: task?.assined_process,
-          bom: sale?.bom
-         
+          assignedBy: assign?.first_name || "Unknown",
+          role: assign?.role || "No role",
+          design_status: task?.isCompleted || "N/A",
+          design_approval: sale?.customer_approve || "Pending",
+          customer_design_comment:
+            sale?.customer_design_comment || "No comment",
+          sale_id: sale?._id || "No sale ID",
+          designFile: sale?.designFile || null,
+          assinedby_comment: task?.assinedby_comment || "No comment",
+          assined_process: task?.assined_process || "No process",
+          bom: sale?.bom || [],
         };
       });
 
       setTasks(tasks);
-      console.log("new",tasks);           
+      console.log("new", tasks);
     } catch (error) {
       console.log(error);
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -117,7 +113,7 @@ const Task = () => {
   const colorChange = (color) => {
     if (color === "Pending") {
       return "orange";
-    } else if (color === "Reject") {
+    } else if (color === "Reject" || color === "Design Rejected") {
       return "red";
     } else {
       return "green";
@@ -189,6 +185,7 @@ const Task = () => {
 
       toast.success("File uploaded successfully.");
       onClose();
+      fetchTasks();
     } catch (error) {
       console.error("Error uploading file:", error);
 
@@ -207,9 +204,8 @@ const Task = () => {
           },
         }
       );
-      //console.log(response);
-
       toast.success(response.data.message);
+      fetchTasks();
     } catch (error) {
       console.log(error);
 
@@ -217,7 +213,7 @@ const Task = () => {
     }
   };
 
-  const handleDone =  async (id) => {
+  const handleDone = async (id) => {
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}assined/update-status/${id}`,
@@ -231,6 +227,7 @@ const Task = () => {
       //console.log(response);
 
       toast.success(response.data.message);
+      fetchTasks();
     } catch (error) {
       console.log(error);
 
@@ -238,11 +235,10 @@ const Task = () => {
     }
   };
 
-  const handleBOM = (id)=>{
+  const handleBOM = (id) => {
     //console.log(id);
-    navigate('/production/bom', {state: {id}});
-
-  }
+    navigate("/production/bom", { state: { id } });
+  };
   //console.log(tasks);
 
   return (
@@ -310,7 +306,6 @@ const Task = () => {
       ) : (
         <VStack spacing={5}>
           {tasks.map((task) => (
-          
             <Box
               key={task._id}
               borderWidth="1px"
@@ -390,121 +385,116 @@ const Task = () => {
 
               {/* Footer */}
               <Divider my={3} />
-                  {role.toLowerCase().includes('prod') ? (
-                   <HStack className="space-x-3">
-                   {task?.design_status === "Pending" ? (
-                     <Button                   
-                     colorScheme="teal"
-                     size="sm"                    
-                     onClick={() => handleAccept(task?.id)}>
+              {role.toLowerCase().includes("prod") ? (
+                <HStack className="space-x-3">
+                  {task?.design_status === "Pending" ? (
+                    <Button
+                      colorScheme="teal"
+                      size="sm"
+                      onClick={() => handleAccept(task?.id)}
+                    >
                       Accept Task
-                     </Button>
-                   ) : null}
-                   
-                   {task?.design_status === "UnderProcessing" ? (
-                    <>
-                    {task?.bom.length > 0 ? (
-                       <Badge
-                       colorScheme="green"
-                       fontSize="sm"
-                     >
-                       <strong>BOM:</strong> Created
-                     </Badge>
-                    ) : (
-                       <Button                   
-                       colorScheme="teal"
-                       size="sm"
-                       onClick={()=>handleBOM(task?.sale_id)}
-                       >
-                       Create BOM
-                       </Button>  
-                    )}
-                     
-                   
-                    {task?.design_status != "Completed" ? (
-                      <Button                   
-                      colorScheme="orange"
-                      leftIcon={<FaCheck />}
-                      size="sm"                    
-                      onClick={() => handleDone(task?.id)}>
-                      Task Done
-                      </Button>
-                    ) : null}
-                    
-                    </>
+                    </Button>
+                  ) : null}
 
-                  ) : null}              
-                   
-                    
-                    </HStack>
-                
-                    
-                  ) : (
-                    <HStack
-                    justify="space-between"
-                    mt={3}
-                    flexWrap="wrap"
-                    align="center"
-                    gap={4}
-                  >
-                    {task?.design_status === "Pending" ? (
-                      <Button
-                        leftIcon={<FaCheck />}
-                        colorScheme="teal"
-                        size="sm"
-                        onClick={() => handleAccept(task?.id)}
-                      >
-                        Accept Task
-                      </Button>
-                    ) : task?.design_status === "UnderProcessing" ? (
+                  {task?.design_status === "UnderProcessing" ? (
+                    <>
+                      {task?.bom.length > 0 ? (
+                        <Badge colorScheme="green" fontSize="sm">
+                          <strong>BOM:</strong> Created
+                        </Badge>
+                      ) : (
+                        <Button
+                          colorScheme="teal"
+                          size="sm"
+                          onClick={() => handleBOM(task?.sale_id)}
+                        >
+                          Create BOM
+                        </Button>
+                      )}
+
+                      {task?.design_status != "Completed" ? (
+                        <Button
+                          colorScheme="orange"
+                          leftIcon={<FaCheck />}
+                          size="sm"
+                          onClick={() => handleDone(task?.id)}
+                        >
+                          Task Done
+                        </Button>
+                      ) : null}
+                    </>
+                  ) : null}
+                </HStack>
+              ) : (
+                <HStack
+                  justify="space-between"
+                  mt={3}
+                  flexWrap="wrap"
+                  align="center"
+                  gap={4}
+                >
+                  <VStack align='start'>
+                  {task?.design_status === "Pending" ? (
+                    <Button
+                      leftIcon={<FaCheck />}
+                      colorScheme="teal"
+                      size="sm"
+                      onClick={() => handleAccept(task?.id)}
+                    >
+                      Accept Task
+                    </Button>
+                  ) : task?.design_status === "UnderProcessing" ? (
+                    <Button
+                      leftIcon={<FaUpload />}
+                      colorScheme="teal"
+                      size="sm"
+                      onClick={() => handleOpenModal(task)}
+                    >
+                      Upload File
+                    </Button>
+                  ) : task?.design_approval === "Approve" ? (
+                    <Badge colorScheme="green" fontSize="sm">
+                      Customer Approval: {task?.design_approval}
+                    </Badge>
+                  ) : task?.design_approval === "Reject" ? (
+                    <VStack align="start">
+                      <Badge colorScheme="red" fontSize="sm">
+                        Customer Approval: {task?.design_approval}
+                      </Badge>
+                      <Text className="text-red-500">
+                        Feedback: {task?.customer_design_comment}
+                      </Text>
                       <Button
                         leftIcon={<FaUpload />}
                         colorScheme="teal"
                         size="sm"
                         onClick={() => handleOpenModal(task)}
                       >
-                        Upload File
+                        Re-Upload File
                       </Button>
-                    ) : task?.design_approval === "Approve" ? (
-                      <Badge colorScheme="green" fontSize="sm">
-                        Customer Approval: {task.design_approval}
-                      </Badge>
-                    ) : task?.design_approval === "Reject" ? (
-                      <VStack align="start">
-                        <Badge colorScheme="red" fontSize="sm">
-                          Customer Approval: {task.design_approval}
-                        </Badge>
-                        <Text className="text-red-500">
-                          Feedback: {task.customer_design_comment}
-                        </Text>
-                        <Button
-                          leftIcon={<FaUpload />}
-                          colorScheme="teal"
-                          size="sm"
-                          onClick={() => handleOpenModal(task)}
-                        >
-                          Re-Upload File
-                        </Button>
-                      </VStack>
-                    ) : (
-                      <Text fontSize="sm">
-                        <strong>Uploaded File:</strong>{" "}
-                        <a
-                          href={task.designFile}
-                          className="text-blue-500 underline"
-                          target="_blank"
-                        >
-                          preview
-                        </a>
-                      </Text>
-                    )}
-    
+                    </VStack>
+                  ) : null}
+
+                  {task?.designFile ? (
                     <Text fontSize="sm">
-                      <strong>Date:</strong> {task.date}
-                    </Text>
-                  </HStack>
-                  )}
-              
+                    <strong>Uploaded File:</strong>{" "}
+                    <a
+                      href={task.designFile}
+                      className="text-blue-500 underline"
+                      target="_blank"
+                    >
+                      preview
+                    </a>
+                  </Text>
+                  ) : null}
+                  </VStack>
+
+                  <Text fontSize="sm">
+                    <strong>Date:</strong> {task.date}
+                  </Text>
+                </HStack>
+              )}
             </Box>
           ))}
         </VStack>

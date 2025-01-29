@@ -60,7 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   >
     <div className="flex flex-col justify-center items-center gap-3 p-7 w-full">
       <div className="cursor-pointer w-40 h-40 bg-white rounded-full shadow-md flex items-center justify-center gap-2">
-        <img src={logo} alt="logo" className="h-17" />
+        <img src={logo} alt="logo" className=" bg-transparent" />
         
       </div>
   

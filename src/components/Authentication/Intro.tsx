@@ -1,5 +1,5 @@
-import logo from '../../assets/images/logo/logo.png';
-import { FaCheck } from "react-icons/fa";
+import logo from "../../assets/images/logo/logo.png";
+import { FaCheckCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Intro: React.FC = () => {
@@ -7,29 +7,37 @@ const Intro: React.FC = () => {
     <div className="hidden xl:flex bg-[#e3e3e3] h-[100vh] w-[50%] flex-col justify-center items-center">
       <div className="mb-5">
         <Link to="/">
-          <img className="w-[200px]" src={logo}></img>
+          <img className="w-[200px] bg-transparent" src={logo} ></img>
         </Link>
       </div>
       <div>
-        <h1 className="mb-5 text-2xl font-bold text-[#4f5d75]">
-          Manage Your Company With:
+        <h1 className="mb-2 text-2xl font-bold text-center text-[#4f5d75]">
+          WELCOME TO KRISHNA LABELS INC
         </h1>
+        <p className="text-center mb-5 text-[#4f5d75] font-semibold">
+          Precision in Every Thread, Trust in Every Tag
+        </p>
 
         <div className="text-sm text-[#4f5d75] font-bold">
-          <div className="mb-4 leading-7">
+          <div className=" leading-7">
             <p className="flex items-center gap-x-2">
-              <FaCheck />
-              Run In One Tool
+              <FaCheckCircle className="text-green-500 text-lg"  />
+              Empowering Quality Since 1970 – A Legacy of Dalmack Auto Electric
+              PL
             </p>
-            <p className="ml-6">Run And Scale Your Erp Crm Apps</p>
           </div>
           <div className="leading-7">
             <p className="flex items-center gap-x-2">
-              <FaCheck />
-              Easily Add And Manage Your Services
+              <FaCheckCircle className="text-green-500 text-lg" />
+              "Your vision, our labels. Crafting excellence for a global
+              clientele."
             </p>
-            <p className="ml-6">
-              It Brings Together Your Invoice Clients And Leads
+          </div>
+          <div className=" leading-7">
+            <p className="flex items-center gap-x-2">
+              <FaCheckCircle className="text-green-500 text-lg" />
+              Secure Access Protecting your data with industry-standard
+              security.
             </p>
           </div>
         </div>

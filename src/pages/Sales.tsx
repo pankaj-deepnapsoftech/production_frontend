@@ -191,31 +191,30 @@ const Sales = () => {
             gap={4}
             width="100%"
           >
-             <Input
-            type="text"
-            placeholder="Search Sale..."
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-            className="w-full md:w-auto"
-          />
-          <Input
-            type="date"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="w-full md:w-auto"
-          />
-          <Select
-            placeholder="Filter by Sale Status"
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="w-full md:w-auto"
-          >
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-          </Select>
-
+            <Input
+              type="text"
+              placeholder="Search Sale..."
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+              className="w-full md:w-auto"
+            />
+            <Input
+              type="date"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              className="w-full md:w-auto"
+            />
+            <Select
+              placeholder="Filter by Sale Status"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="w-full md:w-auto"
+            >
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+            </Select>
           </Box>
-         
+
           <HStack className="space-x-2 w-full md:w-auto justify-end">
             <Button
               bgColor="white"
@@ -321,18 +320,22 @@ const Sales = () => {
                           Design Approval: {purchase?.customer_approve}
                         </Badge>
                       )}
-                      {purchase?.boms[0]?.is_production_started ? (
-                        <Badge
+                    {!purchase?.invoice &&
+                    purchase?.boms?.[0]?.is_production_started !== undefined ? (
+                      <Badge
                         colorScheme={
-                          purchase?.boms[0]?.is_production_started 
+                          purchase.boms[0].is_production_started
                             ? "green"
                             : "red"
                         }
                         fontSize="sm"
                       >
-                        Production: {purchase?.boms[0]?.is_production_started ? "Started" : "Pending"}
+                        Production:{" "}
+                        {purchase.boms[0].is_production_started
+                          ? "Started"
+                          : "Pending"}
                       </Badge>
-                      ) : null}
+                    ) : null}
 
                     {purchase?.paymet_status && (
                       <Badge

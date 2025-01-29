@@ -54,6 +54,7 @@ const Dispatch = () => {
         }
       );
       setData(response.data.data);
+      console.log(response.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -63,14 +64,9 @@ const Dispatch = () => {
     fetchData();
   }, []);
 
-  const calculateTotal = (
-    price: number,
-    qty: number,
-    gst: number,
-   
-  ) => {
+  const calculateTotal = (price: number, qty: number, gst: number) => {
     const basePrice = price * qty;
-    const gstval = (basePrice * gst)/100;
+    const gstval = (basePrice * gst) / 100;
     const totalPrice = basePrice + gstval;
     return totalPrice;
   };
@@ -92,21 +88,6 @@ const Dispatch = () => {
     setSaleId(id);
     DispatchDisclosure.onOpen();
   };
-
-  // Filtered data based on search query
-  const filteredData = data?.filter((acc: any) =>
-    acc?.item.some((sale: any) => {
-      const customerName = sale?.customer_id[0]?.full_name.toLowerCase();
-      const productName = sale?.product_id[0]?.name.toLowerCase();
-      const saleBy = sale?.user_id[0]?.first_name.toLowerCase();
-      const searchLower = searchQuery.toLowerCase();
-      return (
-        customerName.includes(searchLower) ||
-        productName.includes(searchLower) ||
-        saleBy.includes(searchLower)
-      );
-    })
-  );
 
   return (
     <div className="overflow-x-hidden">
@@ -137,10 +118,10 @@ const Dispatch = () => {
           </HStack>
         </HStack>
       </Box>
-      {filteredData?.map((acc: any) =>
-        acc?.item.map((sale: any) => (
+
+      {data?.map((acc: any) =>
           <Box
-            key={sale?._id}
+            key={acc?._id}
             maxW="100%"
             overflowX="auto"
             borderWidth="1px"
@@ -162,7 +143,7 @@ const Dispatch = () => {
                 left={0}
                 h="100%"
                 w={2}
-                bg={sale?.product_status === "Dispatch" ? "orange" : "green"}
+                bg={acc?.bom[0]?.sale_id[0]?.product_status === "Dispatch" ? "orange" : "green"}
                 borderRadius="md"
               />
 
@@ -170,10 +151,10 @@ const Dispatch = () => {
                 {/* Left Section */}
                 <VStack align="start" w={{ base: "100%", md: "48%" }}>
                   <Text fontWeight="bold" fontSize="lg">
-                    Sale By: {sale?.user_id[0]?.first_name || "N/A"}
+                    Sale By: {acc?.bom[0]?.sale_id[0]?.user_id[0]?.first_name || "N/A"}
                   </Text>
                   <Text fontWeight="bold" fontSize="sm" className="underline">
-                    Date: {new Date(sale?.createdAt).toLocaleDateString()}
+                    Date: {new Date(acc?.bom[0]?.sale_id[0]?.createdAt).toLocaleDateString()}
                   </Text>
                 </VStack>
 
@@ -182,28 +163,28 @@ const Dispatch = () => {
                   align={{ base: "start", md: "end" }}
                   w={{ base: "100%", md: "48%" }}
                 >
-                  {sale?.paymet_status && (
+                  {acc?.bom[0]?.sale_id[0]?.paymet_status && (
                     <Badge
                       colorScheme={
-                        sale?.paymet_status === "Pending" ? "orange" : "green"
+                        acc?.bom[0]?.sale_id[0]?.paymet_status === "Pending" ? "orange" : "green"
                       }
                       fontSize="sm"
                     >
                       Payment Status:{" "}
-                      {sale?.paymet_status === "Paied"
+                      {acc?.bom[0]?.sale_id[0]?.paymet_status === "Paied"
                         ? "Paid"
-                        : sale?.paymet_status}
+                        : acc?.bom[0]?.sale_id[0]?.paymet_status}
                     </Badge>
                   )}
 
-                  {sale?.product_status && (
+                  {acc?.bom[0]?.sale_id[0]?.product_status && (
                     <Badge
                       colorScheme={
-                        sale?.product_status === "Dispatch" ? "orange" : "green"
+                        acc?.bom[0]?.sale_id[0]?.product_status === "Dispatch" ? "orange" : "green"
                       }
                       fontSize="sm"
                     >
-                      Product Status: {sale?.product_status}
+                      Product Status: {acc?.bom[0]?.sale_id[0]?.product_status}
                     </Badge>
                   )}
                 </VStack>
@@ -221,16 +202,15 @@ const Dispatch = () => {
                 <VStack align="start" w={{ base: "100%", md: "48%" }}>
                   <Text fontSize="sm">
                     <strong>Customer:</strong>{" "}
-                    {sale?.customer_id[0]?.full_name || "N/A"}
+                    {acc?.bom[0]?.sale_id[0]?.customer_id[0]?.full_name || "N/A"}
                   </Text>
                   <Text fontSize="sm">
                     <strong>Product Name:</strong>{" "}
-                    {sale?.product_id[0]?.name || "N/A"}
+                    {acc?.bom[0]?.sale_id[0]?.product_id[0]?.name || "N/A"}
                   </Text>
                   <Text fontSize="sm">
-                    <strong>Quantity:</strong> {sale?.product_qty || "N/A"}
+                    <strong>Quantity:</strong> {acc?.bom[0]?.sale_id[0]?.product_qty || "N/A"}
                   </Text>
-                
                 </VStack>
 
                 <VStack
@@ -238,18 +218,15 @@ const Dispatch = () => {
                   w={{ base: "100%", md: "48%" }}
                 >
                   <Text fontSize="sm">
-                    <strong>Price:</strong> {sale?.price * sale?.product_qty || "N/A"}
+                    <strong>Price:</strong>{" "}
+                    {acc?.bom[0]?.sale_id[0]?.price * acc?.bom[0]?.sale_id[0]?.product_qty || "N/A"}
                   </Text>
                   <Text fontSize="sm">
-                      <strong>GST :</strong> {sale?.GST}%
-                    </Text>
+                    <strong>GST :</strong> {acc?.bom[0]?.sale_id[0]?.GST}%
+                  </Text>
                   <Text fontSize="sm">
                     <strong>Total Price:</strong>{" "}
-                    {calculateTotal(
-                      sale?.price,
-                      sale?.product_qty,
-                      sale?.GST
-                    )}
+                    {calculateTotal(acc?.bom[0]?.sale_id[0]?.price, acc?.bom[0]?.sale_id[0]?.product_qty, acc?.bom[0]?.sale_id[0]?.GST)}
                   </Text>
                 </VStack>
               </HStack>
@@ -268,13 +245,13 @@ const Dispatch = () => {
                   leftIcon={<FaCloudUploadAlt />}
                   _hover={{ bgColor: "blue.500" }}
                   className="border border-blue-500 hover:text-white"
-                  onClick={() => handleInvoiceUpload(sale?._id, sale?.invoice)}
+                  onClick={() => handleInvoiceUpload(acc?.bom[0]?.sale_id[0]?._id, acc?.bom[0]?.sale_id[0]?.invoice)}
                   width={{ base: "full", sm: "auto" }}
                 >
                   Upload Invoice
                 </Button>
 
-                {sale?.customer_pyement_ss && (
+                {acc?.bom[0]?.sale_id[0]?.customer_pyement_ss && (
                   <Button
                     bgColor="white"
                     leftIcon={<IoEyeSharp />}
@@ -282,9 +259,9 @@ const Dispatch = () => {
                     className="border border-orange-500 hover:text-white"
                     onClick={() =>
                       handlePayment(
-                        sale?._id,
-                        sale?.customer_pyement_ss,
-                        sale?.payment_verify
+                        acc?.bom[0]?.sale_id[0]?._id,
+                        acc?.bom[0]?.sale_id[0]?.customer_pyement_ss,
+                        acc?.bom[0]?.sale_id[0]?.payment_verify
                       )
                     }
                     width={{ base: "full", sm: "auto" }}
@@ -293,20 +270,20 @@ const Dispatch = () => {
                   </Button>
                 )}
 
-                {sale?.payment_verify === true && (
+                {acc?.bom[0]?.sale_id[0]?.payment_verify === true && (
                   <Button
                     bgColor="white"
                     leftIcon={<TbTruckDelivery />}
                     _hover={{ bgColor: "green.500" }}
                     className="border border-green-500 hover:text-white"
-                    onClick={() => handleDispatch(sale?._id)}
+                    onClick={() => handleDispatch(acc?.bom[0]?.sale_id[0]?._id)}
                     width={{ base: "full", sm: "auto" }}
                   >
                     Dispatch
                   </Button>
                 )}
 
-                {sale?.customer_order_ss && (
+                {acc?.bom[0]?.sale_id[0]?.customer_order_ss && (
                   <Button
                     bgColor="white"
                     leftIcon={<IoEyeSharp />}
@@ -315,7 +292,7 @@ const Dispatch = () => {
                     width={{ base: "full", sm: "auto" }}
                   >
                     <a
-                      href={sale?.customer_order_ss}
+                      href={acc?.bom[0]?.sale_id[0]?.customer_order_ss}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -326,7 +303,7 @@ const Dispatch = () => {
               </HStack>
             </Box>
           </Box>
-        ))
+      
       )}
 
       {/* Modal for invoice upload, payment and dispatch */}
