@@ -74,7 +74,7 @@ const Sales = () => {
         },
       });
 
-      console.log(response.data.data);
+      
       setPurchases(response.data.data);
     } catch (error: any) {
       const errorMessage =
@@ -82,7 +82,7 @@ const Sales = () => {
         error.message ||
         "Failed to fetch purchase data";
       toast.error(errorMessage);
-      console.log(error);
+    
     } finally {
       setIsLoading(false);
     }

@@ -18,6 +18,7 @@ import {
   useDisclosure,
   useColorModeValue,
   VStack,
+  Select,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -29,6 +30,7 @@ import UploadInvoice from "./UploadInvoice";
 import PaymentModal from "./PaymentModal";
 import { TbTruckDelivery } from "react-icons/tb";
 import DispatchData from "./DispatchData";
+import { toast } from "react-toastify";
 
 const Dispatch = () => {
   const [cookies] = useCookies();
@@ -37,11 +39,12 @@ const Dispatch = () => {
   const [paymentfile, setPaymentFile] = useState("");
   const [invoiceFile, setInvoiceFile] = useState("");
   const [verifystatus, setVerifyStatus] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
-
+  const [searchQuery, setSearchQuery] = useState(""); 
   const invoiceDisclosure = useDisclosure();
   const paymentDisclosure = useDisclosure();
   const DispatchDisclosure = useDisclosure();
+  const [selectedPaymentStatus, setSelectedPaymentStatus] = useState(""); // Payment filter
+  const [selectedProductStatus, setSelectedProductStatus] = useState(""); // Product filter
 
   const fetchData = async () => {
     try {
@@ -54,9 +57,9 @@ const Dispatch = () => {
         }
       );
       setData(response.data.data);
-      console.log(response.data.data);
-    } catch (error) {
-      console.log(error);
+     
+    } catch (error:any) {
+      toast.error(error);
     }
   };
 
@@ -89,17 +92,48 @@ const Dispatch = () => {
     DispatchDisclosure.onOpen();
   };
 
+  // Filter data based on selected dropdown values
+  const filteredData = data.filter((acc: any) => {
+    const paymentStatus = acc?.bom[0]?.sale_id[0]?.paymet_status || "";
+    const productStatus = acc?.bom[0]?.sale_id[0]?.product_status || "";
+
+    return (
+      (selectedPaymentStatus === "" || paymentStatus === selectedPaymentStatus) &&
+      (selectedProductStatus === "" || productStatus === selectedProductStatus)
+    );
+  });
+
   return (
     <div className="overflow-x-hidden">
       <Box p={5}>
         <Text className="text-lg font-bold">Completed Products</Text>
         <HStack className="flex justify-between items-center mb-5 mt-5">
-          <Input
-            type="text"
-            placeholder="Search by product, customer or saler..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)} // Update search query on change
-          />
+         {/* filters */}
+         <FormControl>
+              <FormLabel fontSize="sm">Payment Status</FormLabel>
+              <Select
+                placeholder="All"
+                value={selectedPaymentStatus}
+                onChange={(e) => setSelectedPaymentStatus(e.target.value)}
+                size="sm"
+              >
+                <option value="Pending">Pending</option>
+                <option value="Paied">Paid</option>
+              </Select>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel fontSize="sm">Product Status</FormLabel>
+              <Select
+                placeholder="All"
+                value={selectedProductStatus}
+                onChange={(e) => setSelectedProductStatus(e.target.value)}
+                size="sm"
+              >
+                <option value="Dispatch">Dispatch</option>
+                <option value="Delivered">Delivered</option>
+              </Select>
+            </FormControl>
 
           <HStack className="space-x-2">
             <Button
@@ -112,6 +146,7 @@ const Dispatch = () => {
               color="#1640d6"
               borderColor="#1640d6"
               variant="outline"
+              className="mt-6"
             >
               Refresh
             </Button>
@@ -119,7 +154,7 @@ const Dispatch = () => {
         </HStack>
       </Box>
 
-      {data?.map((acc: any) =>
+      {filteredData?.map((acc: any) =>
           <Box
             key={acc?._id}
             maxW="100%"

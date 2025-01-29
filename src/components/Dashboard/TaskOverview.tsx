@@ -4,7 +4,7 @@ import { Box, Grid, GridItem, Img, Text } from "@chakra-ui/react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 
-const DispatchOverview = () => {
+const TaskOverview = () => {
   const [dispatchData, setDispatchData] = useState([]);
   const [cookies] = useCookies(["access_token"]);
   const [totalItems, setTotalItems] = useState();
@@ -80,13 +80,13 @@ const DispatchOverview = () => {
           className="border border-gray-200 hover:shadow-lg transition-shadow"
         >
           <Img
-            src="/svg/box.svg"
-            className=" w-20 h-20 filter-orange img-move-down"
+            src="/svg/task-complete.svg"
+            className=" w-20 h-20 filter-orange img-bounce-scale"
           />
           <Text fontSize="2xl" fontWeight="bold" className="text-gray-700">
             {dispatchData.length}
           </Text>
-          <Text className="text-gray-500">Products Ready</Text>
+          <Text className="text-gray-500"> Done</Text>
         </GridItem>
 
         <GridItem
@@ -99,13 +99,13 @@ const DispatchOverview = () => {
           className="border border-gray-200 hover:shadow-lg transition-shadow"
         >
           <Img
-            src="/svg/dispatch.svg"
-            className=" w-20 h-20  filter-blue img-slide-in"
+            src="/svg/task-processing.svg"
+            className=" w-20 h-20  filter-blue img-bounce-scale"
           />
           <Text fontSize="2xl" fontWeight="bold" className="text-gray-700">
             {dispatchCount}
           </Text>
-          <Text className="text-gray-500">Out for delivery</Text>
+          <Text className="text-gray-500"> UnderProcessing</Text>
         </GridItem>
 
         {/* Card 3: Products Delivered */}
@@ -119,17 +119,17 @@ const DispatchOverview = () => {
           className="border border-gray-200 hover:shadow-lg transition-shadow"
         >
           <Img
-            src="/svg/delivered.svg"
+            src="/svg/task-due.svg"
             className="  w-20 h-20 filter-green img-bounce-scale"
           />
           <Text fontSize="2xl" fontWeight="bold" className="text-gray-700">
             {deliveredCount}
           </Text>
-          <Text className="text-gray-500">Products Delivered</Text>
+          <Text className="text-gray-500"> Pending</Text>
         </GridItem>
       </Grid>
     </Box>
   );
 };
 
-export default DispatchOverview;
+export default TaskOverview;

@@ -282,11 +282,19 @@ const PurchaseHistory = () => {
                     </Badge>
                   ) : null}
 
-                  {purchase?.boms[0]?.is_production_started ? (
-                      <Badge colorScheme="green" fontSize="sm">
-                      Production : {purchase?.boms[0]?.is_production_started ? "Started" : "Pending"}
+                  {!purchase?.invoice &&
+                  purchase?.boms?.[0]?.is_production_started !== undefined ? (
+                    <Badge
+                      colorScheme={
+                        purchase.boms[0].is_production_started ? "green" : "red"
+                      }
+                      fontSize="sm"
+                    >
+                      Production:{" "}
+                      {purchase.boms[0].is_production_started
+                        ? "Started"
+                        : "Pending"}
                     </Badge>
-
                   ) : null}
 
                   {purchase && purchase?.paymet_status ? (
@@ -392,7 +400,7 @@ const PurchaseHistory = () => {
                     bgColor="white"
                     leftIcon={<MdOutlineTaskAlt />}
                     _hover={{ bgColor: "green.500" }}
-                    className="border border-green-500 hover:text-white w-full sm:w-auto" 
+                    className="border border-green-500 hover:text-white w-full sm:w-auto"
                     onClick={() => {
                       onProductionOpen();
                       setDesignProcess(purchase?.empprocess);
@@ -563,7 +571,7 @@ const PurchaseHistory = () => {
                 className=" flex items-start w-full justify-start flex-col"
               >
                 <strong className="text-black">Website Link:</strong>
-                <span className=" w-full ">{webLink}</span>
+                <a href={webLink} className=" w-full " target="_blank">{webLink}</a>
               </Text>
 
               <Text color="red.600">

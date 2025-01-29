@@ -22,7 +22,7 @@ const Intro: React.FC = () => {
           <div className=" leading-7">
             <p className="flex items-center gap-x-2">
               <FaCheckCircle className="text-green-500 text-lg"  />
-              Empowering Quality Since 1970 – A Legacy of Dalmack Auto Electric
+              Empowering Quality Since 1970 - A Legacy of Dalmack Auto Electric
               PL
             </p>
           </div>

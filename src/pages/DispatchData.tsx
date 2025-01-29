@@ -32,7 +32,7 @@ const DispatchData = ({ sale_id, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    
 
     try {
       const response = await axios.patch(
@@ -45,7 +45,6 @@ const DispatchData = ({ sale_id, onClose }) => {
         }
       );
 
-      console.log(response);
 
       toast({
         title: "Success",

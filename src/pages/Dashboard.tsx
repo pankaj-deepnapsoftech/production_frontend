@@ -46,6 +46,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { MdWavingHand } from "react-icons/md";
 import axios from "axios";
 import DispatchOverview from "../components/Dashboard/DispatchOverview";
+import TaskOverview from "../components/Dashboard/TaskOverview";
 
 const Dashboard: React.FC = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
@@ -260,6 +261,14 @@ const Dashboard: React.FC = () => {
     navigate("/login");
   }
 
+  const allowedRoles = ["product", "production", "design", "designer"];
+
+  const shouldRenderTaskOverview = allowedRoles.some(
+    (userRole) => role.toLowerCase() === userRole
+  );
+
+  console.log(shouldRenderTaskOverview);
+
   return (
     <div>
       <div className="flex items-start justify-between flex-wrap">
@@ -426,10 +435,9 @@ const Dashboard: React.FC = () => {
               </Grid>
 
               <NavLink to="/sales" className="mt-5">
-                {role &&
-                ["admin", "account"].includes(role.toLowerCase()) ?  (
+                {role && ["admin", "account"].includes(role.toLowerCase()) ? (
                   <SalesGraph />
-                ):null }
+                ) : null}
               </NavLink>
 
               <div className="mt-5 p-3 bg-white shadow-md">
@@ -441,7 +449,24 @@ const Dashboard: React.FC = () => {
                   <DispatchOverview />
                 </NavLink>
               </div>
+              {/*
 
+              {shouldRenderTaskOverview && (
+                <div className="mt-5 p-3 bg-white shadow-md">
+                  <HStack className="flex items-center justify-between mb-2 w-full">
+                    <Text className="text-lg font-bold">
+                      Task Insights
+                    </Text>
+                  </HStack>
+                  <Divider />
+                  <NavLink to="/production/production-track">
+                     <TaskOverview />
+                  </NavLink>
+                </div>
+              )}
+
+               */}
+               
               <div className="mt-5 p-3 bg-white shadow-md">
                 {boms && (
                   <Card

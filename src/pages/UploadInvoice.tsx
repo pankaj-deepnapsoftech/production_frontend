@@ -22,7 +22,7 @@ const UploadInvoice = ({ sale_id, invoicefile, onClose }) => {
   const [cookies] = useCookies();
   const Toast = useToast();
 
-  console.log("invoice", invoicefile);
+
 
   const handleFileDrop = (event) => {
     event.preventDefault();
@@ -57,8 +57,7 @@ const UploadInvoice = ({ sale_id, invoicefile, onClose }) => {
         }
       );
 
-      console.log(response);
-
+ 
       Toast({
         title: "Success",
         description: "File Uploaded Successfully :) ",
@@ -69,7 +68,7 @@ const UploadInvoice = ({ sale_id, invoicefile, onClose }) => {
 
       onClose(); // Close the modal or perform any other action
     } catch (error) {
-      console.error("Error uploading file:", error);
+    
       Toast({
         title: "Error",
         description: "Failed to upload the File :( ",

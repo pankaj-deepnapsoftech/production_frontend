@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Box, Button, HStack, Text, VStack } from "@chakra-ui/react";
 
 const Pagination = ({page,setPage,length}) => {
-  console.log(length)
  
   
   return (

@@ -18,6 +18,7 @@ import {
   Badge,
   Divider,
   Input,
+  Select,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -44,6 +45,8 @@ const Productions = () => {
   const [comment, setComment] = useState("");
   const [filterText, setFilterText] = useState("");
   const [filterDate, setFilterDate] = useState("");
+  const [paymentFilter, setPaymentFilter] = useState("");
+  const [productFilter, setProductFilter] = useState("");
   const [filteredPurchases, setFilteredPurchases] = useState<any[]>([]);
 
   const fetchPurchases = async () => {
@@ -64,7 +67,6 @@ const Productions = () => {
         }
       );
       setPurchases(response.data.data);
-      console.log(response.data.data);
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
@@ -96,20 +98,15 @@ const Productions = () => {
   }, [pages]);
 
   useEffect(() => {
-    if (!purchases.length) {
-      setFilteredPurchases([]);
-      return;
-    }
-
-    const filteredData = purchases.filter((purchase) => {
+    let filteredData = purchases.filter((purchase) => {
       const matchesText =
         !filterText ||
         [
           purchase?.user_id?.[0]?.first_name,
           purchase?.product_id?.[0]?.name,
-          purchase?.customer_id[0]?.full_name,
+          purchase?.customer_id?.[0]?.full_name,
         ]
-          .filter(Boolean) // Filter out undefined/null values
+          .filter(Boolean)
           .some((field) =>
             field.toLowerCase().includes(filterText.toLowerCase())
           );
@@ -119,38 +116,47 @@ const Productions = () => {
         new Date(purchase?.createdAt).toISOString().split("T")[0] ===
           filterDate;
 
-      return matchesText && matchesDate;
-    });
+      const matchesPayment =
+        !paymentFilter || purchase?.paymet_status === paymentFilter;
 
+      const matchesProduct =
+        !productFilter || purchase?.product_status === productFilter;
+
+      return matchesText && matchesDate && matchesPayment && matchesProduct;
+    });
     setFilteredPurchases(filteredData);
-  }, [filterText, filterDate, purchases]);
+  }, [filterText, filterDate, paymentFilter, productFilter, purchases]);
 
   const handleTrackClick = (sale: string) => {
     setSelectedSale(sale);
     trackDisclosure.onOpen();
   };
+
   return (
     <div className="overflow-x-hidden">
       <Box p={5}>
         <Text className="text-lg font-bold">Track Productions</Text>
-        <HStack className="flex justify-between items-center mb-5 mt-5">
+        <HStack className="flex flex-col md:flex-row justify-between items-center mb-5 mt-5 space-y-2 md:space-y-0 md:space-x-2 w-full">
           <Input
             type="text"
             placeholder="Search production..."
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
+            className="w-full md:w-auto"
           />
           <Input
             type="date"
             value={filterDate}
             onChange={(e) => setFilterDate(e.target.value)}
+            className="w-full md:w-auto"
           />
-          <HStack className="space-x-2">
+
+          <HStack className="w-full md:w-auto space-x-2">
             <Button
               fontSize={{ base: "14px", md: "14px" }}
               paddingX={{ base: "10px", md: "12px" }}
               paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 100 }}
+              width="full md:w-auto"
               onClick={fetchPurchases}
               leftIcon={<MdOutlineRefresh />}
               color="#1640d6"
@@ -160,6 +166,27 @@ const Productions = () => {
               Refresh
             </Button>
           </HStack>
+        </HStack>
+
+        <HStack className="flex flex-col md:flex-row justify-between items-center mb-5 mt-5 space-y-2 md:space-y-0 md:space-x-2 w-full">
+          <Select
+            placeholder="Filter by Payment Status"
+            value={paymentFilter}
+            onChange={(e) => setPaymentFilter(e.target.value)}
+            className="w-full md:w-auto"
+          >
+            <option value="Pending">Pending</option>
+            <option value="Paied">Paid</option>
+          </Select>
+          <Select
+            placeholder="Filter by Product Status"
+            value={productFilter}
+            onChange={(e) => setProductFilter(e.target.value)}
+            className="w-full md:w-auto"
+          >
+            <option value="Dispatch">Dispatch</option>
+            <option value="Delivered">Delivered</option>
+          </Select>
         </HStack>
 
         {isLoading ? (
@@ -251,13 +278,16 @@ const Productions = () => {
                       {purchase?.boms[0]?.is_production_started ? (
                         <Badge
                           colorScheme={
-                            purchase?.boms[0]?.is_production_started 
-                              ? "green"                             
+                            purchase?.boms[0]?.is_production_started
+                              ? "green"
                               : "orange"
                           }
                           fontSize="sm"
                         >
-                         Production : {purchase?.boms[0]?.is_production_started ? "Started": "Pending"}
+                          Production :{" "}
+                          {purchase?.boms[0]?.is_production_started
+                            ? "Started"
+                            : "Pending"}
                         </Badge>
                       ) : null}
 

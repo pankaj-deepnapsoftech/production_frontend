@@ -25,7 +25,6 @@ const CreateSale: React.FC = ({ onClose }) => {
     GST: 0,
     comment: "",
   });
-  console.log(formData);
 
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
@@ -104,8 +103,6 @@ const CreateSale: React.FC = ({ onClose }) => {
         }
       );
 
-      console.log("sales", response.data);
-
       setFormData({
         customer_id: "",
         product_id: "",
@@ -135,8 +132,6 @@ const CreateSale: React.FC = ({ onClose }) => {
         duration: 5000,
         isClosable: true,
       });
-
-      console.error(error);
     }
   };
 
@@ -154,8 +149,9 @@ const CreateSale: React.FC = ({ onClose }) => {
               Select a customer
             </option>
             {customers.map((customer: any) => (
-              <option key={customer._id} value={customer._id}>
-                {customer.full_name}
+              <option key={customer?._id} value={customer?._id}>
+                {customer?.full_name}{" "}
+                {customer?.company_name ? ` - ${customer?.company_name}` : null}
               </option>
             ))}
           </Select>
@@ -211,13 +207,16 @@ const CreateSale: React.FC = ({ onClose }) => {
 
         <FormControl id="GST" isRequired>
           <FormLabel>GST Type</FormLabel>
-          <RadioGroup onChange={handleGSTChange} value={formData.GST.toString()}>
-        <Stack direction="row">
-          <Radio value="18">GST (18%)</Radio>
-          <Radio value="12">GST (12%)</Radio>
-          <Radio value="5">GST (5%)</Radio>
-        </Stack>
-      </RadioGroup>
+          <RadioGroup
+            onChange={handleGSTChange}
+            value={formData.GST.toString()}
+          >
+            <Stack direction="row">
+              <Radio value="18">GST (18%)</Radio>
+              <Radio value="12">GST (12%)</Radio>
+              <Radio value="5">GST (5%)</Radio>
+            </Stack>
+          </RadioGroup>
         </FormControl>
         <FormControl id="comment">
           <FormLabel>Remarks</FormLabel>
