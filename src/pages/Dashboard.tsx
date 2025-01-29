@@ -261,6 +261,7 @@ const Dashboard: React.FC = () => {
     navigate("/login");
   }
 
+  /*
   const allowedRoles = ["product", "production", "design", "designer"];
 
   const shouldRenderTaskOverview = allowedRoles.some(
@@ -268,6 +269,7 @@ const Dashboard: React.FC = () => {
   );
 
   console.log(shouldRenderTaskOverview);
+  */
 
   return (
     <div>

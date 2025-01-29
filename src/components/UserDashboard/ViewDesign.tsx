@@ -18,10 +18,14 @@ import { BiHappyHeartEyes, BiSad } from "react-icons/bi";
 interface ViewDesignProps {
   designUrl: string;
   purchaseData: any;
-  onClose:any;
+  onClose: any;
 }
 
-const ViewDesign: React.FC<ViewDesignProps> = ({ designUrl, purchaseData, onClose }) => {
+const ViewDesign: React.FC<ViewDesignProps> = ({
+  designUrl,
+  purchaseData,
+  onClose,
+}) => {
   const [status, setStatus] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [cookies] = useCookies(["access_token"]);
@@ -65,12 +69,36 @@ const ViewDesign: React.FC<ViewDesignProps> = ({ designUrl, purchaseData, onClos
     }
   };
 
-  return (
-    <Box>
-      <Image src={designUrl} alt="Design File" mb={4} />
-
+  const handleDownload = () => {
+    fetch(designUrl)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'design-image'; 
+        link.click(); 
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => console.error('Download failed', error));
+  };
   
-        <form onSubmit={handleSubmit}>
+  
+
+  return (
+    <Box className="flex flex-col justify-center items-center">
+      <Image src={designUrl} alt="Design File" mb={4} />
+      <Button
+        size="sm"
+        bgColor="white"
+        _hover={{ bgColor: "green.500" }}
+        className="border border-green-500 hover:text-white mt-2 mb-5"
+        onClick={handleDownload}
+      >
+        Download
+      </Button>
+
+      <form onSubmit={handleSubmit}>
         <HStack align="center" justify="space-between" mb={4}>
           <RadioGroup onChange={setStatus} value={status}>
             <HStack spacing="24px">
@@ -144,9 +172,6 @@ const ViewDesign: React.FC<ViewDesignProps> = ({ designUrl, purchaseData, onClos
           Submit
         </Button>
       </form>
-   
-
-  
     </Box>
   );
 };
