@@ -270,6 +270,9 @@ const Dashboard: React.FC = () => {
 
   console.log(shouldRenderTaskOverview);
   */
+  if (role === "emp") {
+    navigate("/access");
+  }
 
   return (
     <div>
@@ -451,24 +454,22 @@ const Dashboard: React.FC = () => {
                   <DispatchOverview />
                 </NavLink>
               </div>
-              {/*
 
-              {shouldRenderTaskOverview && (
+              {role &&
+              ["design", "designer", "production", "product"].includes(
+                role.toLowerCase()
+              ) ? (
                 <div className="mt-5 p-3 bg-white shadow-md">
                   <HStack className="flex items-center justify-between mb-2 w-full">
-                    <Text className="text-lg font-bold">
-                      Task Insights
-                    </Text>
+                    <Text className="text-lg font-bold">Task Insights</Text>
                   </HStack>
                   <Divider />
-                  <NavLink to="/production/production-track">
-                     <TaskOverview />
+                  <NavLink to="/task">
+                    <TaskOverview />
                   </NavLink>
                 </div>
-              )}
+              ) : null}
 
-               */}
-               
               <div className="mt-5 p-3 bg-white shadow-md">
                 {boms && (
                   <Card

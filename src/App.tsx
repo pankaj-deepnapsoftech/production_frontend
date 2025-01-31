@@ -22,15 +22,13 @@ import NewEntry from "./components/UserDashboard/NewEntry";
 import { useCookies } from "react-cookie";
 import CustomerLogin from "./components/Authentication/CustomerLogin";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
+import NotAccess from "./components/NotAccess";
 
 const App: React.FC = () => {
 
   const { allowedroutes, isSuper, role } = useSelector((state: any) => state.auth);
   const [userRole, setUserRole] = useState<string | null>(null)
   const [cookies] = useCookies();
-
-
-
 
 
 
@@ -60,6 +58,8 @@ const App: React.FC = () => {
           <Route path="/customer-login" element={<CustomerLogin />} />      
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/access" element={<NotAccess />} />
+          
           {userRole !== "user" && userRole !== "Security Guard" ? <Route path="/" element={<Layout />}>
             {routes.map((route, ind) => {
               const isAllowed = isSuper || allowedroutes.includes(route.path.replaceAll('/', ''));
@@ -78,7 +78,7 @@ const App: React.FC = () => {
                       })}
                   </Route>
                 );
-              } else {
+              }  else {
                 return (
                   <Route
                     index={route.name === "Dashboard" ? true : false}

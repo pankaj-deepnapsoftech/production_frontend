@@ -35,7 +35,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
 
   const [login] = useLoginMutation();
   const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
-  
+
   const loginHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -44,21 +44,27 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
         email: email,
         password: password,
       }).unwrap();
-      if(data.user.role){
+
+      if (data.user.role) {
         dispatch(userExists(data.user));
+      } else if (data?.user?.isSuper) {
+        dispatch(userExists({ ...data.user, role: "admin" }));
+      } else {
+        dispatch(userExists({ ...data.user, role: "emp" }));
       }
-      else{
-        dispatch(userExists({...data.user,role:"admin"}))
+      setCookie("access_token", data.token, { maxAge: 86400 });
+      if (data?.user?.isSuper) {
+        setCookie("role", "admin", { maxAge: 86400 });
+      } else {
+        setCookie("role", data?.user?.role?.role || "emp", { maxAge: 86400 });
       }
-      setCookie('access_token', data.token, {maxAge: 86400});
-      setCookie('role', data?.user?.role?.role || "admin", {maxAge: 86400});
-      setCookie("name", data.user.first_name , { maxAge: 86400 });
-      setCookie("email", data.user.email , { maxAge: 86400 });
+      setCookie("name", data.user.first_name, { maxAge: 86400 });
+      setCookie("email", data.user.email, { maxAge: 86400 });
       toast.success(data.message);
-      navigate('/');
+      navigate("/");
     } catch (err: any) {
       toast.error(err?.message || err?.data?.message || "Something went wrong");
-    } finally{
+    } finally {
       setIsLoginLoading(false);
     }
   };
@@ -144,10 +150,15 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
           style={{ boxShadow: "0 2px 0 rgba(5, 95, 255, 0.1)" }}
           className="w-[100%] rounded-lg bg-[#1640d6] text-white py-2 font-bold disabled:cursor-not-allowed disabled:bg-[#b7b6b6]"
         >
-          {isLoginLoading ? 'Logging in...' : 'Login'}
+          {isLoginLoading ? "Logging in..." : "Login"}
         </button>
 
-        <button onClick={()=>navigate("/customer-login")} className="py-3 font-medium text-blue-500" >Back to Customer Login</button>
+        <button
+          onClick={() => navigate("/customer-login")}
+          className="py-3 font-medium text-blue-500"
+        >
+          Back to Customer Login
+        </button>
       </form>
     </div>
   );

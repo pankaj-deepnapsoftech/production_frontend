@@ -564,7 +564,7 @@ const PurchaseHistory = () => {
                 className="text-center"
               >
                 Here is the link and tracking ID of the delivery
-              </Text>
+              </Text> 
 
               <Text
                 color="red.600"
