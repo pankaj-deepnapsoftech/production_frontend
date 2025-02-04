@@ -22,7 +22,6 @@ const DispatchOverview = () => {
         }
       );
       setDispatchData(response.data.data);
-      console.log("dispatch data", response.data.data);
     } catch (error) {
       console.log(error);
     }

@@ -41,12 +41,13 @@ const AddStore: React.FC<AddStoreProps> = ({ closeDrawerHandler, fetchStoresHand
         pincode: pincode,
         city: city,
         state: state
-      }).unwrap();
+      }).unwrap();    
       toast.success(response.message);
       fetchStoresHandler();
       closeDrawerHandler();
     } catch (error: any) {
       toast.error(error?.message || "Something went wrong");
+      console.log(error);
     } finally {
       setIsAddingStore(false);
     }
