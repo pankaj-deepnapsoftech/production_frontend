@@ -34,6 +34,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({email, setEmail, s
         toast.success(response.message);
         setShowRegisterComponent(false);
         setShowOTPVerificationComponent(true);
+
       } catch (err: any) {
         toast.error(err?.message || err?.data?.message || "Something went wrong");
       } finally{
