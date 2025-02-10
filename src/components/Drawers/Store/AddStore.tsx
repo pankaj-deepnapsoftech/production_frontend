@@ -80,7 +80,7 @@ const AddStore: React.FC<AddStoreProps> = ({ closeDrawerHandler, fetchStoresHand
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   type="text"
-                  placeholder="Product Name"
+                  placeholder="Store Name"
                 />
               </FormControl>
               <FormControl className="mt-3 mb-5">

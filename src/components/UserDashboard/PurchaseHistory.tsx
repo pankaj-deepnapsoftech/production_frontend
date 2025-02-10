@@ -68,6 +68,7 @@ const PurchaseHistory = () => {
   const [webLink, setWebLink] = useState("");
   const [pages, setPages] = useState(1);
   const [assignedData, setAssignedData] = useState([]);
+  const [customerApprove, setCustomerApprove] = useState("");
 
   const {
     isOpen: isProductionModalOpen,
@@ -112,7 +113,6 @@ const PurchaseHistory = () => {
         }
       );
       setPurchases(response.data.data);
-      console.log("purchase data: ", response.data.data);
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
@@ -149,9 +149,14 @@ const PurchaseHistory = () => {
     }
   };
 
-  const openDesignModal = (designFile: string, purchase: object) => {
+  const openDesignModal = (
+    designFile: string,
+    purchase: object,
+    approve: string
+  ) => {
     setSelectedDesign(designFile);
     setSelectedData(purchase);
+    setCustomerApprove(approve);
     onImageOpen();
   };
 
@@ -514,6 +519,7 @@ const PurchaseHistory = () => {
               <ViewDesign
                 designUrl={selectedDesign}
                 purchaseData={selectedData}
+                approve={customerApprove}
                 onClose={onImageClose}
               />
             )}
@@ -564,14 +570,16 @@ const PurchaseHistory = () => {
                 className="text-center"
               >
                 Here is the link and tracking ID of the delivery
-              </Text> 
+              </Text>
 
               <Text
                 color="red.600"
                 className=" flex items-start w-full justify-start flex-col"
               >
                 <strong className="text-black">Website Link:</strong>
-                <a href={webLink} className=" w-full " target="_blank">{webLink}</a>
+                <a href={webLink} className=" w-full " target="_blank">
+                  {webLink}
+                </a>
               </Text>
 
               <Text color="red.600">

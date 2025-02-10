@@ -24,34 +24,25 @@ const CreateSale: React.FC = ({ onClose }) => {
     product_qty: "",
     GST: 0,
     comment: "",
+    productFile: null, // New field for image
   });
 
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
-  const [users, setUsers] = useState([]);
   const [cookies] = useCookies();
   const toast = useToast();
 
   useEffect(() => {
-    // Fetch data for dropdowns
     const fetchDropdownData = async () => {
       try {
-        const [customerRes, productRes, userRes] = await Promise.all([
+        const [customerRes, productRes] = await Promise.all([
           axios.get(`${process.env.REACT_APP_BACKEND_URL}customer/get-all`, {
             headers: { Authorization: `Bearer ${cookies.access_token}` },
           }),
           axios.get(`${process.env.REACT_APP_BACKEND_URL}product/all`, {
             headers: { Authorization: `Bearer ${cookies.access_token}` },
           }),
-
-          axios.get(`${process.env.REACT_APP_BACKEND_URL}auth/all`, {
-            headers: { Authorization: `Bearer ${cookies.access_token}` },
-          }),
         ]);
-
-        const filteredUsers = (userRes.data.users || []).filter(
-          (user: any) => user.role
-        );
 
         const filteredProducts = (productRes.data.products || []).filter(
           (product: any) => product.category == "finished goods"
@@ -59,9 +50,7 @@ const CreateSale: React.FC = ({ onClose }) => {
 
         setCustomers(customerRes.data.data || []);
         setProducts(filteredProducts || []);
-        setUsers(filteredUsers || []);
       } catch (error) {
-        console.error("Failed to fetch dropdown data:", error);
         toast({
           title: "Error",
           description: "Failed to fetch data for dropdowns.",
@@ -78,27 +67,51 @@ const CreateSale: React.FC = ({ onClose }) => {
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const { name, value, type } = e.target;
+
+    if (type === "file") {
+      const file = (e.target as HTMLInputElement).files?.[0] || null;
+      setFormData((prevData) => ({ ...prevData, productFile: file }));
+    } else {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
   };
 
   const handleGSTChange = (value: string) => {
     setFormData((prevData) => ({
       ...prevData,
-      GST: Number(value), // Update GST as a number in the formData
+      GST: Number(value),
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const formDataToSend = new FormData();
+    formDataToSend.append("customer_id", formData.customer_id);
+    formDataToSend.append("product_id", formData.product_id);
+    formDataToSend.append("product_type", formData.product_type);
+    formDataToSend.append("price", formData.price);
+    formDataToSend.append("product_qty", formData.product_qty);
+    formDataToSend.append("GST", formData.GST.toString());
+    formDataToSend.append("comment", formData.comment);
+    
+    if (formData.productFile) {
+      formDataToSend.append("productFile", formData.productFile);
+    }
+
+    // for (let [key, value] of formDataToSend.entries()) {
+    //   console.log(key, value);
+    // }
+
     try {
-      const response = await axios.post(
+      await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}purchase/create`,
-        formData,
+        formDataToSend,
         {
           headers: {
             Authorization: `Bearer ${cookies.access_token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -109,25 +122,25 @@ const CreateSale: React.FC = ({ onClose }) => {
         product_type: "finished goods",
         price: "",
         product_qty: "",
-        GST: { CGST: 0, SGST: 0, IGST: 0 },
-        customer_approve: "Pending",
+        GST: 0,
         comment: "",
+        productFile: null,
       });
 
       toast({
-        title: "Purchase Created",
-        description: "The purchase has been created successfully.",
+        title: "Sale Created",
+        description: "The sale has been created successfully.",
         status: "success",
         duration: 5000,
         isClosable: true,
       });
 
       onClose();
-      //console.log(response.data);
     } catch (error) {
+      console.log(error)
       toast({
         title: "Error",
-        description: "Failed to create the purchase. Please try again.",
+        description: "Failed to create the sale. Please try again.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -145,13 +158,10 @@ const CreateSale: React.FC = ({ onClose }) => {
             value={formData.customer_id}
             onChange={handleInputChange}
           >
-            <option value="" disabled>
-              Select a customer
-            </option>
+            <option value="" disabled>Select a customer</option>
             {customers.map((customer: any) => (
-              <option key={customer?._id} value={customer?._id}>
-                {customer?.full_name}{" "}
-                {customer?.company_name ? ` - ${customer?.company_name}` : null}
+              <option key={customer._id} value={customer._id}>
+                {customer.full_name} {customer.company_name ? ` - ${customer.company_name}` : null}
               </option>
             ))}
           </Select>
@@ -160,20 +170,9 @@ const CreateSale: React.FC = ({ onClose }) => {
         <FormControl id="product_name" isRequired>
           <FormLabel>Product</FormLabel>
           <Select
-            name="product_name"
-            value={formData.product_name}
-            onChange={(e) => {
-              const selectedProductId = e.target.value;
-              const selectedProduct = products.find(
-                (product) => product._id === selectedProductId
-              );
-
-              setFormData((prevData) => ({
-                ...prevData,
-                product_id: selectedProductId,
-                price: selectedProduct ? selectedProduct.price : "",
-              }));
-            }}
+            name="product_id"
+            value={formData.product_id}
+            onChange={handleInputChange}
           >
             <option value="">Select a product</option>
             {products.map((product: any) => (
@@ -186,31 +185,17 @@ const CreateSale: React.FC = ({ onClose }) => {
 
         <FormControl id="price" isRequired>
           <FormLabel>Price</FormLabel>
-          <Input
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleInputChange}
-          />
+          <Input type="number" name="price" value={formData.price} onChange={handleInputChange} />
         </FormControl>
 
         <FormControl id="product_qty" isRequired>
           <FormLabel>Product Quantity</FormLabel>
-          <Input
-            type="number"
-            name="product_qty"
-            value={formData.product_qty}
-            onChange={handleInputChange}
-            placeholder="Enter quantity"
-          />
+          <Input type="number" name="product_qty" value={formData.product_qty} onChange={handleInputChange} />
         </FormControl>
 
         <FormControl id="GST" isRequired>
           <FormLabel>GST Type</FormLabel>
-          <RadioGroup
-            onChange={handleGSTChange}
-            value={formData.GST.toString()}
-          >
+          <RadioGroup onChange={handleGSTChange} value={formData.GST.toString()}>
             <Stack direction="row">
               <Radio value="18">GST (18%)</Radio>
               <Radio value="12">GST (12%)</Radio>
@@ -218,15 +203,15 @@ const CreateSale: React.FC = ({ onClose }) => {
             </Stack>
           </RadioGroup>
         </FormControl>
+
+        <FormControl id="productFile">
+          <FormLabel>Product Image</FormLabel>
+          <Input type="file" accept="image/*" name="productFile" onChange={handleInputChange} />
+        </FormControl>
+
         <FormControl id="comment">
           <FormLabel>Remarks</FormLabel>
-          <Input
-            type="text"
-            name="comment"
-            value={formData.comment}
-            onChange={handleInputChange}
-            placeholder="Further Details (if any)"
-          />
+          <Input type="text" name="comment" value={formData.comment} onChange={handleInputChange} placeholder="Further Details (if any)" />
         </FormControl>
 
         <Button type="submit" colorScheme="teal" size="lg" width="full">

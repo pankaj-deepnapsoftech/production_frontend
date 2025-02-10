@@ -342,39 +342,35 @@ const Dashboard: React.FC = () => {
             gap={6}
             className="w-full"
           >
-            <GridItem className=" p-3">
+            <GridItem>
               <Grid
-                templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
-                gap={4}
+                templateColumns={{
+                  base: "1fr", // 1 item per row on small screens
+                  sm: "1fr", // 1 item per row on small screens
+                  md: "repeat(3, 1fr)", // 3 items per row on medium and larger screens
+                }}
+                gap={2}
                 className="w-full"
               >
                 {/* Card 1: Total Employees */}
                 <GridItem>
                   <NavLink to="/employee">
                     <Box
-                      p={{ base: 2, md: 4 }} // Adjust padding for small and medium screens
+                      p={4}
                       borderRadius="md"
                       boxShadow="md"
-                      className="bg-white flex items-center justify-around gap-4 cursor-pointer hover:scale-105 transition-all ease-in"
+                      className="bg-white flex items-center justify-between gap-4 cursor-pointer hover:scale-105 transition-all ease-in"
                     >
                       <div className="text-center md:text-left">
-                        {" "}
-                        {/* Center text on small screens */}
-                        <Text fontSize={{ base: "md", md: "lg" }}>
-                          Employee
-                        </Text>{" "}
-                        {/* Font size responsive */}
-                        <Text
-                          fontSize={{ base: "md", md: "lg" }}
-                          fontWeight="bold"
-                        >
+                        <Text fontSize="lg">Employee</Text>
+                        <Text fontWeight="bold" fontSize="lg">
                           {role && role === "admin" ? totalEmployees : 0}
                         </Text>
                       </div>
                       <img
                         src="/images/graph.svg"
                         alt="Total Employees"
-                        className="w-16 h-16 md:w-20 md:h-20" // Adjust image size for smaller screens
+                        className="w-16 h-16 md:w-20 md:h-20"
                       />
                     </Box>
                   </NavLink>
@@ -389,7 +385,7 @@ const Dashboard: React.FC = () => {
                       boxShadow="md"
                       className="bg-white flex items-center justify-around gap-4 cursor-pointer hover:scale-105 transition-all ease-in"
                     >
-                      <div>
+                      <div className="text-center md:text-left">
                         <Text fontSize="lg">Customer</Text>
                         <Text fontWeight="bold" fontSize="lg">
                           {role &&
@@ -402,7 +398,7 @@ const Dashboard: React.FC = () => {
                       </div>
                       <img
                         src="/images/graph2.svg"
-                        alt="Total Employees"
+                        alt="Total Customers"
                         className="w-16 h-16 md:w-20 md:h-20"
                       />
                     </Box>
@@ -416,9 +412,9 @@ const Dashboard: React.FC = () => {
                       p={4}
                       borderRadius="md"
                       boxShadow="md"
-                      className="bg-white flex items-center justify-around gap-4  cursor-pointer hover:scale-105 transition-all ease-in"
+                      className="bg-white flex items-center justify-around gap-4 cursor-pointer hover:scale-105 transition-all ease-in"
                     >
-                      <div>
+                      <div className="text-center md:text-left">
                         <Text fontSize="lg">Sales</Text>
                         <Text fontWeight="bold" fontSize="lg">
                           {role &&
@@ -431,7 +427,7 @@ const Dashboard: React.FC = () => {
                       </div>
                       <img
                         src="/images/graph.svg"
-                        alt="Total Employees"
+                        alt="Total Sales"
                         className="w-16 h-16 md:w-20 md:h-20"
                       />
                     </Box>
@@ -455,10 +451,7 @@ const Dashboard: React.FC = () => {
                 </NavLink>
               </div>
 
-              {role &&
-              ["design", "designer", "production", "product"].includes(
-                role.toLowerCase()
-              ) ? (
+              {role != "Admmin" || role != "admin" ? (
                 <div className="mt-5 p-3 bg-white shadow-md">
                   <HStack className="flex items-center justify-between mb-2 w-full">
                     <Text className="text-lg font-bold">Task Insights</Text>

@@ -36,12 +36,9 @@ const Dispatch = () => {
   const [cookies] = useCookies();
   const [data, setData] = useState([]);
   const [saleId, setSaleId] = useState("");
-  const [paymentfile, setPaymentFile] = useState("");
-  const [invoiceFile, setInvoiceFile] = useState("");
-  const [verifystatus, setVerifyStatus] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); 
-  const invoiceDisclosure = useDisclosure();
-  const paymentDisclosure = useDisclosure();
+
+  const [searchQuery, setSearchQuery] = useState("");
+
   const DispatchDisclosure = useDisclosure();
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState(""); // Payment filter
   const [selectedProductStatus, setSelectedProductStatus] = useState(""); // Product filter
@@ -57,8 +54,7 @@ const Dispatch = () => {
         }
       );
       setData(response.data.data);
-     
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(error);
     }
   };
@@ -74,19 +70,6 @@ const Dispatch = () => {
     return totalPrice;
   };
 
-  const handleInvoiceUpload = (id: any, file: any) => {
-    setSaleId(id);
-    setInvoiceFile(file);
-    invoiceDisclosure.onOpen();
-  };
-
-  const handlePayment = (id: any, payment: string, verify: boolean) => {
-    setSaleId(id);
-    setPaymentFile(payment);
-    setVerifyStatus(verify);
-    paymentDisclosure.onOpen();
-  };
-
   const handleDispatch = (id: any) => {
     setSaleId(id);
     DispatchDisclosure.onOpen();
@@ -98,7 +81,8 @@ const Dispatch = () => {
     const productStatus = acc?.bom[0]?.sale_id[0]?.product_status || "";
 
     return (
-      (selectedPaymentStatus === "" || paymentStatus === selectedPaymentStatus) &&
+      (selectedPaymentStatus === "" ||
+        paymentStatus === selectedPaymentStatus) &&
       (selectedProductStatus === "" || productStatus === selectedProductStatus)
     );
   });
@@ -108,32 +92,32 @@ const Dispatch = () => {
       <Box p={5}>
         <Text className="text-lg font-bold">Completed Products</Text>
         <HStack className="flex justify-between items-center mb-5 mt-5">
-         {/* filters */}
-         <FormControl>
-              <FormLabel fontSize="sm">Payment Status</FormLabel>
-              <Select
-                placeholder="All"
-                value={selectedPaymentStatus}
-                onChange={(e) => setSelectedPaymentStatus(e.target.value)}
-                size="sm"
-              >
-                <option value="Pending">Pending</option>
-                <option value="Paied">Paid</option>
-              </Select>
-            </FormControl>
+          {/* filters */}
+          <FormControl>
+            <FormLabel fontSize="sm">Payment Status</FormLabel>
+            <Select
+              placeholder="All"
+              value={selectedPaymentStatus}
+              onChange={(e) => setSelectedPaymentStatus(e.target.value)}
+              size="sm"
+            >
+              <option value="Pending">Pending</option>
+              <option value="Paied">Paid</option>
+            </Select>
+          </FormControl>
 
-            <FormControl>
-              <FormLabel fontSize="sm">Product Status</FormLabel>
-              <Select
-                placeholder="All"
-                value={selectedProductStatus}
-                onChange={(e) => setSelectedProductStatus(e.target.value)}
-                size="sm"
-              >
-                <option value="Dispatch">Dispatch</option>
-                <option value="Delivered">Delivered</option>
-              </Select>
-            </FormControl>
+          <FormControl>
+            <FormLabel fontSize="sm">Product Status</FormLabel>
+            <Select
+              placeholder="All"
+              value={selectedProductStatus}
+              onChange={(e) => setSelectedProductStatus(e.target.value)}
+              size="sm"
+            >
+              <option value="Dispatch">Dispatch</option>
+              <option value="Delivered">Delivered</option>
+            </Select>
+          </FormControl>
 
           <HStack className="space-x-2">
             <Button
@@ -154,252 +138,181 @@ const Dispatch = () => {
         </HStack>
       </Box>
 
-      {filteredData?.map((acc: any) =>
+      {filteredData?.map((acc: any) => (
+        <Box
+          key={acc?._id}
+          maxW="100%"
+          overflowX="auto"
+          borderWidth="1px"
+          borderRadius="md"
+          borderColor="gray.200"
+        >
           <Box
-            key={acc?._id}
-            maxW="100%"
-            overflowX="auto"
             borderWidth="1px"
-            borderRadius="md"
-            borderColor="gray.200"
+            borderRadius="lg"
+            boxShadow="lg"
+            bg="white"
+            p={4}
+            w="100%"
+            position="relative"
           >
             <Box
-              borderWidth="1px"
-              borderRadius="lg"
-              boxShadow="lg"
-              bg="white"
-              p={4}
-              w="100%"
-              position="relative"
+              position="absolute"
+              top={0}
+              left={0}
+              h="100%"
+              w={2}
+              bg={
+                acc?.bom[0]?.sale_id[0]?.product_status === "Dispatch"
+                  ? "orange"
+                  : "green"
+              }
+              borderRadius="md"
+            />
+
+            <HStack justify="space-between" mb={3} flexWrap="wrap" gap={4}>
+              {/* Left Section */}
+              <VStack align="start" w={{ base: "100%", md: "48%" }}>
+                <Text fontWeight="bold" fontSize="lg">
+                  Sale By:{" "}
+                  {acc?.bom[0]?.sale_id[0]?.user_id[0]?.first_name || "N/A"}
+                </Text>
+                <Text fontWeight="bold" fontSize="sm" className="underline">
+                  Date:{" "}
+                  {new Date(
+                    acc?.bom[0]?.sale_id[0]?.createdAt
+                  ).toLocaleDateString()}
+                </Text>
+              </VStack>
+
+              {/* Right Section */}
+              <VStack
+                align={{ base: "start", md: "end" }}
+                w={{ base: "100%", md: "48%" }}
+              >
+                {acc?.bom[0]?.sale_id[0]?.paymet_status && (
+                  <Badge
+                    colorScheme={
+                      acc?.bom[0]?.sale_id[0]?.paymet_status === "Pending"
+                        ? "orange"
+                        : "green"
+                    }
+                    fontSize="sm"
+                  >
+                    Payment Status:{" "}
+                    {acc?.bom[0]?.sale_id[0]?.paymet_status === "Paied"
+                      ? "Paid"
+                      : acc?.bom[0]?.sale_id[0]?.paymet_status}
+                  </Badge>
+                )}
+
+                {acc?.bom[0]?.sale_id[0]?.product_status && (
+                  <Badge
+                    colorScheme={
+                      acc?.bom[0]?.sale_id[0]?.product_status === "Dispatch"
+                        ? "orange"
+                        : "green"
+                    }
+                    fontSize="sm"
+                  >
+                    Product Status: {acc?.bom[0]?.sale_id[0]?.product_status}
+                  </Badge>
+                )}
+              </VStack>
+            </HStack>
+
+            <Divider />
+
+            <HStack
+              justify="space-between"
+              spacing={3}
+              mt={3}
+              flexWrap="wrap"
+              gap={4}
             >
-              <Box
-                position="absolute"
-                top={0}
-                left={0}
-                h="100%"
-                w={2}
-                bg={acc?.bom[0]?.sale_id[0]?.product_status === "Dispatch" ? "orange" : "green"}
-                borderRadius="md"
-              />
+              <VStack align="start" w={{ base: "100%", md: "48%" }}>
+                <Text fontSize="sm">
+                  <strong>Customer:</strong>{" "}
+                  {acc?.bom[0]?.sale_id[0]?.customer_id[0]?.full_name || "N/A"}
+                </Text>
+                <Text fontSize="sm">
+                  <strong>Product Name:</strong>{" "}
+                  {acc?.bom[0]?.sale_id[0]?.product_id[0]?.name || "N/A"}
+                </Text>
+                <Text fontSize="sm">
+                  <strong>Quantity:</strong>{" "}
+                  {acc?.bom[0]?.sale_id[0]?.product_qty || "N/A"}
+                </Text>
+              </VStack>
 
-              <HStack justify="space-between" mb={3} flexWrap="wrap" gap={4}>
-                {/* Left Section */}
-                <VStack align="start" w={{ base: "100%", md: "48%" }}>
-                  <Text fontWeight="bold" fontSize="lg">
-                    Sale By: {acc?.bom[0]?.sale_id[0]?.user_id[0]?.first_name || "N/A"}
-                  </Text>
-                  <Text fontWeight="bold" fontSize="sm" className="underline">
-                    Date: {new Date(acc?.bom[0]?.sale_id[0]?.createdAt).toLocaleDateString()}
-                  </Text>
-                </VStack>
-
-                {/* Right Section */}
-                <VStack
-                  align={{ base: "start", md: "end" }}
-                  w={{ base: "100%", md: "48%" }}
-                >
-                  {acc?.bom[0]?.sale_id[0]?.paymet_status && (
-                    <Badge
-                      colorScheme={
-                        acc?.bom[0]?.sale_id[0]?.paymet_status === "Pending" ? "orange" : "green"
-                      }
-                      fontSize="sm"
-                    >
-                      Payment Status:{" "}
-                      {acc?.bom[0]?.sale_id[0]?.paymet_status === "Paied"
-                        ? "Paid"
-                        : acc?.bom[0]?.sale_id[0]?.paymet_status}
-                    </Badge>
-                  )}
-
-                  {acc?.bom[0]?.sale_id[0]?.product_status && (
-                    <Badge
-                      colorScheme={
-                        acc?.bom[0]?.sale_id[0]?.product_status === "Dispatch" ? "orange" : "green"
-                      }
-                      fontSize="sm"
-                    >
-                      Product Status: {acc?.bom[0]?.sale_id[0]?.product_status}
-                    </Badge>
-                  )}
-                </VStack>
-              </HStack>
-
-              <Divider />
-
-              <HStack
-                justify="space-between"
-                spacing={3}
-                mt={3}
-                flexWrap="wrap"
-                gap={4}
+              <VStack
+                align={{ base: "start", md: "end" }}
+                w={{ base: "100%", md: "48%" }}
               >
-                <VStack align="start" w={{ base: "100%", md: "48%" }}>
-                  <Text fontSize="sm">
-                    <strong>Customer:</strong>{" "}
-                    {acc?.bom[0]?.sale_id[0]?.customer_id[0]?.full_name || "N/A"}
-                  </Text>
-                  <Text fontSize="sm">
-                    <strong>Product Name:</strong>{" "}
-                    {acc?.bom[0]?.sale_id[0]?.product_id[0]?.name || "N/A"}
-                  </Text>
-                  <Text fontSize="sm">
-                    <strong>Quantity:</strong> {acc?.bom[0]?.sale_id[0]?.product_qty || "N/A"}
-                  </Text>
-                </VStack>
+                <Text fontSize="sm">
+                  <strong>Price:</strong>{" "}
+                  {acc?.bom[0]?.sale_id[0]?.price *
+                    acc?.bom[0]?.sale_id[0]?.product_qty || "N/A"}
+                </Text>
+                <Text fontSize="sm">
+                  <strong>GST :</strong> {acc?.bom[0]?.sale_id[0]?.GST}%
+                </Text>
+                <Text fontSize="sm">
+                  <strong>Total Price:</strong>{" "}
+                  {calculateTotal(
+                    acc?.bom[0]?.sale_id[0]?.price,
+                    acc?.bom[0]?.sale_id[0]?.product_qty,
+                    acc?.bom[0]?.sale_id[0]?.GST
+                  )}
+                </Text>
+              </VStack>
+            </HStack>
 
-                <VStack
-                  align={{ base: "start", md: "end" }}
-                  w={{ base: "100%", md: "48%" }}
-                >
-                  <Text fontSize="sm">
-                    <strong>Price:</strong>{" "}
-                    {acc?.bom[0]?.sale_id[0]?.price * acc?.bom[0]?.sale_id[0]?.product_qty || "N/A"}
-                  </Text>
-                  <Text fontSize="sm">
-                    <strong>GST :</strong> {acc?.bom[0]?.sale_id[0]?.GST}%
-                  </Text>
-                  <Text fontSize="sm">
-                    <strong>Total Price:</strong>{" "}
-                    {calculateTotal(acc?.bom[0]?.sale_id[0]?.price, acc?.bom[0]?.sale_id[0]?.product_qty, acc?.bom[0]?.sale_id[0]?.GST)}
-                  </Text>
-                </VStack>
-              </HStack>
-
-              {/* Footer */}
-              <Divider my={3} />
-              <HStack
-                justify={{ base: "center", sm: "space-between" }}
-                mt={3}
-                spacing={{ base: 3, sm: 4 }}
-                flexWrap="wrap"
-                className="sm:flex-col"
-              >
+            {/* Footer */}
+            <Divider my={3} />
+            <HStack
+              justify={{ base: "center", sm: "space-between" }}
+              mt={3}
+              spacing={{ base: 3, sm: 4 }}
+              flexWrap="wrap"
+              className="sm:flex-col"
+            >
+              {acc?.bom[0]?.sale_id[0]?.payment_verify === true && (
                 <Button
                   bgColor="white"
-                  leftIcon={<FaCloudUploadAlt />}
-                  _hover={{ bgColor: "blue.500" }}
-                  className="border border-blue-500 hover:text-white"
-                  onClick={() => handleInvoiceUpload(acc?.bom[0]?.sale_id[0]?._id, acc?.bom[0]?.sale_id[0]?.invoice)}
+                  leftIcon={<TbTruckDelivery />}
+                  _hover={{ bgColor: "green.500" }}
+                  className="border border-green-500 hover:text-white"
+                  onClick={() => handleDispatch(acc?.bom[0]?.sale_id[0]?._id)}
                   width={{ base: "full", sm: "auto" }}
                 >
-                  Upload Invoice
+                  Dispatch
                 </Button>
+              )}
 
-                {acc?.bom[0]?.sale_id[0]?.customer_pyement_ss && (
-                  <Button
-                    bgColor="white"
-                    leftIcon={<IoEyeSharp />}
-                    _hover={{ bgColor: "orange.500" }}
-                    className="border border-orange-500 hover:text-white"
-                    onClick={() =>
-                      handlePayment(
-                        acc?.bom[0]?.sale_id[0]?._id,
-                        acc?.bom[0]?.sale_id[0]?.customer_pyement_ss,
-                        acc?.bom[0]?.sale_id[0]?.payment_verify
-                      )
-                    }
-                    width={{ base: "full", sm: "auto" }}
+              {acc?.bom[0]?.sale_id[0]?.customer_order_ss && (
+                <Button
+                  bgColor="white"
+                  leftIcon={<IoEyeSharp />}
+                  _hover={{ bgColor: "yellow.500" }}
+                  className="border border-yellow-500 hover:text-white"
+                  width={{ base: "full", sm: "auto" }}
+                >
+                  <a
+                    href={acc?.bom[0]?.sale_id[0]?.customer_order_ss}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    View Payment
-                  </Button>
-                )}
-
-                {acc?.bom[0]?.sale_id[0]?.payment_verify === true && (
-                  <Button
-                    bgColor="white"
-                    leftIcon={<TbTruckDelivery />}
-                    _hover={{ bgColor: "green.500" }}
-                    className="border border-green-500 hover:text-white"
-                    onClick={() => handleDispatch(acc?.bom[0]?.sale_id[0]?._id)}
-                    width={{ base: "full", sm: "auto" }}
-                  >
-                    Dispatch
-                  </Button>
-                )}
-
-                {acc?.bom[0]?.sale_id[0]?.customer_order_ss && (
-                  <Button
-                    bgColor="white"
-                    leftIcon={<IoEyeSharp />}
-                    _hover={{ bgColor: "yellow.500" }}
-                    className="border border-yellow-500 hover:text-white"
-                    width={{ base: "full", sm: "auto" }}
-                  >
-                    <a
-                      href={acc?.bom[0]?.sale_id[0]?.customer_order_ss}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View Delivery Proof
-                    </a>
-                  </Button>
-                )}
-              </HStack>
-            </Box>
+                    View Delivery Proof
+                  </a>
+                </Button>
+              )}
+            </HStack>
           </Box>
-      
-      )}
+        </Box>
+      ))}
 
-      {/* Modal for invoice upload, payment and dispatch */}
-      <Modal
-        isOpen={invoiceDisclosure.isOpen}
-        onClose={invoiceDisclosure.onClose}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Upload Invoice</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <UploadInvoice
-              sale_id={saleId}
-              invoicefile={invoiceFile}
-              onClose={invoiceDisclosure.onClose}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
-              mr={3}
-              onClick={() => invoiceDisclosure.onClose()}
-            >
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      <Modal
-        isOpen={paymentDisclosure.isOpen}
-        onClose={paymentDisclosure.onClose}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Payment</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <PaymentModal
-              sale_id={saleId}
-              payment={paymentfile}
-              verify={verifystatus}
-              onClose={paymentDisclosure.onClose}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
-              mr={3}
-              onClick={() => paymentDisclosure.onClose()}
-            >
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      {/*  dispatch */}
 
       <Modal
         isOpen={DispatchDisclosure.isOpen}

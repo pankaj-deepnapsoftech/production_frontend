@@ -257,21 +257,21 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                               <span>{row.original?.rm_store?.name}</span>
                             )}
                             {cell.column.id === "fg_store" && (
-                              <span>{row.original.fg_store.name}</span>
+                              <span>{row.original?.fg_store?.name}</span>
                             )}
                             {cell.column.id === "scrap_store" && (
-                              <span>{row.original.scrap_store.name}</span>
+                              <span>{row.original?.scrap_store?.name}</span>
                             )}
                             {cell.column.id === "status" && (
                               <span
                                 className="px-2 py-1 rounded-md"
                                 style={{
                                   backgroundColor:
-                                    statusStyles[row.original.status].bg,
-                                  color: statusStyles[row.original.status].text,
+                                    statusStyles[row.original?.status].bg,
+                                  color: statusStyles[row.original?.status].text,
                                 }}
                               >
-                                {row.original.status.toUpperCase()}
+                                {row.original?.status.toUpperCase()}
                               </span>
                             )}
                           </Td>

@@ -73,7 +73,6 @@ const Sales = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
       
       setPurchases(response.data.data);
     } catch (error: any) {
@@ -82,7 +81,6 @@ const Sales = () => {
         error.message ||
         "Failed to fetch purchase data";
       toast.error(errorMessage);
-    
     } finally {
       setIsLoading(false);
     }
@@ -431,6 +429,11 @@ const Sales = () => {
                   >
                     Edit{" "}
                   </Button>
+                  {purchase?.designFile ? (
+                    <a href={purchase?.designFile} target="_blank" className="text-blue-500 underline text-sm">
+                      Uploded Design File
+                    </a>
+                  ) : null}
                   <Button
                     bgColor="white"
                     _hover={{ bgColor: "orange.500" }}

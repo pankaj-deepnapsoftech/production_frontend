@@ -23,13 +23,16 @@ import {
   Select,
   Spinner,
 } from "@chakra-ui/react";
-import { FaCheck, FaUpload } from "react-icons/fa";
+import { FaCheck, FaCloudUploadAlt, FaUpload } from "react-icons/fa";
 import { MdOutlineRefresh } from "react-icons/md";
 import axios, { Axios } from "axios";
 import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
 import Pagination from "./Pagination";
 import { NavLink, useNavigate } from "react-router-dom";
+import UploadInvoice from "./UploadInvoice";
+import PaymentModal from "./PaymentModal";
+import { IoEyeSharp } from "react-icons/io5";
 
 const Task = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -43,8 +46,12 @@ const Task = () => {
   const [page, setPage] = useState(1);
   const role = cookies?.role;
   const navigate = useNavigate();
-  // console.log(role);
-
+  const [saleId, setSaleId] = useState("");
+  const [invoiceFile, setInvoiceFile] = useState("");
+  const invoiceDisclosure = useDisclosure();
+  const [paymentfile, setPaymentFile] = useState("");
+  const paymentDisclosure = useDisclosure();
+  const [verifystatus, setVerifyStatus] = useState(false);
   const [filters, setFilters] = useState({
     status: "",
     date: "",
@@ -66,10 +73,18 @@ const Task = () => {
         }
       );
 
+      console.log(response.data.data);
+
       const tasks = response.data.data.map((task) => {
         const sale = task?.sale_id?.length ? task.sale_id[0] : null;
         const product = sale?.product_id?.length ? sale.product_id[0] : null;
         const assign = task?.assined_by?.length ? task.assined_by[0] : null;
+        const customer = task?.sale_id[0]?.customer_id
+          ? task?.sale_id[0]?.customer_id[0]
+          : null;
+        const user = task?.sale_id[0]?.user_id
+          ? task?.sale_id[0]?.user_id[0]
+          : null;
 
         return {
           id: task?._id,
@@ -88,6 +103,13 @@ const Task = () => {
           assinedby_comment: task?.assinedby_comment || "No comment",
           assined_process: task?.assined_process || "No process",
           bom: sale?.bom || [],
+          customer_name: customer?.full_name,
+          company_name: customer?.company_name,
+          sale_by: user?.first_name,
+          invoice: sale?.invoice,
+          payment_verify: sale?.payment_verify,
+          paymet_status: sale?.paymet_status,
+          customer_pyement_ss: sale?.customer_pyement_ss,
         };
       });
 
@@ -115,7 +137,10 @@ const Task = () => {
       return "orange";
     } else if (color === "Reject" || color === "Design Rejected") {
       return "red";
-    } else {
+    } else if (color === false) {
+      return "orange"
+    }
+    else {
       return "green";
     }
   };
@@ -239,7 +264,19 @@ const Task = () => {
     //console.log(id);
     navigate("/production/bom", { state: { id } });
   };
-  //console.log(tasks);
+
+  const handleInvoiceUpload = (id: any, file: any) => {
+    setSaleId(id);
+    setInvoiceFile(file);
+    invoiceDisclosure.onOpen();
+  };
+
+  const handlePayment = (id: any, payment: string, verify: boolean) => {
+    setSaleId(id);
+    setPaymentFile(payment);
+    setVerifyStatus(verify);
+    paymentDisclosure.onOpen();
+  };
 
   return (
     <div className="overflow-x-hidden">
@@ -335,20 +372,48 @@ const Task = () => {
                 align="start"
               >
                 <Text fontWeight="bold" fontSize="lg">
-                  {task.productName}
+                  {task?.productName}
                 </Text>
+
+                <VStack align="start">
                 <Badge
                   colorScheme={colorChange(task.design_status)}
                   fontSize="sm"
                 >
                   <strong>Task:</strong> {task?.design_status}
                 </Badge>
+                {["acc", "account", "accountant", "dispatch", "dis"].includes(
+                    role.toLowerCase()
+                  ) && task?.paymet_status ? (
+                    <Badge
+                    colorScheme={colorChange(task?.paymet_status)}
+                    fontSize="sm"
+                  >
+                    <strong>Payment:</strong> {task?.paymet_status}
+                  </Badge>
+                  ) :null }
+
+
+                {["acc", "account", "accountant", "dispatch", "dis"].includes(
+                    role.toLowerCase()
+                  )  && task?.payment_verify ? (
+                    <Badge
+                    colorScheme={colorChange(task.payment_verify)}
+                    fontSize="sm"
+                  >
+                    <strong>Payment Verification:</strong> {task?.payment_verify ? "Verified" : "Not Verfied"}
+                  </Badge>
+                  ) : null}
+
+         
+
+                </VStack>
+               
               </HStack>
 
               {/* Divider */}
               <Divider />
 
-              {/* Task Details */}
               <HStack
                 justify="space-between"
                 spacing={3}
@@ -364,6 +429,18 @@ const Task = () => {
                   <Text fontSize="sm">
                     <strong>Quantity:</strong> {task.productQuantity}
                   </Text>
+                  {["acc", "account", "accountant", "dispatch", "dis"].includes(
+                    role.toLowerCase()
+                  ) ? (
+                    <>
+                      <Text fontSize="sm">
+                        <strong>Customer:</strong> {task.customer_name}
+                      </Text>
+                      <Text fontSize="sm">
+                        <strong>Sale By:</strong> {task.sale_by}
+                      </Text>
+                    </>
+                  ) : null}
                 </VStack>
                 <VStack
                   align={{ base: "start", md: "end" }}
@@ -426,6 +503,62 @@ const Task = () => {
                     </>
                   ) : null}
                 </HStack>
+              ) : ["accountant", "acc"].includes(role.toLowerCase()) ? (
+                <HStack
+                  justify="space-between"
+                  mt={3}
+                  flexWrap="wrap"
+                  align="center"
+                  gap={4}
+                >
+                  {task?.design_status === "Pending" ? (
+                    <Button
+                      colorScheme="teal"
+                      size="sm"
+                      onClick={() => handleAccept(task?.id)}
+                    >
+                      Accept Task
+                    </Button>
+                  ) : null}
+
+                  {task?.invoice ? (
+                    <Button
+                      bgColor="white"
+                      leftIcon={<FaCloudUploadAlt />}
+                      _hover={{ bgColor: "blue.500" }}
+                      className="border border-blue-500 hover:text-white"
+                      onClick={() =>
+                        handleInvoiceUpload(task?.sale_id, task?.invoice)
+                      }
+                      width={{ base: "full", sm: "auto" }}
+                    >
+                      Upload Invoice
+                    </Button>
+                  ) : null}
+
+                  {task?.customer_pyement_ss ? (
+                    <Button
+                      bgColor="white"
+                      leftIcon={<IoEyeSharp />}
+                      _hover={{ bgColor: "orange.500" }}
+                      className="border border-orange-500 hover:text-white"
+                      onClick={() =>
+                        handlePayment(
+                          task?.sale_id,
+                          task?.customer_pyement_ss,
+                          task?.payment_verify
+                        )
+                      }
+                      width={{ base: "full", sm: "auto" }}
+                    >
+                      View Payment
+                    </Button>
+                  ) : null}
+
+                  <Text fontSize="sm">
+                    <strong>Date:</strong> {task.date}
+                  </Text>
+                </HStack>
               ) : (
                 <HStack
                   justify="space-between"
@@ -434,60 +567,60 @@ const Task = () => {
                   align="center"
                   gap={4}
                 >
-                  <VStack align='start'>
-                  {task?.design_status === "Pending" ? (
-                    <Button
-                      leftIcon={<FaCheck />}
-                      colorScheme="teal"
-                      size="sm"
-                      onClick={() => handleAccept(task?.id)}
-                    >
-                      Accept Task
-                    </Button>
-                  ) : task?.design_status === "UnderProcessing" ? (
-                    <Button
-                      leftIcon={<FaUpload />}
-                      colorScheme="teal"
-                      size="sm"
-                      onClick={() => handleOpenModal(task)}
-                    >
-                      Upload File
-                    </Button>
-                  ) : task?.design_approval === "Approve" ? (
-                    <Badge colorScheme="green" fontSize="sm">
-                      Customer Approval: {task?.design_approval}
-                    </Badge>
-                  ) : task?.design_approval === "Reject" ? (
-                    <VStack align="start">
-                      <Badge colorScheme="red" fontSize="sm">
-                        Customer Approval: {task?.design_approval}
-                      </Badge>
-                      <Text className="text-red-500">
-                        Feedback: {task?.customer_design_comment}
-                      </Text>
+                  <VStack align="start">
+                    {task?.design_status === "Pending" ? (
+                      <Button
+                        leftIcon={<FaCheck />}
+                        colorScheme="teal"
+                        size="sm"
+                        onClick={() => handleAccept(task?.id)}
+                      >
+                        Accept Task
+                      </Button>
+                    ) : task?.design_status === "UnderProcessing" ? (
                       <Button
                         leftIcon={<FaUpload />}
                         colorScheme="teal"
                         size="sm"
                         onClick={() => handleOpenModal(task)}
                       >
-                        Re-Upload File
+                        Upload File
                       </Button>
-                    </VStack>
-                  ) : null}
+                    ) : task?.design_approval === "Approve" ? (
+                      <Badge colorScheme="green" fontSize="sm">
+                        Customer Approval: {task?.design_approval}
+                      </Badge>
+                    ) : task?.design_approval === "Reject" ? (
+                      <VStack align="start">
+                        <Badge colorScheme="red" fontSize="sm">
+                          Customer Approval: {task?.design_approval}
+                        </Badge>
+                        <Text className="text-red-500">
+                          Feedback: {task?.customer_design_comment}
+                        </Text>
+                        <Button
+                          leftIcon={<FaUpload />}
+                          colorScheme="teal"
+                          size="sm"
+                          onClick={() => handleOpenModal(task)}
+                        >
+                          Re-Upload File
+                        </Button>
+                      </VStack>
+                    ) : null}
 
-                  {task?.designFile ? (
-                    <Text fontSize="sm">
-                    <strong>Uploaded File:</strong>{" "}
-                    <a
-                      href={task.designFile}
-                      className="text-blue-500 underline"
-                      target="_blank"
-                    >
-                      preview
-                    </a>
-                  </Text>
-                  ) : null}
+                    {task?.designFile ? (
+                      <Text fontSize="sm">
+                        <strong>Uploaded File:</strong>{" "}
+                        <a
+                          href={task.designFile}
+                          className="text-blue-500 underline"
+                          target="_blank"
+                        >
+                          preview
+                        </a>
+                      </Text>
+                    ) : null}
                   </VStack>
 
                   <Text fontSize="sm">
@@ -500,7 +633,6 @@ const Task = () => {
         </VStack>
       )}
 
-      {/* Modal for File Upload */}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -571,6 +703,67 @@ const Task = () => {
               Upload
             </Button>
             <Button variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal for invoice upload, payment and dispatch */}
+      <Modal
+        isOpen={invoiceDisclosure.isOpen}
+        onClose={invoiceDisclosure.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Upload Invoice</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <UploadInvoice
+              sale_id={saleId}
+              invoicefile={invoiceFile}
+              onClose={invoiceDisclosure.onClose}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500" }}
+              className="border border-red-500 hover:text-white w-full ml-2"
+              mr={3}
+              onClick={() => invoiceDisclosure.onClose()}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal for  payment */}
+      <Modal
+        isOpen={paymentDisclosure.isOpen}
+        onClose={paymentDisclosure.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Payment</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <PaymentModal
+              sale_id={saleId}
+              payment={paymentfile}
+              verify={verifystatus}
+              onClose={paymentDisclosure.onClose}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500" }}
+              className="border border-red-500 hover:text-white w-full ml-2"
+              mr={3}
+              onClick={() => paymentDisclosure.onClose()}
+            >
               Cancel
             </Button>
           </ModalFooter>

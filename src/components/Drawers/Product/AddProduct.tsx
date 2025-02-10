@@ -171,6 +171,14 @@ const AddProduct: React.FC<AddProductProps> = ({
   };
 
   useEffect(() => {
+    if (name) {
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const formattedName = name.toLowerCase().replace(/\s+/g, "-");
+      setId(`${formattedName}-${randomNum}`);
+    }
+  }, [name]); // R
+
+  useEffect(() => {
     fetchAllStores();
   }, []);
 
@@ -210,7 +218,7 @@ const AddProduct: React.FC<AddProductProps> = ({
               <FormLabel fontWeight="bold">Product ID</FormLabel>
               <Input
                 value={id}
-                onChange={(e) => setId(e.target.value)}
+                readOnly 
                 type="text"
                 placeholder="Product ID"
               />
@@ -374,7 +382,7 @@ const AddProduct: React.FC<AddProductProps> = ({
               backgroundColor="#0d9488"
               color="#ffffff"
               type="submit"
-              _hover={{backgroundColor:"#14b8a6"}}
+              _hover={{ backgroundColor: "#14b8a6" }}
               className="mt-5 w-full py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
             >
               Submit

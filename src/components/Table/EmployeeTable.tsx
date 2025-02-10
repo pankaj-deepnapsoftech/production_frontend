@@ -242,8 +242,8 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                               <span
                               className="px-2 py-1 rounded-md"
                               style={{
-                                backgroundColor: verificationStyles[row.original.isVerified ? 'verified' : 'not verified'].bg,
-                                color: verificationStyles[row.original.isVerified ? 'verified' : 'not verified'].text,
+                                backgroundColor: verificationStyles[row.original?.isVerified ? 'verified' : 'not verified'].bg,
+                                color: verificationStyles[row.original?.isVerified ? 'verified' : 'not verified'].text,
                               }}
                             >
                               {row.original.isVerified
@@ -253,8 +253,8 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({
                             {cell.column.id === "role" && (
                               <span>
                                 {(row.original?.role &&
-                                  row.original.role.role) ||
-                                  (row.original.isSuper && "Super Admin") ||
+                                  row.original?.role?.role) ||
+                                  (row.original?.isSuper && "Super Admin") ||
                                   ""}
                               </span>
                             )}

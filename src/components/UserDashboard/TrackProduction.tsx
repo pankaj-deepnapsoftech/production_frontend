@@ -41,10 +41,10 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
       {/* Design Process Section */}
       <Box mb={8}>
         <Text fontWeight="bold" fontSize="2xl" color="blue.600" mb={4}>
-          Design Process
+           Process
         </Text>
         {designProcess?.length === 0 ? (
-          <Box>No design process data available.</Box>
+          <Box>No  process data available.</Box>
         ) : (
           <VStack align="start" spacing={4} className="max-h-[20rem] overflow-y-scroll">
             {designProcess?.map((stage: any, index: number) => (

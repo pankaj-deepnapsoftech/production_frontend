@@ -11,12 +11,14 @@ import {
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 
 const CreateCustomer: React.FC = ({ onClose }) => {
   const [customerType, setCustomerType] = useState("Individual");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [phoneNo, setPhoneNo] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [gstNo, setGstNo] = useState("");
@@ -39,13 +41,11 @@ const CreateCustomer: React.FC = ({ onClose }) => {
     };
 
     try {
-      
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}customer/create`,
-        payload,
-        
+        payload
       );
-      
+
       console.log(response);
 
       toast({
@@ -66,10 +66,9 @@ const CreateCustomer: React.FC = ({ onClose }) => {
       setGstNo("");
 
       onClose();
-
     } catch (error: any) {
       console.log(error);
-      
+
       toast({
         title: "Error",
         description:
@@ -119,17 +118,17 @@ const CreateCustomer: React.FC = ({ onClose }) => {
           />
         </FormControl>
 
-        <FormControl id="password" isRequired>
-          <FormLabel className="text-lg font-medium">password</FormLabel>
+        <FormControl id="password" isRequired className="relative">
+          <FormLabel className="text-lg font-medium">Password</FormLabel>
           <Input
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            placeholder="Enter email"
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter password"
             className="border-2 border-gray-300 rounded-md p-2"
           />
+         
         </FormControl>
-
         {/* Phone Number Field */}
         <FormControl id="phoneNo" isRequired>
           <FormLabel className="text-lg font-medium">Phone Number</FormLabel>

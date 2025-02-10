@@ -19,17 +19,20 @@ interface ViewDesignProps {
   designUrl: string;
   purchaseData: any;
   onClose: any;
+  approve:string;
 }
 
 const ViewDesign: React.FC<ViewDesignProps> = ({
   designUrl,
   purchaseData,
+  approve,
   onClose,
 }) => {
   const [status, setStatus] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
+
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -74,16 +77,14 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
       .then((response) => response.blob())
       .then((blob) => {
         const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.download = 'design-image'; 
-        link.click(); 
+        link.download = "design-image";
+        link.click();
         window.URL.revokeObjectURL(url);
       })
-      .catch((error) => console.error('Download failed', error));
+      .catch((error) => console.error("Download failed", error));
   };
-  
-  
 
   return (
     <Box className="flex flex-col justify-center items-center">
@@ -98,7 +99,11 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
         Download
       </Button>
 
-      <form onSubmit={handleSubmit}>
+
+      {approve === "Approve" ? (
+        <p className="text-orange-500 font-normal text-sm">You have already approved the design :)</p>
+      ) : (
+        <form onSubmit={handleSubmit}>
         <HStack align="center" justify="space-between" mb={4}>
           <RadioGroup onChange={setStatus} value={status}>
             <HStack spacing="24px">
@@ -172,6 +177,9 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
           Submit
         </Button>
       </form>
+      )}
+
+     
     </Box>
   );
 };
