@@ -275,6 +275,16 @@ const Productions = () => {
                         </Badge>
                       ) : null}
 
+                      {purchase?.token_status ? (
+                         <Badge
+                         colorScheme="green"
+                         fontSize="sm"
+                       >
+                         Token Amount :{" "}
+                         Paid
+                       </Badge>
+                      ) : null}
+
                       {purchase?.boms[0]?.is_production_started ? (
                         <Badge
                           colorScheme={
