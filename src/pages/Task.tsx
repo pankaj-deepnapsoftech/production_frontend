@@ -52,6 +52,7 @@ const Task = () => {
   const [paymentfile, setPaymentFile] = useState("");
   const paymentDisclosure = useDisclosure();
   const [verifystatus, setVerifyStatus] = useState(false);
+  const [assignId, setAssignId] = useState();
   const [filters, setFilters] = useState({
     status: "",
     date: "",
@@ -72,8 +73,6 @@ const Task = () => {
           },
         }
       );
-
-      console.log(response.data.data);
 
       const tasks = response.data.data.map((task) => {
         const sale = task?.sale_id?.length ? task.sale_id[0] : null;
@@ -138,9 +137,8 @@ const Task = () => {
     } else if (color === "Reject" || color === "Design Rejected") {
       return "red";
     } else if (color === false) {
-      return "orange"
-    }
-    else {
+      return "orange";
+    } else {
       return "green";
     }
   };
@@ -271,10 +269,17 @@ const Task = () => {
     invoiceDisclosure.onOpen();
   };
 
-  const handlePayment = (id: any, payment: string, verify: boolean) => {
+  const handlePayment = (
+    id: any,
+    payment: string,
+    verify: boolean,
+    assignId: any
+  ) => {
     setSaleId(id);
     setPaymentFile(payment);
     setVerifyStatus(verify);
+    setAssignId(assignId);
+
     paymentDisclosure.onOpen();
   };
 
@@ -364,7 +369,6 @@ const Task = () => {
                 borderRadius="md"
               />
 
-              {/* Header */}
               <HStack
                 justify="space-between"
                 mb={3}
@@ -376,39 +380,38 @@ const Task = () => {
                 </Text>
 
                 <VStack align="start">
-                <Badge
-                  colorScheme={colorChange(task.design_status)}
-                  fontSize="sm"
-                >
-                  <strong>Task:</strong> {task?.design_status}
-                </Badge>
-                {["acc", "account", "accountant", "dispatch", "dis"].includes(
+                  <Badge
+                    colorScheme={colorChange(task.design_status)}
+                    fontSize="sm"
+                  >
+                    <strong>Task:</strong> {task?.design_status}
+                  </Badge>
+                  {["acc", "account", "accountant", "dispatch", "dis"].includes(
                     role.toLowerCase()
                   ) && task?.paymet_status ? (
                     <Badge
-                    colorScheme={colorChange(task?.paymet_status)}
-                    fontSize="sm"
-                  >
-                    <strong>Payment:</strong> {task?.paymet_status}
-                  </Badge>
-                  ) :null }
-
-
-                {["acc", "account", "accountant", "dispatch", "dis"].includes(
-                    role.toLowerCase()
-                  )  && task?.payment_verify ? (
-                    <Badge
-                    colorScheme={colorChange(task.payment_verify)}
-                    fontSize="sm"
-                  >
-                    <strong>Payment Verification:</strong> {task?.payment_verify ? "Verified" : "Not Verfied"}
-                  </Badge>
+                      colorScheme={colorChange(task?.paymet_status)}
+                      fontSize="sm"
+                    >
+                      <strong>Payment:</strong>{" "}
+                      {task?.paymet_status === "Paied"
+                        ? "Paid"
+                        : task?.paymet_status}
+                    </Badge>
                   ) : null}
 
-         
-
+                  {["acc", "account", "accountant", "dispatch", "dis"].includes(
+                    role.toLowerCase()
+                  ) && task?.payment_verify ? (
+                    <Badge
+                      colorScheme={colorChange(task.payment_verify)}
+                      fontSize="sm"
+                    >
+                      <strong>Payment Verification:</strong>{" "}
+                      {task?.payment_verify ? "Verified" : "Not Verfied"}
+                    </Badge>
+                  ) : null}
                 </VStack>
-               
               </HStack>
 
               {/* Divider */}
@@ -546,7 +549,8 @@ const Task = () => {
                         handlePayment(
                           task?.sale_id,
                           task?.customer_pyement_ss,
-                          task?.payment_verify
+                          task?.payment_verify,
+                          task?.id
                         )
                       }
                       width={{ base: "full", sm: "auto" }}
@@ -753,6 +757,7 @@ const Task = () => {
               sale_id={saleId}
               payment={paymentfile}
               verify={verifystatus}
+              assign={assignId}
               onClose={paymentDisclosure.onClose}
             />
           </ModalBody>

@@ -43,12 +43,10 @@ const Header: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
       </div>
 
       <div className="flex gap-x-5 items-center">
-        <IoIosNotifications size={40} />
-
         <Avatar
           cursor="pointer"
           size="md"
-          name={firstname ? firstname + " " + lastname : ""}
+          name={firstname && lastname ? firstname + " " + lastname : firstname}
           onClick={() => setShowUserDetails((prev) => !prev)}
         ></Avatar>
         {showUserDetails && (

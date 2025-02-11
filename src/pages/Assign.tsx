@@ -9,7 +9,6 @@ import {
   FormLabel,
   Input,
   Button,
-  Select,
   useToast,
   Textarea,
   HStack,
@@ -18,6 +17,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import Select from "react-select"; // Import react-select
 
 const Assign = ({ empData, saleData, onClose }) => {
   const tasks = saleData?.assinedto;
@@ -147,8 +147,6 @@ const Assign = ({ empData, saleData, onClose }) => {
         }
       );
 
-      
-
       toast({
         title: "Task Deleted",
         description: "The task has been successfully deleted.",
@@ -178,6 +176,12 @@ const Assign = ({ empData, saleData, onClose }) => {
       return "green";
     }
   };
+
+  // Convert empData into the format needed for react-select
+  const employeeOptions = empData?.map((emp) => ({
+    value: emp?._id,
+    label: `${emp?.first_name} - ${emp?.role?.role}`,
+  }));
 
   return (
     <Box p={2}>
@@ -255,16 +259,16 @@ const Assign = ({ empData, saleData, onClose }) => {
           <Select
             name="assined_to"
             placeholder="Select an employee"
-            value={formData.assined_to}
-            onChange={handleChange}
-            bgColor="white"
-          >
-            {empData?.map((emp) => (
-              <option key={emp?._id} value={emp?._id}>
-                {emp?.first_name} - {emp?.role?.role}
-              </option>
-            ))}
-          </Select>
+            value={employeeOptions?.find((emp) => emp.value === formData.assined_to)} // Set selected value
+            onChange={(selectedOption) =>
+              setFormData((prevData) => ({
+                ...prevData,
+                assined_to: selectedOption?.value,
+              }))
+            }
+            options={employeeOptions} // Options from empData
+            isSearchable={true} // Make it searchable
+          />
         </FormControl>
         <FormControl mb={4}>
           <FormLabel>Define Process</FormLabel>

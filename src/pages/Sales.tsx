@@ -463,7 +463,7 @@ const Sales = () => {
           <ModalHeader>Add a new Sale</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <CreateSale onClose={createDisclosure.onClose} />
+            <CreateSale onClose={createDisclosure.onClose} refresh={fetchPurchases}/>
           </ModalBody>
           <ModalFooter>
             <Button

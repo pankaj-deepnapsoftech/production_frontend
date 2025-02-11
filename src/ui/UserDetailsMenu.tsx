@@ -1,4 +1,5 @@
 import { Avatar } from "@chakra-ui/react";
+import { useCookies } from "react-cookie";
 import { BiLogOutCircle, BiX } from "react-icons/bi";
 
 interface UserDetailsMenuProps {
@@ -12,6 +13,8 @@ interface UserDetailsMenuProps {
 const UserDetailsMenu: React.FC<UserDetailsMenuProps> = ({
     email, firstname, lastname, logoutHandler, closeUserDetailsMenu
 }) => {
+  const [cookies] = useCookies();
+  const role = cookies?.role
   return (
     <div
       className="bg-white px-3 py-3 z-30 rounded-lg"
@@ -21,16 +24,16 @@ const UserDetailsMenu: React.FC<UserDetailsMenuProps> = ({
       }}
     >
       <div className="cursor-pointer flex border-b py-2 px-3 rounded-md hover:bg-[#e3e3e3]">
-        <Avatar size="md" name={firstname + ' ' + lastname} />
+        <Avatar size="md" name={ firstname && lastname ?  firstname + ' ' + lastname : firstname} />
         <div className="pl-2">
           <p className="text-lg font-semibold mb-1">
-            {firstname + ' ' + lastname}
-            {/* <Badge ml="1" colorScheme="red" rounded={"6px"}>
-              {role === "Admin" ? "Employee" : "Super Admin"}
-            </Badge> */}
+            {firstname && lastname ?  firstname + ' ' + lastname : firstname} 
           </p>
           <p className="mt-[-4px] font-semibold">{email}</p>
-        </div>
+        </div>        
+      </div>
+      <div className="cursor-pointer flex border-b py-2 px-3 rounded-md hover:bg-[#e3e3e3]">
+      <p className="mt-[-4px] font-semibold"><strong>Role : </strong>{role}</p>
       </div>
       <div
         className="cursor-pointer px-3 py-1 rounded-md hover:bg-[#e3e3e3] mt-2 font-semibold text-lg flex items-center gap-x-2 border-b"

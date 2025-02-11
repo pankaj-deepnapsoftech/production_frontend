@@ -1,54 +1,65 @@
-import {
-  Box,
-  Text,
-  VStack,
-  Badge,
-  Progress,
-} from "@chakra-ui/react";
+import { Box, Text, VStack, Badge, Progress } from "@chakra-ui/react";
 
 const TrackProduction = ({ designProcess, productionProcess }: any) => {
-  console.log("designprocess", designProcess);
-  
-  const ColorChange = (color:any)=>{
-    if(color === "Pending"){
-      return "orange"
-    } else if(color === "Design Rejected"){
-     return "red"
-    }else if(color === "UnderProcessing"){
-       return "blue"
-    }else{
-      return "green"
-    }
-  }
 
-  const progressChange = (value:any)=>{
-    if(value === "Pending"){
-      return 20
-    } else if(value === "Design Rejected"){
-     return 0
+  const ColorChange = (color: any) => {
+    if (color === "Pending") {
+      return "orange";
+    } else if (color === "Design Rejected") {
+      return "red";
+    } else if (color === "UnderProcessing") {
+      return "blue";
+    } else {
+      return "green";
     }
-    else if(value === "UnderProcessing"){
-      return 50
-     }
-    else{
-      return 100
+  };
+
+  const progressChange = (value: any) => {
+    if (value === "Pending") {
+      return 20;
+    } else if (value === "Design Rejected") {
+      return 0;
+    } else if (value === "UnderProcessing") {
+      return 50;
+    } else {
+      return 100;
     }
-  }
- 
+  };
+
+  const getProcessStatus = (start: boolean, done: boolean) => {
+    if (done) {
+      return "Completed";
+    } else if (start) {
+      return "UnderProcessing";
+    } else {
+      return "Pending";
+    }
+  };
+
+  const getProgressValue = (start: boolean, done: boolean) => {
+    if (done) {
+      return 100;
+    } else if (start) {
+      return 50; // UnderProcessing
+    } else {
+      return 20; // Pending
+    }
+  };
+
+  console.log(productionProcess);
 
   return (
     <Box p={4}>
       {/* Design Process Section */}
       <Box mb={8}>
         <Text fontWeight="bold" fontSize="2xl" color="blue.600" mb={4}>
-           Process
+          Process
         </Text>
         {designProcess?.length === 0 ? (
-          <Box>No  process data available.</Box>
+          <Box>No process data available.</Box>
         ) : (
           <VStack align="start" spacing={4} className="max-h-[20rem] overflow-y-scroll">
             {designProcess?.map((stage: any, index: number) => (
-              
               <Box
                 key={index}
                 p={4}
@@ -62,7 +73,7 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
                 <Text
                   fontWeight="bold"
                   fontSize="lg"
-                  color={ColorChange(stage?.isCompleted) }
+                  color={ColorChange(stage?.isCompleted)}
                 >
                   {stage?.assined_process}
                 </Text>
@@ -78,7 +89,7 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
                   </Text>
                   <Box mt={1} w="full">
                     <Progress
-                      value={progressChange(stage?.isCompleted) }
+                      value={progressChange(stage?.isCompleted)}
                       size="sm"
                       colorScheme={ColorChange(stage?.isCompleted)}
                       borderRadius="md"
@@ -100,45 +111,48 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
           <Box>No production process data available.</Box>
         ) : (
           <VStack align="start" spacing={4} className="max-h-[20rem] overflow-y-scroll">
-            {productionProcess?.map((stage: any, index: number) => (
-              <Box
-                key={index}
-                p={4}
-                w="full"
-                borderWidth="1px"
-                borderRadius="lg"
-                shadow="md"
-                bg={stage?.done ? "green.50" : "red.50"}
-                borderColor={stage?.done ? "green.300" : "red.300"}
-              >
-                <Text
-                  fontWeight="bold"
-                  fontSize="lg"
-                  color={stage?.done ? "green.700" : "red.700"}
+            {productionProcess?.map((stage: any, index: number) => {
+              // Get the process status and progress based on start and done
+              const status = getProcessStatus(stage?.start, stage?.done);
+              const progressValue = getProgressValue(stage?.start, stage?.done);
+              const colorScheme = status === "Completed" ? "green" : status === "UnderProcessing" ? "blue" : "orange";
+
+              return (
+                <Box
+                  key={index}
+                  p={4}
+                  w="full"
+                  borderWidth="1px"
+                  borderRadius="lg"
+                  shadow="md"
+                  bg={status === "Completed" ? "green.50" : status === "UnderProcessing" ? "blue.50" : "orange.50"}
+                  borderColor={colorScheme}
                 >
-                  {stage?.process}
-                </Text>
-                <Text mt={2} fontSize="md">
-                  Status:
-                  <Badge ml={2} colorScheme={stage?.done ? "green" : "red"} variant="solid">
-                    {stage?.done ? "Completed" : "Pending"}
-                  </Badge>
-                </Text>
-                <Box mt={2}>
-                  <Text fontSize="sm" color="gray.500">
-                    Progress:
+                  <Text fontWeight="bold" fontSize="lg" color={colorScheme}>
+                    {stage?.process}
                   </Text>
-                  <Box mt={1} w="full">
-                    <Progress
-                      value={stage?.done ? 100 : 50} // Assuming 50% for pending as a placeholder
-                      size="sm"
-                      colorScheme={stage?.done ? "green" : "red"}
-                      borderRadius="md"
-                    />
+                  <Text mt={2} fontSize="md">
+                    Status:
+                    <Badge ml={2} colorScheme={colorScheme} variant="solid">
+                      {status}
+                    </Badge>
+                  </Text>
+                  <Box mt={2}>
+                    <Text fontSize="sm" color="gray.500">
+                      Progress:
+                    </Text>
+                    <Box mt={1} w="full">
+                      <Progress
+                        value={progressValue}
+                        size="sm"
+                        colorScheme={colorScheme}
+                        borderRadius="md"
+                      />
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-            ))}
+              );
+            })}
           </VStack>
         )}
       </Box>

@@ -15,7 +15,7 @@ import {
 import axios from "axios";
 import { useCookies } from "react-cookie";
 
-const CreateSale: React.FC = ({ onClose }) => {
+const CreateSale: React.FC = ({ onClose, refresh }) => {
   const [formData, setFormData] = useState({
     customer_id: "",
     product_id: "",
@@ -136,6 +136,7 @@ const CreateSale: React.FC = ({ onClose }) => {
       });
 
       onClose();
+      refresh();
     } catch (error) {
       console.log(error)
       toast({

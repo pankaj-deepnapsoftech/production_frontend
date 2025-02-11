@@ -7,13 +7,15 @@ import {
   Button,
   Select,
   Box,
+  IconButton,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
-const CreateCustomer: React.FC = ({ onClose }) => {
+const CreateCustomer: React.FC = ({ onClose, refresh }) => {
   const [customerType, setCustomerType] = useState("Individual");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -66,6 +68,7 @@ const CreateCustomer: React.FC = ({ onClose }) => {
       setGstNo("");
 
       onClose();
+      refresh();
     } catch (error: any) {
       console.log(error);
 
@@ -78,6 +81,10 @@ const CreateCustomer: React.FC = ({ onClose }) => {
         isClosable: true,
       });
     }
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev); // Toggle the showPassword state
   };
 
   return (
@@ -120,14 +127,21 @@ const CreateCustomer: React.FC = ({ onClose }) => {
 
         <FormControl id="password" isRequired className="relative">
           <FormLabel className="text-lg font-medium">Password</FormLabel>
-          <Input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type={showPassword ? "text" : "password"}
-            placeholder="Enter password"
-            className="border-2 border-gray-300 rounded-md p-2"
-          />
-         
+          
+            <Input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter password"
+              className="border-2 border-gray-300 relative rounded-md p-2 pr-10" // Added pr-10 to create padding for the icon
+            />
+            <IconButton
+              aria-label="Toggle password visibility"
+              icon={showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
+              onClick={toggleShowPassword}
+              className="absolute bottom-10 left-[22.4rem] flex items-center justify-center p-2" // Ensure it's vertically centered
+            />
+   
         </FormControl>
         {/* Phone Number Field */}
         <FormControl id="phoneNo" isRequired>

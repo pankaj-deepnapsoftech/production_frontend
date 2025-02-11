@@ -45,7 +45,7 @@ interface Purchase {
   createdAt: string;
   updatedAt: string;
   price: number;
-  product_name: { name: string; process?: any }[]; // Unified declaration
+  product_name: { name: string; process?: any }
   product_qty: number;
   product_type: string;
   designFile: string;

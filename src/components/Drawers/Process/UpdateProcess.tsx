@@ -181,9 +181,11 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
       setIsUpdating(true);
       const response = await updateProcess(data).unwrap();
       if (!response.success) {
-        throw new Error(response.message);
+        throw new Error(response?.message);
       }
-      toast.success(response.message);
+      
+      console.log(response);
+      toast.success(response?.message);
       closeDrawerHandler();
       fetchProcessHandler();
     } catch (error: any) {
@@ -192,7 +194,7 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
       setIsUpdating(false);
     }
   };
-
+  console.log(processes);
   const markProcessDoneHandler = async () => {
     try {
       setIsUpdating(true);
@@ -411,6 +413,8 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
     "Cost",
   ];
 
+
+
   return (
     <Drawer closeDrawerHandler={closeDrawerHandler}>
       <div
@@ -482,6 +486,7 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
 
             <div>
               <Process inputs={processes} setInputs={setProcesses} />
+             
             </div>
 
             <hr className="my-5" />

@@ -451,7 +451,7 @@ const Dashboard: React.FC = () => {
                 </NavLink>
               </div>
 
-              {role != "Admmin" || role != "admin" ? (
+              { role != "admin" ? (
                 <div className="mt-5 p-3 bg-white shadow-md">
                   <HStack className="flex items-center justify-between mb-2 w-full">
                     <Text className="text-lg font-bold">Task Insights</Text>

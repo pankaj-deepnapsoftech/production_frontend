@@ -217,7 +217,7 @@ const Customer: React.FC = () => {
           <ModalHeader>Create a New Customer</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <CreateCustomer onClose={createDisclosure.onClose} />
+            <CreateCustomer onClose={createDisclosure.onClose} refresh={fetchCustomers}/>
           </ModalBody>
           <ModalFooter>
             <Button
