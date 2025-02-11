@@ -30,6 +30,7 @@ import UpdateSale from "./UpdateSale";
 import { MdOutlineRefresh } from "react-icons/md";
 import Assign from "./Assign";
 import Pagination from "./Pagination";
+import TokenAmount from "./TokenAmount";
 
 const Sales = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
@@ -38,6 +39,7 @@ const Sales = () => {
   const updateDisclosure = useDisclosure();
   const assignDisclosure = useDisclosure();
   const remarksDisclosure = useDisclosure();
+  const tokenDisclosure = useDisclosure();
   const [purchases, setPurchases] = useState<[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
@@ -50,6 +52,7 @@ const Sales = () => {
   const [filterDate, setFilterDate] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("");
   const [filteredPurchases, setFilteredPurchases] = useState<any[]>([]);
+  const [tokenAmount, setTokenAmount] = useState();
   const role = cookies?.role;
   const token = cookies.access_token;
 
@@ -73,7 +76,7 @@ const Sales = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       setPurchases(response.data.data);
     } catch (error: any) {
       const errorMessage =
@@ -176,6 +179,12 @@ const Sales = () => {
     const gstVal = (basePrice * gst) / 100;
     const totalPrice = basePrice + gstVal;
     return totalPrice;
+  };
+
+  const handleTokenClick = (id: any, amount: number) => {
+    setSelectedSale(id);
+    setTokenAmount(amount);
+    tokenDisclosure.onOpen();
   };
 
   return (
@@ -351,6 +360,19 @@ const Sales = () => {
                       </Badge>
                     )}
 
+                    {purchase?.token_amt && purchase?.token_status === false ? (
+                      <Badge colorScheme="orange" fontSize="sm">
+                        Token Amount : Pending
+                      </Badge>
+                    ) : null}
+
+                    {purchase?.token_status ? (
+                      <Badge colorScheme="green" fontSize="sm">
+                        Token Amount :{" "}
+                        {purchase?.token_status ? "Paid" : "Pending"}
+                      </Badge>
+                    ) : null}
+
                     {purchase?.product_status && (
                       <Badge
                         colorScheme={
@@ -389,12 +411,12 @@ const Sales = () => {
                     <Text fontSize="sm">
                       <strong>Quantity:</strong> {purchase?.product_qty}
                     </Text>
-                  </VStack>
-                  <VStack align="start" w={{ base: "100%", md: "auto" }}>
                     <Text fontSize="sm">
                       <strong>Price:</strong>{" "}
                       {purchase?.price * purchase?.product_qty}
                     </Text>
+                  </VStack>
+                  <VStack align="start" w={{ base: "100%", md: "auto" }}>
                     <Text fontSize="sm">
                       <strong>GST :</strong> {purchase?.GST}%
                     </Text>
@@ -406,6 +428,7 @@ const Sales = () => {
                         purchase?.GST
                       ).toFixed(2)}
                     </Text>
+
                     {purchase?.comment && (
                       <Text
                         className="text-blue-500 underline cursor-pointer"
@@ -414,6 +437,15 @@ const Sales = () => {
                         Remarks{" "}
                       </Text>
                     )}
+                    {purchase?.designFile ? (
+                      <a
+                        href={purchase?.designFile}
+                        target="_blank"
+                        className="text-blue-500 underline text-sm"
+                      >
+                        Uploded Design File
+                      </a>
+                    ) : null}
                   </VStack>
                 </HStack>
 
@@ -429,11 +461,21 @@ const Sales = () => {
                   >
                     Edit{" "}
                   </Button>
-                  {purchase?.designFile ? (
-                    <a href={purchase?.designFile} target="_blank" className="text-blue-500 underline text-sm">
-                      Uploded Design File
-                    </a>
+
+                  {purchase?.customer_approve === "Approve" ? (
+                    <Button
+                      bgColor="white"
+                      _hover={{ bgColor: "purple.500" }}
+                      className="border border-purple-500 hover:text-white"
+                      w={{ base: "100%", md: "auto" }}
+                      onClick={() =>
+                        handleTokenClick(purchase?._id, purchase?.token_amt)
+                      }
+                    >
+                      Add Token{" "}
+                    </Button>
                   ) : null}
+
                   <Button
                     bgColor="white"
                     _hover={{ bgColor: "orange.500" }}
@@ -463,7 +505,10 @@ const Sales = () => {
           <ModalHeader>Add a new Sale</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <CreateSale onClose={createDisclosure.onClose} refresh={fetchPurchases}/>
+            <CreateSale
+              onClose={createDisclosure.onClose}
+              refresh={fetchPurchases}
+            />
           </ModalBody>
           <ModalFooter>
             <Button
@@ -547,6 +592,33 @@ const Sales = () => {
           <ModalBody>
             <Text className="p-3 bg-orange-100 mb-5">{comment}</Text>
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* token modal */}
+      <Modal isOpen={tokenDisclosure.isOpen} onClose={tokenDisclosure.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader> Sample Token Amount</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <TokenAmount
+              sale={selectedSale}
+              onClose={tokenDisclosure.onClose}
+              refresh={fetchPurchases}
+              tokenAmount={tokenAmount}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500" }}
+              className="border border-red-500 hover:text-white w-full ml-2"
+              onClick={tokenDisclosure.onClose}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
 

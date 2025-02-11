@@ -34,6 +34,7 @@ import { IoEyeSharp } from "react-icons/io5";
 import UploadPayment from "./UploadPayment";
 import DeliveryProof from "./DeliveryProof";
 import moment from "moment";
+import TokenProof from "./TokenProof";
 
 interface Purchase {
   GST: {
@@ -45,7 +46,7 @@ interface Purchase {
   createdAt: string;
   updatedAt: string;
   price: number;
-  product_name: { name: string; process?: any }
+  product_name: { name: string; process?: any };
   product_qty: number;
   product_type: string;
   designFile: string;
@@ -69,7 +70,8 @@ const PurchaseHistory = () => {
   const [pages, setPages] = useState(1);
   const [assignedData, setAssignedData] = useState([]);
   const [customerApprove, setCustomerApprove] = useState("");
-
+  const [tokenFile, setTokenFile] = useState("");
+  const [amount, setAmount] = useState();
   const {
     isOpen: isProductionModalOpen,
     onOpen: onProductionOpen,
@@ -98,6 +100,12 @@ const PurchaseHistory = () => {
     onClose: onProofClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isTokenOpen,
+    onOpen: onTokenOpen,
+    onClose: onTokenClose,
+  } = useDisclosure();
+
   const fetchPurchases = async () => {
     try {
       setIsLoading(true);
@@ -112,7 +120,8 @@ const PurchaseHistory = () => {
           },
         }
       );
-      setPurchases(response.data.data);
+      setPurchases(response.data?.data);
+      console.log(response.data.data);
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
@@ -183,6 +192,13 @@ const PurchaseHistory = () => {
     const gstVal = (basePrice * gst) / 100;
     const totalPrice = basePrice + gstVal;
     return totalPrice;
+  };
+
+  const handleToken = (id: any, amount: number, tokenFile: any) => {
+    setPurchaseId(id);
+    setTokenFile(tokenFile);
+    setAmount(amount);
+    onTokenOpen();
   };
 
   useEffect(() => {
@@ -287,6 +303,12 @@ const PurchaseHistory = () => {
                     </Badge>
                   ) : null}
 
+                  {purchase?.token_status ? (
+                     <Badge colorScheme="green" fontSize="sm">
+                     Token Amount: Paid
+                   </Badge>
+                  ) : null}
+
                   {!purchase?.invoice &&
                   purchase?.boms?.[0]?.is_production_started !== undefined ? (
                     <Badge
@@ -367,20 +389,18 @@ const PurchaseHistory = () => {
                     Quantity:{" "}
                     <span className="font-normal">{purchase?.product_qty}</span>
                   </Text>
-                </VStack>
-
-                <VStack
-                  align={{ base: "start", md: "end" }}
-                  w={{ base: "100%", md: "48%" }}
-                >
-                  {" "}
-                  {/* Change to flex-start for alignment on smaller screens */}
                   <Text fontSize={{ base: "xs", sm: "sm" }} fontWeight="bold">
                     Price:{" "}
                     <span className="font-normal">
                       {purchase?.price * purchase?.product_qty}
                     </span>
                   </Text>
+                </VStack>
+
+                <VStack
+                  align={{ base: "start", md: "end" }}
+                  w={{ base: "100%", md: "48%" }}
+                >
                   <Text fontSize={{ base: "xs", sm: "sm" }} fontWeight="bold">
                     GST: <span className="font-normal">{purchase?.GST} %</span>
                   </Text>
@@ -394,6 +414,21 @@ const PurchaseHistory = () => {
                       ).toFixed(2)}
                     </span>
                   </Text>
+
+                  {purchase?.token_amt ? (
+                    <Text
+                      className="text-blue-500 underline font-semibold cursor-pointer"
+                      onClick={() =>
+                        handleToken(
+                          purchase?._id,
+                          purchase?.token_amt,
+                          purchase?.token_ss
+                        )
+                      }
+                    >
+                     {purchase?.token_status ? "See Token Amount" : "Pay Now For Sample"} 
+                    </Text>
+                  ) : null}
                 </VStack>
               </HStack>
 
@@ -603,6 +638,25 @@ const PurchaseHistory = () => {
                 id={purchaseId}
                 orderfile={orderFile}
                 onClose={onProofClose}
+              />
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* token proof modal */}
+      <Modal isOpen={isTokenOpen} onClose={onTokenClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Token</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {purchaseId && (
+              <TokenProof
+                id={purchaseId}
+                tokenFile={tokenFile}
+                amount={amount}
+                onClose={onTokenClose}
               />
             )}
           </ModalBody>

@@ -22,8 +22,7 @@ const UploadPayment = ({ id, orderfile, onClose }) => {
   const [cookies] = useCookies(['access_token']);
   const Toast = useToast();
 
-  console.log("orderfile", orderfile);
-
+  
   const handleFileDrop = (event) => {
     event.preventDefault();
     if (event.dataTransfer.files && event.dataTransfer.files[0]) {
@@ -58,7 +57,7 @@ const UploadPayment = ({ id, orderfile, onClose }) => {
         }
       );
 
-      console.log(response);
+     
 
       Toast({
         title: "Success",
