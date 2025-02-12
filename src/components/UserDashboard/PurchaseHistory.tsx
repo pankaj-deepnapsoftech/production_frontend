@@ -309,6 +309,12 @@ const PurchaseHistory = () => {
                    </Badge>
                   ) : null}
 
+                  {purchase?.isSampleApprove ? (
+                     <Badge colorScheme="green" fontSize="sm">
+                     Sample Product: Approved
+                   </Badge>
+                  ) : null}
+
                   {!purchase?.invoice &&
                   purchase?.boms?.[0]?.is_production_started !== undefined ? (
                     <Badge

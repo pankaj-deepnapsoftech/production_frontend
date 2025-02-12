@@ -76,7 +76,7 @@ const Dispatch = () => {
   };
 
   // Filter data based on selected dropdown values
-  const filteredData = data.filter((acc: any) => {
+  const filteredData = data?.filter((acc: any) => {
     const paymentStatus = acc?.bom[0]?.sale_id[0]?.paymet_status || "";
     const productStatus = acc?.bom[0]?.sale_id[0]?.product_status || "";
 

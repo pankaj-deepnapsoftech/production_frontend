@@ -7,6 +7,8 @@ import { useCookies } from "react-cookie";
 const TaskOverview = () => {
   const [cookies] = useCookies(["access_token"]);
   const [taskStatus, setTaskStatus] = useState([]);
+
+  console.log(taskStatus);
   
   // Fetch data from the backend API
   const fetchData = async () => {
@@ -19,7 +21,7 @@ const TaskOverview = () => {
           },
         }
       );
-      setTaskStatus(response.data);
+      setTaskStatus(response?.data);
     } catch (error) {
       console.log(error);
     }
@@ -31,8 +33,8 @@ const TaskOverview = () => {
 
  
   const getStatusCount = (status:any) => {
-    const statusData = taskStatus.find(item => item.status === status);
-    return statusData ? statusData.count : 0; // Return 0 if status is not found
+    const statusData = taskStatus?.find(item => item.status === status);
+    return statusData ? statusData?.count : 0; // Return 0 if status is not found
   };
 
   return (
@@ -61,7 +63,7 @@ const TaskOverview = () => {
             className="w-14 h-14 filter-orange img-bounce-scale"
           />
           <Text fontSize="2xl" fontWeight="bold" className="text-gray-700">
-            {getStatusCount("Complete")}
+            {getStatusCount("Completed")}
           </Text>
           <Text className="text-gray-500">Done</Text>
         </GridItem>

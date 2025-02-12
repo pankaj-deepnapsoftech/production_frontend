@@ -83,7 +83,7 @@ const DispatchOverview = () => {
             className=" w-20 h-20 filter-orange img-move-down"
           />
           <Text fontSize="2xl" fontWeight="bold" className="text-gray-700">
-            {dispatchData.length}
+            {dispatchData?.length}
           </Text>
           <Text className="text-gray-500">Products Ready</Text>
         </GridItem>
