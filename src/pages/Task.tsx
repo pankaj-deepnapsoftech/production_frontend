@@ -33,6 +33,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import UploadInvoice from "./UploadInvoice";
 import PaymentModal from "./PaymentModal";
 import { IoEyeSharp } from "react-icons/io5";
+import TokenAmount from "./TokenAmount";
 
 const Task = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -53,6 +54,9 @@ const Task = () => {
   const paymentDisclosure = useDisclosure();
   const [verifystatus, setVerifyStatus] = useState(false);
   const [assignId, setAssignId] = useState();
+  const tokenDisclosure = useDisclosure();
+  const [tokenAmount, setTokenAmount] = useState();
+  const [paymentFor, setPaymentFor] = useState("");
   const [filters, setFilters] = useState({
     status: "",
     date: "",
@@ -73,7 +77,7 @@ const Task = () => {
           },
         }
       );
-
+      console.log(response.data.data);
       const tasks = response.data.data.map((task) => {
         const sale = task?.sale_id?.length ? task.sale_id[0] : null;
         const product = sale?.product_id?.length ? sale.product_id[0] : null;
@@ -109,6 +113,11 @@ const Task = () => {
           payment_verify: sale?.payment_verify,
           paymet_status: sale?.paymet_status,
           customer_pyement_ss: sale?.customer_pyement_ss,
+          token_amt: sale?.token_amt,
+          token_status: sale?.token_status,
+          token_ss: sale?.token_ss,
+          isTokenVerify: sale?.isTokenVerify,
+          bom_name: sale?.bom[0]?.bom_name,
         };
       });
 
@@ -273,14 +282,21 @@ const Task = () => {
     id: any,
     payment: string,
     verify: boolean,
-    assignId: any
+    assignId: any,
+    payfor:string
   ) => {
     setSaleId(id);
     setPaymentFile(payment);
     setVerifyStatus(verify);
     setAssignId(assignId);
-
+    setPaymentFor(payfor);
     paymentDisclosure.onOpen();
+  };
+
+  const handleTokenClick = (id: any, amount: number) => {
+    setSaleId(id);
+    setTokenAmount(amount);
+    tokenDisclosure.onOpen();
   };
 
   return (
@@ -386,6 +402,45 @@ const Task = () => {
                   >
                     <strong>Task:</strong> {task?.design_status}
                   </Badge>
+
+                  {["acc", "account", "accountant", "dispatch", "dis"].includes(
+                    role.toLowerCase()
+                  ) &&
+                  task?.token_amt &&
+                  task?.token_status === false ? (
+                    <Badge colorScheme="orange" fontSize="sm">
+                      Token Amount : Pending
+                    </Badge>
+                  ) : null}
+
+                  {["acc", "account", "accountant", "dispatch", "dis"].includes(
+                    role.toLowerCase()
+                  ) &&
+                  task?.token_amt &&
+                  task?.token_status ? (
+                    <Badge colorScheme="green" fontSize="sm">
+                      Token Amount : Paid
+                    </Badge>
+                  ) : null}
+
+                  {["acc", "account", "accountant", "dispatch", "dis"].includes(
+                    role.toLowerCase()
+                  ) && task?.isTokenVerify === false? (
+                    <Badge colorScheme="orange" fontSize="sm">
+                      Token Verification :{" "}
+                     Pending
+                    </Badge>
+                  ) : null}
+
+                  {["acc", "account", "accountant", "dispatch", "dis"].includes(
+                    role.toLowerCase()
+                  ) && task?.isTokenVerify ? (
+                    <Badge colorScheme="green" fontSize="sm">
+                      Token Verification :{" "}
+                      Verified
+                    </Badge>
+                  ) : null}
+
                   {["acc", "account", "accountant", "dispatch", "dis"].includes(
                     role.toLowerCase()
                   ) && task?.paymet_status ? (
@@ -442,22 +497,47 @@ const Task = () => {
                       <Text fontSize="sm">
                         <strong>Sale By:</strong> {task.sale_by}
                       </Text>
+                      <Text fontSize="sm">
+                    <strong>Assigned By:</strong> {task.assignedBy}
+                  </Text>
                     </>
                   ) : null}
                 </VStack>
                 <VStack
                   align={{ base: "start", md: "end" }}
                   w={{ base: "100%", md: "48%" }}
-                >
-                  <Text fontSize="sm">
-                    <strong>Assigned By:</strong> {task.assignedBy}
-                  </Text>
+                >                 
                   <Text fontSize="sm">
                     <strong>Assigned Process:</strong> {task?.assined_process}
                   </Text>
                   {task?.assinedby_comment ? (
-                    <Text fontSize="sm">
+                    <Text fontSize="sm" >
                       <strong>Remarks:</strong> {task?.assinedby_comment}
+                    </Text>
+                  
+                  ) : null}
+
+                  {task?.bom_name ? (
+                    <Text fontSize="sm" color="blue">
+                    <strong className="text-black">BOM Name:</strong> {task?.bom_name}
+                  </Text>
+                  ) : null}
+
+                  {task?.token_ss ? (
+                    <Text                     
+                      className="text-blue-500 underline text-sm cursor-pointer"
+                      onClick={() =>
+                        handlePayment(
+                          task?.sale_id,
+                          task?.token_ss,
+                          task?.isTokenVerify,                       
+                          task?.id,
+                          "token"
+                        )
+                      }
+                    >
+                      {" "}
+                      View Token Proof{" "}
                     </Text>
                   ) : null}
                 </VStack>
@@ -524,7 +604,21 @@ const Task = () => {
                     </Button>
                   ) : null}
 
-                  {task?.invoice ? (
+                  {task?.design_approval === "Approve" ? (
+                    <Button
+                      bgColor="white"
+                      _hover={{ bgColor: "purple.500" }}
+                      className="border border-purple-500 hover:text-white"
+                      w={{ base: "100%", md: "auto" }}
+                      onClick={() =>
+                        handleTokenClick(task?.sale_id, task?.token_amt)
+                      }
+                    >
+                      Add Token{" "}
+                    </Button>
+                  ) : null}
+
+                  {task?.isTokenVerify ? (
                     <Button
                       bgColor="white"
                       leftIcon={<FaCloudUploadAlt />}
@@ -550,7 +644,8 @@ const Task = () => {
                           task?.sale_id,
                           task?.customer_pyement_ss,
                           task?.payment_verify,
-                          task?.id
+                          task?.id,
+                          "payment"
                         )
                       }
                       width={{ base: "full", sm: "auto" }}
@@ -758,6 +853,7 @@ const Task = () => {
               payment={paymentfile}
               verify={verifystatus}
               assign={assignId}
+              payfor= {paymentFor}
               onClose={paymentDisclosure.onClose}
             />
           </ModalBody>
@@ -775,7 +871,34 @@ const Task = () => {
         </ModalContent>
       </Modal>
 
-      <Pagination page={page} setPage={setPage} length={tasks.length} />
+      {/* token modal */}
+      <Modal isOpen={tokenDisclosure.isOpen} onClose={tokenDisclosure.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader> Sample Token Amount</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <TokenAmount
+              sale={saleId}
+              onClose={tokenDisclosure.onClose}
+              refresh={fetchTasks}
+              tokenAmount={tokenAmount}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500" }}
+              className="border border-red-500 hover:text-white w-full ml-2"
+              onClick={tokenDisclosure.onClose}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Pagination page={page} setPage={setPage} length={tasks?.length} />
     </div>
   );
 };
