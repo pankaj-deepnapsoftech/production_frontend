@@ -65,6 +65,7 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
 
 
   const handleCheckboxChange = async (id: any) => {
+    setMarkedAsRead(!markedAsRead);
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}notification/update/${id}`,

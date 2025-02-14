@@ -77,6 +77,7 @@ const Task = () => {
           },
         }
       );
+
       const tasks = response.data.data.map((task) => {
         const sale = task?.sale_id?.length ? task.sale_id[0] : null;
         const product = sale?.product_id?.length ? sale.product_id[0] : null;

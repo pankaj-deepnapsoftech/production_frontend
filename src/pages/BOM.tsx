@@ -75,7 +75,6 @@ const BOM: React.FC = () => {
       );
       const data = await response.json();
       
-    
       if (!data.success) {
         throw new Error(data.message);
       }

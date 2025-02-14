@@ -30,6 +30,7 @@ import { MainColor } from "../../constants/constants";
 interface ProcessTableProps {
   process: Array<{
     creator: any;
+    bom: any;
     item: string;
     rm_store: string;
     fg_store: string;
@@ -55,6 +56,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
     () => [
       { Header: "Created By", accessor: "creator" },
       { Header: "Status", accessor: "status" },
+      { Header: "BOM", accessor: "bom" },
       { Header: "Item", accessor: "item" },
       { Header: "RM Store", accessor: "rm_store" },
       { Header: "FG Store", accessor: "fg_store" },
@@ -113,6 +115,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
     usePagination
   );
 
+  console.log(process);
   return (
     <div>
       {isLoadingProcess && <Loading />}
@@ -225,6 +228,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                               cell.column.id !== "scrap_store" &&
                               cell.column.id !== "item" &&
                               cell.column.id !== "status" &&
+                              cell.column.id !== "bom" &&
                               cell.render("Cell")}
 
                             {cell.column.id === "createdAt" &&
@@ -253,6 +257,9 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                             {cell.column.id === "item" && (
                               <span>{row.original?.item?.name}</span>
                             )}
+                            {cell.column.id === "bom" && (
+                              <span>{row.original?.bom?.bom_name}</span>
+                            )}
                             {cell.column.id === "rm_store" && (
                               <span>{row.original?.rm_store?.name}</span>
                             )}
@@ -268,7 +275,8 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                                 style={{
                                   backgroundColor:
                                     statusStyles[row.original?.status].bg,
-                                  color: statusStyles[row.original?.status].text,
+                                  color:
+                                    statusStyles[row.original?.status].text,
                                 }}
                               >
                                 {row.original?.status.toUpperCase()}

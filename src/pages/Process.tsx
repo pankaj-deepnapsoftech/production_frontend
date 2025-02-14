@@ -46,6 +46,7 @@ const Process: React.FC = () => {
       }
 
       setData(data.production_processes);
+      console.log(data.production_processes);
       setFilteredData(data.production_processes);
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
