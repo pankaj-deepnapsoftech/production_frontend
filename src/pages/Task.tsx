@@ -612,7 +612,7 @@ const Task = () => {
                         handleTokenClick(task?.sale_id, task?.token_amt)
                       }
                     >
-                      Add Token{" "}
+                      Add Token Amount{" "}
                     </Button>
                   ) : null}
 
