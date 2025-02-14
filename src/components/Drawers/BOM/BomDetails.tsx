@@ -125,6 +125,18 @@ const BomDetails: React.FC<BomDetailsProps> = ({
                   </span>{" "}
                   {material?.item?.name}
                 </p>
+                {material?.item?.color ? ( <p>
+                  <span className="font-semibold text-gray-600">
+                    Item Color:
+                  </span>{" "}
+                  {material?.item?.color}
+                </p>) : null}               
+                {material?.item?.code ? ( <p>
+                  <span className="font-semibold text-gray-600">
+                    Item Code:
+                  </span>{" "}
+                  {material?.item?.code}
+                </p>) : null}
                 <p>
                   <span className="font-semibold text-gray-600">Quantity:</span>{" "}
                   {material?.quantity}
@@ -176,6 +188,19 @@ const BomDetails: React.FC<BomDetailsProps> = ({
               <span className="font-semibold text-gray-600">Item Name:</span>{" "}
               {finishedGood?.item?.name}
             </li>
+
+            {finishedGood?.item?.color ? (
+              <li>
+              <span className="font-semibold text-gray-600">Item Color:</span>{" "}
+              {finishedGood?.item?.color}
+            </li>
+            ) : null}
+            {finishedGood?.item?.code ? (
+              <li>
+              <span className="font-semibold text-gray-600">Item Code:</span>{" "}
+              {finishedGood?.item?.code}
+            </li>
+            ) : null}
             <li>
               <span className="font-semibold text-gray-600">Quantity:</span>{" "}
               {finishedGood.quantity}
@@ -231,6 +256,18 @@ const BomDetails: React.FC<BomDetailsProps> = ({
                   </span>{" "}
                   {material?.item?.name}
                 </p>
+                {material?.item?.color ? ( <p>
+                  <span className="font-semibold text-gray-600">
+                    Item Color:
+                  </span>{" "}
+                  {material?.item?.color}
+                </p>) : null}               
+                {material?.item?.code ? ( <p>
+                  <span className="font-semibold text-gray-600">
+                    Item Code:
+                  </span>{" "}
+                  {material?.item?.code}
+                </p>) : null}
                 <p>
                   <span className="font-semibold text-gray-600">Quantity:</span>{" "}
                   {material?.quantity}

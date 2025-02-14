@@ -77,7 +77,6 @@ const Task = () => {
           },
         }
       );
-      console.log(response.data.data);
       const tasks = response.data.data.map((task) => {
         const sale = task?.sale_id?.length ? task.sale_id[0] : null;
         const product = sale?.product_id?.length ? sale.product_id[0] : null;
@@ -122,20 +121,19 @@ const Task = () => {
       });
 
       setTasks(tasks);
-      console.log("new", tasks);
+     
     } catch (error) {
-      console.log(error);
+      toast.error(error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Fetch tasks on mount
+
   useEffect(() => {
     fetchTasks();
   }, [cookies?.access_token, page]);
 
-  // Handle filter change
   const handleFilterChange = (field, value) => {
     setFilters({ ...filters, [field]: value });
   };
@@ -152,7 +150,6 @@ const Task = () => {
     }
   };
 
-  // Filter tasks based on selected filters
   const filteredTasks = tasks.filter((task) => {
     return (
       (!filters.status || task.design_status === filters.status) &&

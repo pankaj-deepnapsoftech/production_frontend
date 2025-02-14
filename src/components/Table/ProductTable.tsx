@@ -65,6 +65,8 @@ const ProductTable: React.FC<ProductTableProps> = ({
 }) => {
   const columns: Column<{
     name: string;
+    color:string,
+    code: string,
     product_id: string;
     uom: string;
     category: string;
@@ -88,6 +90,14 @@ const ProductTable: React.FC<ProductTableProps> = ({
       {
         Header: "Name",
         accessor: "name",
+      },
+      {
+        Header: "Color",
+        accessor: "color",
+      },
+      {
+        Header: "Code",
+        accessor: "code",
       },
       {
         Header: "Inventory Category",
@@ -171,6 +181,8 @@ const ProductTable: React.FC<ProductTableProps> = ({
     setPageSize,
   }: TableInstance<{
     name: string;
+    color:string,
+    code:string,
     product_id: string;
     uom: string;
     category: string;
@@ -224,6 +236,8 @@ const ProductTable: React.FC<ProductTableProps> = ({
                   (
                     hg: HeaderGroup<{
                       name: string;
+                      color:string;
+                      code:string;
                       product_id: string;
                       uom: string;
                       category: string;

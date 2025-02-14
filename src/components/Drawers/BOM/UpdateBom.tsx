@@ -333,7 +333,11 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
   useEffect(() => {
     const modifiedProducts = products.map((prd) => ({
       value: prd._id,
-      label: prd.name,
+      label: `${
+        prd?.color || prd?.code
+          ? `${prd?.name}/${prd?.color}/${prd?.code}`
+          : `${prd?.name}`
+      } `,
     }));
     setProductOptions(modifiedProducts);
   }, [products]);
@@ -526,7 +530,7 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
                       </FormControl>
                     </Td>
                     <Td>
-                      <FormControl isRequired>
+                      <FormControl>
                         <Input
                           border="1px"
                           borderColor="#a9a9a9"
@@ -574,7 +578,7 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
                       </FormControl>
                     </Td>
                     <Td>
-                      <FormControl isRequired>
+                      <FormControl >
                         <input
                           type="file"
                           placeholder="Choose a file"
@@ -585,7 +589,7 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
                       </FormControl>
                     </Td>
                     <Td>
-                      <FormControl isRequired>
+                      <FormControl>
                         <Input
                           border="1px"
                           borderColor="#a9a9a9"

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useSelector } from "react-redux";
 import logo from "../../assets/images/logo/logo.png";
 import {
@@ -11,10 +12,11 @@ import {
   Button,
   Badge,
   Checkbox,
+  useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ClickMenu from "../../ui/ClickMenu";
-import { toast } from "react-toastify";
+
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import UserDetailsMenu from "../../ui/UserDetailsMenu";
@@ -31,7 +33,7 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<any>();
   const [markedAsRead, setMarkedAsRead] = useState(false);
-
+  const toast = useToast();
   const { firstname, lastname, email } = useSelector(
     (state: any) => state.auth
   );
@@ -50,7 +52,7 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
           }
         );
 
-        setNotifications(response.data.data);
+        setNotifications(response?.data?.data);
       } catch (error) {
         console.log(error);
       }
@@ -59,7 +61,7 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
     fetchNotification();
   }, []);
 
-  const unreadCount = notifications?.filter((notif: any) => notif.view === false).length || 0;
+  const unreadCount = notifications?.filter((notif: any) => notif?.view === false).length || 0;
 
 
   const handleCheckboxChange = async (id: any) => {
@@ -74,9 +76,21 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
         }
       );
 
-      console.log(response);
+      toast({
+        title: "Success",
+        description:  `Marked as viewed `,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
     } catch (error) {
-      console.log(error);
+      toast({
+        title: "Failed",
+        description:  `${error.message } `,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -86,10 +100,22 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
       removeCookie("role");
       removeCookie("name");
       removeCookie("email");
-      toast.success("Logged out successfully");
+      toast({
+        title: "Success",
+        description:  `Logged out successfully`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
       navigate("/login");
     } catch (error: any) {
-      toast.error(error.message || "Something went wrong");
+      toast({
+        title: "Failed",
+        description:  `${error.message || "Something went wrong"} `,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 

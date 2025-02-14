@@ -20,6 +20,8 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
   fetchProductsHandler,
 }) => {
   const [name, setName] = useState<string | undefined>();
+  const [color, setColor] = useState<string | undefined>();
+  const [code, setCode] = useState<string | undefined>();
   const [id, setId] = useState<string | undefined>();
   const [uom, setUom] = useState<
     { value: string; label: string } | undefined
@@ -107,6 +109,8 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
         _id: productId,
         inventory_category: inventoryCategory?.value,
         name,
+        color,
+        code,
         product_id: id,
         uom: uom?.value,
         category: category?.value,
@@ -147,35 +151,37 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
       );
       const data = await response.json();
       if (!data.success) {
-        throw new Error(data.message);
+        throw new Error(data?.message);
       }
-      setName(data.product.name);
-      setId(data.product.product_id);
+      setName(data?.product?.name);
+      setColor(data?.product?.color);
+      setCode(data?.product?.code);
+      setId(data?.product?.product_id);
       setCategory({
-        value: data.product.category,
-        label: data.product.category,
+        value: data?.product?.category,
+        label: data?.product?.category,
       });
-      setUom({ value: data.product.uom, label: data.product.uom });
-      setPrice(data.product.price);
-      setCurrentStock(data.product.current_stock);
-      setMinStock(data.product?.min_stock);
-      setMaxStock(data.product?.max_stock);
-      setHsn(data.product?.hsn);
-      setSubCategory(data.product?.sub_category);
-      setRegularBuyingPrice(data.product?.regular_buying_price);
-      setWholeSaleBuyingPrice(data.product?.wholesale_buying_price);
-      setMrp(data.product?.mrp);
-      setDealerPrice(data.product?.dealer_price);
-      setDistributorPrice(data.product?.distributor_price);
+      setUom({ value: data?.product?.uom, label: data?.product?.uom });
+      setPrice(data?.product?.price);
+      setCurrentStock(data?.product?.current_stock);
+      setMinStock(data?.product?.min_stock);
+      setMaxStock(data?.product?.max_stock);
+      setHsn(data?.product?.hsn);
+      setSubCategory(data?.product?.sub_category);
+      setRegularBuyingPrice(data?.product?.regular_buying_price);
+      setWholeSaleBuyingPrice(data?.product?.wholesale_buying_price);
+      setMrp(data?.product?.mrp);
+      setDealerPrice(data?.product?.dealer_price);
+      setDistributorPrice(data?.product?.distributor_price);
       if (data?.product?.store) {
         setStore({
-          value: data.product.store._id,
-          label: data.product.store.name,
+          value: data?.product?.store._id,
+          label: data?.product?.store.name,
         });
       }
       setInventoryCategory({
-        value: data.product.inventory_category,
-        label: data.product.inventory_category,
+        value: data?.product?.inventory_category,
+        label: data?.product?.inventory_category,
       });
     } catch (err: any) {
       toast.error(err?.data?.message || err?.message || "Something went wrong");
@@ -197,11 +203,11 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
       );
       const data = await response.json();
       if (!data.success) {
-        throw new Error(data.message);
+        throw new Error(data?.message);
       }
       const modifiedStores = data.stores.map((store: any) => ({
-        value: store._id,
-        label: store.name,
+        value: store?._id,
+        label: store?.name,
       }));
       setStoreOptions(modifiedStores);
     } catch (err: any) {
@@ -264,6 +270,24 @@ const UpdateProduct: React.FC<UpdateProductProps> = ({
                   placeholder="Product Name"
                 />
               </FormControl>
+              <FormControl className="mt-3 mb-5" >
+              <FormLabel fontWeight="bold">Product Color Name</FormLabel>
+              <Input
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                type="text"
+                placeholder="Product Color Name"
+              />
+            </FormControl>
+            <FormControl className="mt-3 mb-5" >
+              <FormLabel fontWeight="bold">Product Code</FormLabel>
+              <Input
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                type="text"
+                placeholder="Product Code"
+              />
+            </FormControl>
               <FormControl className="mt-3 mb-5" isRequired>
                 <FormLabel fontWeight="bold">Product Price</FormLabel>
                 <Input

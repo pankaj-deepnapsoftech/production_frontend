@@ -17,6 +17,8 @@ const AddProduct: React.FC<AddProductProps> = ({
   fetchProductsHandler,
 }) => {
   const [name, setName] = useState<string | undefined>();
+  const [color, setColor] = useState<string | undefined>();
+  const [code, setCode] = useState<string | undefined>();
   const [id, setId] = useState<string | undefined>();
   const [uom, setUom] = useState<
     { value: string; label: string } | undefined
@@ -118,6 +120,8 @@ const AddProduct: React.FC<AddProductProps> = ({
 
       const response = await addProduct({
         name,
+        color,
+        code,
         inventory_category: inventoryCategory?.value,
         product_id: id,
         uom: uom?.value,
@@ -230,6 +234,24 @@ const AddProduct: React.FC<AddProductProps> = ({
                 onChange={(e) => setName(e.target.value)}
                 type="text"
                 placeholder="Product Name"
+              />
+            </FormControl>
+            <FormControl className="mt-3 mb-5" >
+              <FormLabel fontWeight="bold">Product Color Name</FormLabel>
+              <Input
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                type="text"
+                placeholder="Product Color Name"
+              />
+            </FormControl>
+            <FormControl className="mt-3 mb-5" >
+              <FormLabel fontWeight="bold">Product Code</FormLabel>
+              <Input
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                type="text"
+                placeholder="Product Code"
               />
             </FormControl>
             <FormControl className="mt-3 mb-5" isRequired>

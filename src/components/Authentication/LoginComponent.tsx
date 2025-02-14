@@ -37,6 +37,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
   const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
 
   const loginHandler = async (e: React.FormEvent) => {
+    console.log(email, password)
     e.preventDefault();
     try {
       setIsLoginLoading(true);
@@ -44,6 +45,8 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
         email: email,
         password: password,
       }).unwrap();
+
+    
 
       if (data.user.role) {
         dispatch(userExists(data.user));
@@ -64,6 +67,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
       navigate("/");
     } catch (err: any) {
       toast.error(err?.message || err?.data?.message || "Something went wrong");
+    
     } finally {
       setIsLoginLoading(false);
     }
