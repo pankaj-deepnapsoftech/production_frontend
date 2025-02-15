@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useSelector } from "react-redux";
 import logo from "../../assets/images/logo/logo.png";
 import {
@@ -11,7 +10,6 @@ import {
   ModalCloseButton,
   Button,
   Badge,
-  Checkbox,
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -32,44 +30,40 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
   const [showUserDetails, setShowUserDetails] = useState<boolean>(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<any>();
-  const [markedAsRead, setMarkedAsRead] = useState(false);
   const toast = useToast();
   const { firstname, lastname, email } = useSelector(
     (state: any) => state.auth
   );
 
   const token = cookie?.access_token;
-  // notification api
+  
+  const fetchNotification = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}notification/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setNotifications(response?.data?.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchNotification = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}notification/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setNotifications(response?.data?.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     fetchNotification();
   }, []);
 
   const unreadCount = notifications?.filter((notif: any) => notif?.view === false).length || 0;
 
-
-  const handleCheckboxChange = async (id: any) => {
-    setMarkedAsRead(!markedAsRead);
+  const markAllAsRead = async () => {
     try {
-      const response = await axios.patch(
-        `${process.env.REACT_APP_BACKEND_URL}notification/update/${id}`,
-        { view: true },
+      await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}notification/updateAll`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -79,15 +73,18 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
 
       toast({
         title: "Success",
-        description:  `Marked as viewed `,
+        description: `All notifications marked as viewed`,
         status: "success",
         duration: 5000,
         isClosable: true,
       });
-    } catch (error) {
+
+      fetchNotification();
+
+    } catch (error: any) {
       toast({
         title: "Failed",
-        description:  `${error.message } `,
+        description: `${error?.message}`,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -103,7 +100,7 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
       removeCookie("email");
       toast({
         title: "Success",
-        description:  `Logged out successfully`,
+        description: `Logged out successfully`,
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -112,7 +109,7 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
     } catch (error: any) {
       toast({
         title: "Failed",
-        description:  `${error.message || "Something went wrong"} `,
+        description: `${error.message || "Something went wrong"}`,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -181,15 +178,18 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
       {/* Notification Modal */}
       <Modal
         isOpen={isNotificationOpen}
-        onClose={() => setIsNotificationOpen(false)}
+        onClose={() => {
+          setIsNotificationOpen(false);
+          markAllAsRead(); 
+        }}
         size="lg"
-        closeOnOverlayClick={false} // Prevent closing on overlay click for better control
-        motionPreset="scale" // Smooth animation effect
+        closeOnOverlayClick={false} 
+        motionPreset="scale" 
       >
         <ModalOverlay />
         <ModalContent
-          borderRadius="xl" // Rounded corners
-          boxShadow="0 4px 10px rgba(0, 0, 0, 0.15)" // Soft shadow
+          borderRadius="xl"
+          boxShadow="0 4px 10px rgba(0, 0, 0, 0.15)" 
           bg="white"
         >
           <ModalHeader
@@ -198,7 +198,7 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
             display="flex"
             alignItems="center"
           >
-            <AiOutlineBell size={24} className="mr-2" /> {/* Bell icon */}
+            <AiOutlineBell size={24} className="mr-2" /> 
             Notifications
           </ModalHeader>
           <ModalCloseButton />
@@ -213,13 +213,6 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
                   key={notif?._id}
                   className="flex items-center border-b py-4"
                 >
-                  <Checkbox
-                  isChecked={notif?.view}
-                    onChange={() => handleCheckboxChange(notif?._id)}
-                    colorScheme="teal"
-                    size="lg"
-                    className="mr-4"
-                  />
                   <div className="flex-1">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-xs text-gray-500">
