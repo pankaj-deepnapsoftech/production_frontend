@@ -75,11 +75,11 @@ const BOM: React.FC = () => {
       );
       const data = await response.json();
       
-      if (!data.success) {
-        throw new Error(data.message);
+      if (!data?.success) {
+        throw new Error(data?.message);
       }
-      setBoms(data.boms);
-      setFilteredBoms(data.boms);
+      setBoms(data?.boms);
+      setFilteredBoms(data?.boms);
     } catch (error: any) {
       toast.error(error?.message || "Something went wrong");
     } finally {
@@ -103,11 +103,11 @@ const BOM: React.FC = () => {
 
   useEffect(() => {
     const searchTxt = searchKey?.toLowerCase();
-    const results = boms.filter(
+    const results = boms?.filter(
       (bom: any) =>
-        bom.bom_name?.toLowerCase()?.includes(searchTxt) ||
-        bom.parts_count?.toString()?.toLowerCase()?.includes(searchTxt) ||
-        bom.total_cost?.toString()?.toLowerCase()?.includes(searchTxt) ||
+       bom?.bom_name?.toLowerCase()?.includes(searchTxt) ||
+       bom?.parts_count?.toString()?.toLowerCase()?.includes(searchTxt) ||
+       bom?.total_cost?.toString()?.toLowerCase()?.includes(searchTxt) ||
         (bom?.approved_by?.first_name + ' ' + bom?.approved_by?.last_name)?.toString()?.toLowerCase()?.includes(searchTxt || '') ||
         (bom?.createdAt &&
           new Date(bom?.createdAt)

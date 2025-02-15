@@ -256,21 +256,21 @@ const ScrapTable: React.FC<ScrapTableProps> = ({
                                                             <span
                                                                 className="px-2 py-1 rounded-md"
                                                             >
-                                                                {row.original.item.name}
+                                                                {row.original?.item.name}
                                                             </span>
                                                         )}
                                                         {cell.column.id === "bom" && (
                                                             <span
                                                                 className="px-2 py-1 rounded-md"
                                                             >
-                                                                {row.original.bom.bom_name}
+                                                                {row.original?.bom?.bom_name}
                                                             </span>
                                                         )}
                                                         {cell.column.id === "finished_good" && (
                                                             <span
                                                                 className="px-2 py-1 rounded-md"
                                                             >
-                                                                {row.original.bom.finished_good.item.name}
+                                                                {row.original?.bom?.finished_good?.item?.name}
                                                             </span>
                                                         )}
                                                     </Td>

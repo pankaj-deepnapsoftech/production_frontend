@@ -223,7 +223,7 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
                                 </span>
                               )}
                             {cell.column.id === "role" && <span className="px-2 py-1 rounded-md bg-[#918d8d] text-white">
-                              {row.original.role}
+                              {row.original?.role}
                             </span>}
                           </Td>
                         );

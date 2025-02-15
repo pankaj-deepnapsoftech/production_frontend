@@ -186,11 +186,6 @@ const Sales = () => {
     return totalPrice;
   };
 
-  const handleTokenClick = (id: any, amount: number) => {
-    setSelectedSale(id);
-    setTokenAmount(amount);
-    tokenDisclosure.onOpen();
-  };
 
   const handleSample = (id:any, approve:boolean) => {
     setSelectedSale(id);
@@ -350,23 +345,7 @@ const Sales = () => {
                         Token Amount :{" "}
                         {purchase?.token_status ? "Paid" : "Pending"}
                       </Badge>
-                    ) : null}
-                    {!purchase?.invoice &&
-                    purchase?.boms?.[0]?.is_production_started !== undefined ? (
-                      <Badge
-                        colorScheme={
-                          purchase.boms[0].is_production_started
-                            ? "green"
-                            : "red"
-                        }
-                        fontSize="sm"
-                      >
-                        Production:{" "}
-                        {purchase.boms[0].is_production_started
-                          ? "Started"
-                          : "Pending"}
-                      </Badge>
-                    ) : null}
+                    ) : null}                   
 
                     {purchase?.isSampleApprove ? (
                       <Badge
@@ -492,19 +471,6 @@ const Sales = () => {
                     Edit{" "}
                   </Button>
 
-                  {purchase?.customer_approve === "Approve" ? (
-                    <Button
-                      bgColor="white"
-                      _hover={{ bgColor: "purple.500" }}
-                      className="border border-purple-500 hover:text-white"
-                      w={{ base: "100%", md: "auto" }}
-                      onClick={() =>
-                        handleTokenClick(purchase?._id, purchase?.token_amt)
-                      }
-                    >
-                      Add Token{" "}
-                    </Button>
-                  ) : null}
 
                   {purchase?.token_ss ? (
                     <Button
@@ -638,32 +604,6 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
-      {/* token modal */}
-      <Modal isOpen={tokenDisclosure.isOpen} onClose={tokenDisclosure.onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader> Sample Token Amount</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <TokenAmount
-              sale={selectedSale}
-              onClose={tokenDisclosure.onClose}
-              refresh={fetchPurchases}
-              tokenAmount={tokenAmount}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
-              onClick={tokenDisclosure.onClose}
-            >
-              Cancel
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
 
         {/* sample modal */}
         <Modal isOpen={sampleDisclosure.isOpen} onClose={sampleDisclosure.onClose}>

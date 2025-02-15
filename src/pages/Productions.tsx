@@ -48,6 +48,7 @@ const Productions = () => {
   const [paymentFilter, setPaymentFilter] = useState("");
   const [productFilter, setProductFilter] = useState("");
   const [filteredPurchases, setFilteredPurchases] = useState<any[]>([]);
+  const [selectedBomIndex, setSelectedBomIndex] = useState("");
 
   const fetchPurchases = async () => {
     try {
@@ -127,8 +128,14 @@ const Productions = () => {
     setFilteredPurchases(filteredData);
   }, [filterText, filterDate, paymentFilter, productFilter, purchases]);
 
+  const handleSampleTrackClick = (sale: string) => {
+    setSelectedSale(sale);
+    setSelectedBomIndex(0);
+    trackDisclosure.onOpen();
+  };
   const handleTrackClick = (sale: string) => {
     setSelectedSale(sale);
+    setSelectedBomIndex(1);
     trackDisclosure.onOpen();
   };
 
@@ -207,9 +214,29 @@ const Productions = () => {
             borderColor="gray.200"
           >
             {filteredPurchases?.map((purchase: any) => {
-              const { status, color } = calculateProcessStatus(
-                purchase?.boms[0]?.production_processes[0]?.processes || []
-              );
+              // Calculate statuses for all BOMs
+              const allBOMStatuses = purchase?.boms?.map((bom: any) => {
+                const { status, color } = calculateProcessStatus(
+                  bom?.production_processes[0]?.processes || []
+                );
+                return { status, color };
+              });
+
+              // Determine the overall status for the purchase based on the BOM statuses
+              const overallStatus = allBOMStatuses.some(
+                (bom) => bom.status === "Pending"
+              )
+                ? "Pending"
+                : allBOMStatuses.every((bom) => bom.status === "Completed")
+                ? "Completed"
+                : "Under Process";
+
+              const overallColor =
+                overallStatus === "Completed"
+                  ? "green"
+                  : overallStatus === "Pending"
+                  ? "orange"
+                  : "yellow";
 
               return (
                 <Box
@@ -230,7 +257,13 @@ const Productions = () => {
                     left={0}
                     h="100%"
                     w={2}
-                    bg={status === "Pending" ? "orange" : "green"}
+                    bg={
+                      overallColor === "orange"
+                        ? "orange"
+                        : overallColor === "green"
+                        ? "green"
+                        : "yellow"
+                    }
                     borderRadius="md"
                   />
 
@@ -276,28 +309,8 @@ const Productions = () => {
                       ) : null}
 
                       {purchase?.token_status ? (
-                         <Badge
-                         colorScheme="green"
-                         fontSize="sm"
-                       >
-                         Token Amount :{" "}
-                         Paid
-                       </Badge>
-                      ) : null}
-
-                      {purchase?.boms[0]?.is_production_started ? (
-                        <Badge
-                          colorScheme={
-                            purchase?.boms[0]?.is_production_started
-                              ? "green"
-                              : "orange"
-                          }
-                          fontSize="sm"
-                        >
-                          Production :{" "}
-                          {purchase?.boms[0]?.is_production_started
-                            ? "Started"
-                            : "Pending"}
+                        <Badge colorScheme="green" fontSize="sm">
+                          Token Amount : Paid
                         </Badge>
                       ) : null}
 
@@ -310,8 +323,8 @@ const Productions = () => {
                           }
                           fontSize="sm"
                         >
-                          Pament Status:{" "}
-                          {purchase?.paymet_status === "Paied"
+                          Payment Status:{" "}
+                          {purchase?.paymet_status === "Paid"
                             ? "Paid"
                             : purchase?.paymet_status}
                         </Badge>
@@ -363,13 +376,19 @@ const Productions = () => {
                   <HStack justify="space-between" mt={3}>
                     <Text
                       className="text-blue-500 underline cursor-pointer"
+                      onClick={() => handleSampleTrackClick(purchase)}
+                    >
+                      Sample Track
+                    </Text>
+                    <Text
+                      className="text-blue-500 underline cursor-pointer"
                       onClick={() => handleTrackClick(purchase)}
                     >
-                      Track{" "}
+                      Production Track
                     </Text>
 
                     <HStack spacing={2}>
-                      {status === "Completed" && (
+                      {overallStatus === "Completed" && (
                         <HStack spacing={2}>
                           <Box
                             boxSize={3}
@@ -382,11 +401,11 @@ const Productions = () => {
                             fontWeight="bold"
                             color="green.500"
                           >
-                            Process {status}
+                            Process {overallStatus}
                           </Text>
                         </HStack>
                       )}
-                      {status === "Under Process" && (
+                      {overallStatus === "Under Process" && (
                         <HStack spacing={2}>
                           <Spinner
                             size="sm"
@@ -399,11 +418,11 @@ const Productions = () => {
                             fontWeight="bold"
                             color="yellow.500"
                           >
-                            Process {status}
+                            Process {overallStatus}
                           </Text>
                         </HStack>
                       )}
-                      {status === "Pending" && (
+                      {overallStatus === "Pending" && (
                         <HStack spacing={2}>
                           <Box
                             boxSize={3}
@@ -416,7 +435,7 @@ const Productions = () => {
                             fontWeight="bold"
                             color="orange.500"
                           >
-                            Process {status}
+                            Process {overallStatus}
                           </Text>
                         </HStack>
                       )}
@@ -436,7 +455,7 @@ const Productions = () => {
           <ModalHeader>Track</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Track sale={selectedSale} />
+            <Track sale={selectedSale} selectedBomIndex={selectedBomIndex} />
           </ModalBody>
         </ModalContent>
       </Modal>

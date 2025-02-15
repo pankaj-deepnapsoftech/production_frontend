@@ -86,20 +86,20 @@ const BOMTable: React.FC<BOMCardProps> = ({
               <HStack justify="space-between" spacing={3} mt={3}>
                 <VStack align="start">
                   <Text fontSize="sm">
-                    <strong>Parts Count:</strong> {bom.parts_count}
+                    <strong>Parts Count:</strong> {bom?.parts_count}
                   </Text>
                   <Text fontSize="sm">
-                    <strong>Total Cost:</strong> {bom.total_cost} /-
+                    <strong>Total Cost:</strong> {bom?.total_cost} /-
                   </Text>
                 </VStack>
                 <VStack align="start">
                   <Text fontSize="sm">
                     <strong>Created On:</strong>{" "}
-                    {moment(bom.createdAt).format("DD/MM/YYYY")}
+                    {moment(bom?.createdAt).format("DD/MM/YYYY")}
                   </Text>
                   <Text fontSize="sm">
                     <strong>Last Updated:</strong>{" "}
-                    {moment(bom.updatedAt).format("DD/MM/YYYY")}
+                    {moment(bom?.updatedAt).format("DD/MM/YYYY")}
                   </Text>
                 </VStack>
               </HStack>
@@ -111,7 +111,7 @@ const BOMTable: React.FC<BOMCardProps> = ({
                     icon={<MdOutlineVisibility />}
                     aria-label="View"
                     onClick={() =>
-                      openBomDetailsDrawerHandler(bom._id)
+                      openBomDetailsDrawerHandler(bom?._id)
                     }
                     colorScheme="blue"
                   />
@@ -122,7 +122,7 @@ const BOMTable: React.FC<BOMCardProps> = ({
                     icon={<MdEdit />}
                     aria-label="Edit"
                     onClick={() =>
-                      openUpdateBomDrawerHandler(bom._id)
+                      openUpdateBomDrawerHandler(bom?._id)
                     }
                     colorScheme="yellow"
                   />
@@ -131,7 +131,7 @@ const BOMTable: React.FC<BOMCardProps> = ({
                   <IconButton
                     icon={<MdDeleteOutline />}
                     aria-label="Delete"
-                    onClick={() => deleteBomHandler(bom._id)}
+                    onClick={() => deleteBomHandler(bom?._id)}
                     colorScheme="red"
                   />
                 )}
@@ -139,7 +139,7 @@ const BOMTable: React.FC<BOMCardProps> = ({
                   <IconButton
                     icon={<FcApproval />}
                     aria-label="Approve"
-                    onClick={() => approveBomHandler(bom._id)}
+                    onClick={() => approveBomHandler(bom?._id)}
                   />
                 )}
               </HStack>

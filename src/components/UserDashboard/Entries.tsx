@@ -77,7 +77,7 @@ const Entries: React.FC = () => {
             },
           }
         );
-        setEntries(response.data.data);
+        setEntries(response.data?.data);
       } catch (error) {
         toast({
           title: "Error",
@@ -90,16 +90,16 @@ const Entries: React.FC = () => {
     };
 
     fetchEntries();
-  }, [cookies.access_token, update]);
+  }, [cookies?.access_token, update]);
 
   // Filter entries based on selected filters
   const filteredEntries = entries.filter((entry) => {
     const matchesInOutFilter =
-      inOutFilter === "all" || entry.status === inOutFilter;
-    const matchesTypeFilter = typeFilter === "all" || entry.type === typeFilter;
+      inOutFilter === "all" || entry?.status === inOutFilter;
+    const matchesTypeFilter = typeFilter === "all" || entry?.type === typeFilter;
     const matchesDateFilter =
       !dateFilter ||
-      new Date(entry.createdAt).toDateString() ===
+      new Date(entry?.createdAt).toDateString() ===
         new Date(dateFilter).toDateString();
 
     return matchesInOutFilter && matchesTypeFilter && matchesDateFilter;
@@ -111,12 +111,12 @@ const Entries: React.FC = () => {
   };
 
   const handleUpdate = async (updatedEntry: Entry) => {
-    const token = cookies.access_token;
+    const token = cookies?.access_token;
     if (!token) return;
 
     try {
       await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}gard/update/${updatedEntry._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}gard/update/${updatedentry?._id}`,
         updatedEntry,
         {
           headers: {
@@ -136,14 +136,14 @@ const Entries: React.FC = () => {
       // Refresh data
       setEntries((prevEntries) =>
         prevEntries.map((entry) =>
-          entry._id === updatedEntry._id ? updatedEntry : entry
+          entry?._id === updatedEntry?._id ? updatedEntry : entry
         )
       );
       onClose();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to update entry.",
+        description: "Failed to update entry?.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -152,13 +152,13 @@ const Entries: React.FC = () => {
   };
 
   const handleDelete = async (entry: Entry) => {
-    const token = cookies.access_token;
+    const token = cookies?.access_token;
     if (!token) return;
 
     try {
       // Send DELETE request to the backend to delete the entry
       await axios.delete(
-        `${process.env.REACT_APP_BACKEND_URL}gard/delete/${entry._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}gard/delete/${entry?._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -175,12 +175,12 @@ const Entries: React.FC = () => {
       });
 
       setEntries((prevEntries) =>
-        prevEntries.filter((e) => e._id !== entry._id)
+        prevEntries?.filter((e) => e?._id !== entry?._id)
       );
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete entry.",
+        description: "Failed to delete entry?.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -189,7 +189,7 @@ const Entries: React.FC = () => {
   };
 
   const handleOut = async (entry: Entry) => {
-    const token = cookies.access_token;
+    const token = cookies?.access_token;
     if (!token) return;
 
     // Update the status to "out"
@@ -198,7 +198,7 @@ const Entries: React.FC = () => {
     try {
       // Send PUT request to update the entry status
       await axios.put(
-        `${process.env.REACT_APP_BACKEND_URL}gard/update/${entry._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}gard/update/${entry?._id}`,
         updatedEntry,
         {
           headers: {
@@ -219,7 +219,7 @@ const Entries: React.FC = () => {
 
       // Update state to reflect changes
       setEntries((prevEntries) =>
-        prevEntries.map((e) => (e._id === entry._id ? updatedEntry : e))
+        prevEntries.map((e) => (e._id === entry?._id ? updatedEntry : e))
       );
     } catch (error) {
       toast({
@@ -235,7 +235,7 @@ const Entries: React.FC = () => {
   // Render a person card
   const renderPersonCard = (entry: Entry) => (
     <Box
-      key={entry._id}
+      key={entry?._id}
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
@@ -256,20 +256,20 @@ const Entries: React.FC = () => {
       >
         <VStack align="flex-start" spacing={1}>
           <Text fontSize="sm" fontWeight="bold">
-            Date: {new Date(entry.createdAt).toLocaleDateString()}
+            Date: {new Date(entry?.createdAt).toLocaleDateString()}
           </Text>
           <Text fontSize="sm" className="text-gray-500">
-            Time: {new Date(entry.createdAt).toLocaleTimeString()}
+            Time: {new Date(entry?.createdAt).toLocaleTimeString()}
           </Text>
         </VStack>
         <VStack>
           <Badge
-            colorScheme={entry.status === "in" ? "green" : "red"}
+            colorScheme={entry?.status === "in" ? "green" : "red"}
             fontSize="sm"
           >
-            Status: {entry.status.toUpperCase()}
+            Status: {entry?.status.toUpperCase()}
           </Badge>
-          {entry.status === "in" && (
+          {entry?.status === "in" && (
             <Button
               size="sm"
               bgColor="white"
@@ -296,13 +296,13 @@ const Entries: React.FC = () => {
       >
         <VStack align="flex-start" spacing={2} w={{ base: "100%", md: "48%" }}>
           <Text fontSize="sm" fontWeight="bold">
-            Name: <span className="font-normal">{entry.name}</span>
+            Name: <span className="font-normal">{entry?.name}</span>
           </Text>
           <Text fontSize="sm" fontWeight="bold">
-            Address: <span className="font-normal">{entry.address}</span>
+            Address: <span className="font-normal">{entry?.address}</span>
           </Text>
           <Text fontSize="sm" fontWeight="bold">
-            Phone: <span className="font-normal">{entry.phone}</span>
+            Phone: <span className="font-normal">{entry?.phone}</span>
           </Text>
         </VStack>
         <VStack
@@ -312,10 +312,10 @@ const Entries: React.FC = () => {
         >
           <Text fontSize="sm" fontWeight="bold">
             Whom To Meet:{" "}
-            <span className="font-normal">{entry.contact_persone}</span>
+            <span className="font-normal">{entry?.contact_persone}</span>
           </Text>
           <Text fontSize="sm" fontWeight="bold">
-            Purpose: <span className="font-normal">{entry.purpose}</span>
+            Purpose: <span className="font-normal">{entry?.purpose}</span>
           </Text>
         </VStack>
       </HStack>
@@ -350,9 +350,9 @@ const Entries: React.FC = () => {
             <ImBin />
           </Button>
         </HStack>
-        {entry.status === "out" && (
+        {entry?.status === "out" && (
           <Text fontSize="sm" className="text-gray-500">
-            Exit Time: {new Date(entry.updatedAt).toLocaleTimeString()}
+            Exit Time: {new Date(entry?.updatedAt).toLocaleTimeString()}
           </Text>
         )}
         <FaPersonWalkingArrowRight className="text-orange-700 text-4xl" />
@@ -363,7 +363,7 @@ const Entries: React.FC = () => {
   // Render a vehicle card
   const renderVehicleCard = (entry: Entry) => (
     <Box
-      key={entry._id}
+      key={entry?._id}
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
@@ -384,20 +384,20 @@ const Entries: React.FC = () => {
       >
         <VStack align="flex-start" spacing={1}>
           <Text fontSize="sm" fontWeight="bold">
-            Date: {new Date(entry.createdAt).toLocaleDateString()}
+            Date: {new Date(entry?.createdAt).toLocaleDateString()}
           </Text>
           <Text fontSize="sm" className="text-gray-500">
-            Entry Time: {new Date(entry.updatedAt).toLocaleTimeString()}
+            Entry Time: {new Date(entry?.updatedAt).toLocaleTimeString()}
           </Text>
         </VStack>
         <VStack>
           <Badge
-            colorScheme={entry.status === "in" ? "green" : "red"}
+            colorScheme={entry?.status === "in" ? "green" : "red"}
             fontSize="sm"
           >
-            Status: {entry.status.toUpperCase()}
+            Status: {entry?.status.toUpperCase()}
           </Badge>
-          {entry.status === "in" && (
+          {entry?.status === "in" && (
             <Button
               size="sm"
               bgColor="white"
@@ -424,25 +424,25 @@ const Entries: React.FC = () => {
       >
         <VStack align="flex-start" spacing={2} w={{ base: "100%", md: "48%" }}>
           <Text fontSize="sm" fontWeight="bold">
-            Name: <span className="font-normal">{entry.name}</span>
+            Name: <span className="font-normal">{entry?.name}</span>
           </Text>
           <Text fontSize="sm" fontWeight="bold">
-            Address: <span className="font-normal">{entry.address}</span>
+            Address: <span className="font-normal">{entry?.address}</span>
           </Text>
           <Text fontSize="sm" fontWeight="bold">
-            Phone: <span className="font-normal">{entry.phone}</span>
+            Phone: <span className="font-normal">{entry?.phone}</span>
           </Text>
         </VStack>
         <VStack   align={{ base: "start", md: "end" }} spacing={2} w={{ base: "100%", md: "48%" }}>
           <Text fontSize="sm" fontWeight="bold">
             Vehicle Details:{" "}
-            <span className="font-normal">{entry.details}</span>
+            <span className="font-normal">{entry?.details}</span>
           </Text>
           <Text fontSize="sm" fontWeight="bold">
-            Material: <span className="font-normal">{entry.material}</span>
+            Material: <span className="font-normal">{entry?.material}</span>
           </Text>
           <Text fontSize="sm" fontWeight="bold">
-            Comment: <span className="font-normal">{entry.comment}</span>
+            Comment: <span className="font-normal">{entry?.comment}</span>
           </Text>
         </VStack>
       </HStack>
@@ -477,9 +477,9 @@ const Entries: React.FC = () => {
             <ImBin />
           </Button>
         </HStack>
-        {entry.status === "out" && (
+        {entry?.status === "out" && (
           <Text fontSize="sm" className="text-gray-500">
-            Exit Time: {new Date(entry.updatedAt).toLocaleTimeString()}
+            Exit Time: {new Date(entry?.updatedAt).toLocaleTimeString()}
           </Text>
         )}
         <TbTruckDelivery className="text-orange-700 text-4xl" />
@@ -527,7 +527,7 @@ const Entries: React.FC = () => {
           <Text className="text-xl font-bold mb-4"> Entries</Text>
           <Box className="max-h-[45rem] overflow-y-scroll">
             {filteredEntries.map((entry) =>
-              entry.type === "person"
+              entry?.type === "person"
                 ? renderPersonCard(entry)
                 : renderVehicleCard(entry)
             )}

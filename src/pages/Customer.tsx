@@ -70,8 +70,8 @@ const Customer: React.FC = () => {
           },
         }
       );
-      setCustomers(response.data.data);
-      setFilteredCustomers(response.data.data); // Initialize filtered customers
+      setCustomers(response.data?.data);
+      setFilteredCustomers(response.data?.data);
     } catch (err: any) {
       setError(err.message || "Failed to fetch customers");
       toast.error(err.response?.data?.message || "Failed to fetch customers");
@@ -84,13 +84,13 @@ const Customer: React.FC = () => {
     fetchCustomers();
   }, [page]);
 
-  // Filter customers based on search query and type
+
   useEffect(() => {
     const filtered = customers.filter((customer) => {
       const matchesSearch =
-        customer.full_name.toLowerCase().includes(searchQuery.toLowerCase());
+        customer?.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesType =
-        filterType === "" || customer.type.toLowerCase() === filterType.toLowerCase();
+        filterType === "" || customer?.type.toLowerCase() === filterType.toLowerCase();
       return matchesSearch && matchesType;
     });
 
@@ -182,16 +182,16 @@ const Customer: React.FC = () => {
             </Thead>
             <Tbody>
               {filteredCustomers.map((customer) => (
-                <Tr key={customer._id}>
-                  <Td>{customer.full_name}</Td>
-                  <Td>{customer.email}</Td>
-                  <Td>{customer.phone}</Td>
-                  <Td>{customer.type}</Td>
+                <Tr key={customer?._id}>
+                  <Td>{customer?.full_name}</Td>
+                  <Td>{customer?.email}</Td>
+                  <Td>{customer?.phone}</Td>
+                  <Td>{customer?.type}</Td>
                   <Td>
-                    {customer.type === "company" ? customer.company_name : "-"}
+                    {customer?.type === "company" ? customer?.company_name : "-"}
                   </Td>
                   <Td>
-                    {customer.type === "company" ? customer.GST_NO : "-"}
+                    {customer?.type === "company" ? customer?.GST_NO : "-"}
                   </Td>
                   <Td>
                     <Button

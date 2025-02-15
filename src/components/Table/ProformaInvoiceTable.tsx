@@ -223,7 +223,7 @@ const ProformaInvoiceTable: React.FC<AgentTableProps> = ({
                             {cell.column.id === "customer" &&
                               (row.original?.buyer || row.original?.supplier) && (
                                 <span>
-                                  {row.original?.buyer ? row.original.buyer.name : row.original.supplier.name}
+                                  {row.original?.buyer ? row.original?.buyer.name : row.original?.supplier.name}
                                 </span>
                               )}
                             {cell.column.id === "creator" &&

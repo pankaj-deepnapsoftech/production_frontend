@@ -82,11 +82,11 @@ const Buyers: React.FC = () => {
         }
       );
       const data = await response.json();
-      if (!data.success) {
-        throw new Error(data.message);
+      if (!data?.success) {
+        throw new Error(data?.message);
       }
-      setBuyers(data.agents);
-      setFilteredBuyers(data.agents);
+      setBuyers(data?.agents);
+      setFilteredBuyers(data?.agents);
     } catch (error: any) {
       toast.error(error?.message || "Something went wrong");
     } finally {
@@ -118,10 +118,10 @@ const Buyers: React.FC = () => {
     try {
       setBulkUploading(true);
       const formData = new FormData();
-      formData.append("excel", file);
+      formData?.append("excel", file);
 
       const response = await bulkUpload(formData).unwrap();
-      toast.success(response.message);
+      toast.success(response?.message);
     } catch (err: any) {
       toast.error(err?.data?.message || err?.message || "Something went wrong");
     } finally {
@@ -137,18 +137,18 @@ const Buyers: React.FC = () => {
     const searchTxt = searchKey?.toLowerCase();
     const results = buyers.filter(
       (buyer: any) =>
-        buyer.name?.toLowerCase()?.includes(searchTxt) ||
-        buyer.email?.toLowerCase()?.includes(searchTxt) ||
-        buyer.phone?.toLowerCase()?.includes(searchTxt) ||
+        buyer?.name?.toLowerCase()?.includes(searchTxt) ||
+        buyer?.email?.toLowerCase()?.includes(searchTxt) ||
+        buyer?.phone?.toLowerCase()?.includes(searchTxt) ||
         buyer?.gst_number?.toLowerCase()?.includes(searchTxt) ||
-        buyer.company_name.toLowerCase().includes(searchTxt) ||
-        buyer.company_email.toLowerCase().includes(searchTxt) ||
-        buyer.company_phone.toLowerCase().includes(searchTxt) ||
-        buyer.address_line1.toLowerCase().includes(searchTxt) ||
+        buyer?.company_name?.toLowerCase().includes(searchTxt) ||
+        buyer?.company_email?.toLowerCase().includes(searchTxt) ||
+        buyer?.company_phone?.toLowerCase().includes(searchTxt) ||
+        buyer?.address_line1?.toLowerCase().includes(searchTxt) ||
         buyer?.address_line2?.toLowerCase()?.includes(searchTxt) ||
         buyer?.pincode?.toLowerCase()?.includes(searchTxt) ||
-        buyer.city.toLowerCase().includes(searchTxt) ||
-        buyer.state.toLowerCase().includes(searchTxt) ||
+        buyer?.city?.toLowerCase().includes(searchTxt) ||
+        buyer?.state?.toLowerCase().includes(searchTxt) ||
         (buyer?.createdAt &&
           new Date(buyer?.createdAt)
             ?.toISOString()

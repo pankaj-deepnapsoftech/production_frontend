@@ -12,13 +12,15 @@ import {
 } from "@chakra-ui/react";
 import { FaCheckCircle, FaHourglassHalf, FaCircle } from "react-icons/fa";
 
-const Track = ({ sale }) => {
-  const [processes, setProcesses] = useState([]);
+const Track = ({ sale, selectedBomIndex }) => {  
+  const [sampleProcesses, setSampleProcesses] = useState([]);
 
   useEffect(() => {
-    const fetchedProcesses = sale?.boms[0]?.production_processes[0]?.processes || [];
-    setProcesses(fetchedProcesses);
-  }, [sale]);
+ 
+    const selectedBom = sale?.boms[selectedBomIndex];
+    const fetchedSampleProcesses = selectedBom?.production_processes[0]?.processes || [];
+    setSampleProcesses(fetchedSampleProcesses);
+  }, [sale, selectedBomIndex]);  
 
   const getStatusText = (start, done) => {
     if (!start && !done) return "Pending";
@@ -30,11 +32,13 @@ const Track = ({ sale }) => {
   return (
     <Box p={6} bg="gray.50" borderRadius="lg" boxShadow="md" className="mb-5">
       <Text className="text-2xl font-bold mb-6 text-center">
-        Product Process{" "}
+        {selectedBomIndex === 0 ? "Sample Product Process" : " Production Process"}
       </Text>
 
-      {processes?.length === 0 ? (
-        <Text className="text-red-500 text-center">Production Process is not Registered yet!</Text>
+      {sampleProcesses?.length === 0 ? (
+        <Text className="text-red-500 text-center">
+          Production Process is not Registered yet!
+        </Text>
       ) : (
         <VStack
           spacing={8}
@@ -42,7 +46,7 @@ const Track = ({ sale }) => {
           position="relative"
           className="timeline-container max-h-[20rem] overflow-y-scroll"
         >
-          {processes.map((process, index) => {
+          {sampleProcesses.map((process, index) => {
             const statusText = getStatusText(process?.start, process?.done);
             const isCompleted = process?.done;
             const isUnderProcessing = process?.start && !process?.done;
@@ -68,7 +72,7 @@ const Track = ({ sale }) => {
                       boxSize={6}
                       color={isCompleted ? "green.500" : isUnderProcessing ? "orange.500" : "gray.500"}
                     />
-                    {index !== processes?.length - 1 && (
+                    {index !== sampleProcesses?.length - 1 && (
                       <Box
                         position="absolute"
                         left="50%"

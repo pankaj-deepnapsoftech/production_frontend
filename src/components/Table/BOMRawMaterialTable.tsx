@@ -327,17 +327,17 @@ import {
                                 <span
                                   className="px-2 py-1 rounded-md"
                                   style={{
-                                    backgroundColor: inventoryCategoryStyles[row.original.inventory_category]?.bg,
-                                    color: inventoryCategoryStyles[row.original.inventory_category]?.text,
+                                    backgroundColor: inventoryCategoryStyles[row.original?.inventory_category]?.bg,
+                                    color: inventoryCategoryStyles[row.original?.inventory_category]?.text,
                                   }}
                                 >
-                                  {row.original.inventory_category.substr(0, 1).toUpperCase() + row.original.inventory_category.substr(1,)}
+                                  {row.original?.inventory_category?.substr(0, 1).toUpperCase() + row.original?.inventory_category.substr(1,)}
                                 </span>
                               )}
-                              {cell.column.id === "change" && row.original.change_type && (
+                              {cell.column.id === "change" && row.original?.change_type && (
                                 <p className="flex gap-1 items-center">
-                                  {row.original.change_type === 'increase' ? <FaArrowUpLong color="#0dac51" size={20} /> : <FaArrowDownLong color="#c70505" size={20} />}
-                                  <span style={{ color: row.original.change_type === 'increase' ? '#0dac51' : '#c70505' }}>{row.original.quantity_changed}</span>
+                                  {row.original?.change_type === 'increase' ? <FaArrowUpLong color="#0dac51" size={20} /> : <FaArrowDownLong color="#c70505" size={20} />}
+                                  <span style={{ color: row.original?.change_type === 'increase' ? '#0dac51' : '#c70505' }}>{row.original?.quantity_changed}</span>
                                 </p>
                               )}
                             </Td>

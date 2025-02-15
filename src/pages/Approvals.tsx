@@ -407,14 +407,14 @@ const Approvals: React.FC = () => {
         buyer.email?.toLowerCase()?.includes(searchTxt) ||
         buyer.phone?.toLowerCase()?.includes(searchTxt) ||
         buyer?.gst_number?.toLowerCase()?.includes(searchTxt) ||
-        buyer.company_name.toLowerCase().includes(searchTxt) ||
-        buyer.company_email.toLowerCase().includes(searchTxt) ||
-        buyer.company_phone.toLowerCase().includes(searchTxt) ||
-        buyer.address_line1.toLowerCase().includes(searchTxt) ||
+        buyer?.company_name?.toLowerCase().includes(searchTxt) ||
+        buyer?.company_email?.toLowerCase().includes(searchTxt) ||
+        buyer?.company_phone?.toLowerCase().includes(searchTxt) ||
+        buyer?.address_line1?.toLowerCase().includes(searchTxt) ||
         buyer?.address_line2?.toLowerCase()?.includes(searchTxt) ||
         buyer?.pincode?.toLowerCase()?.includes(searchTxt) ||
-        buyer.city.toLowerCase().includes(searchTxt) ||
-        buyer.state.toLowerCase().includes(searchTxt) ||
+        buyer.city?.toLowerCase().includes(searchTxt) ||
+        buyer.state?.toLowerCase().includes(searchTxt) ||
         (buyer?.createdAt &&
           new Date(buyer?.createdAt)
             ?.toISOString()
@@ -440,18 +440,18 @@ const Approvals: React.FC = () => {
     const searchTxt = sellerSearchKey?.toLowerCase();
     const results = sellers.filter(
       (seller: any) =>
-        seller.name?.toLowerCase()?.includes(searchTxt) ||
-        seller.email?.toLowerCase()?.includes(searchTxt) ||
-        seller.phone?.toLowerCase()?.includes(searchTxt) ||
+        seller?.name?.toLowerCase()?.includes(searchTxt) ||
+        seller?.email?.toLowerCase()?.includes(searchTxt) ||
+        seller?.phone?.toLowerCase()?.includes(searchTxt) ||
         seller?.gst_number?.toLowerCase()?.includes(searchTxt) ||
-        seller.company_name.toLowerCase().includes(searchTxt) ||
-        seller.company_email.toLowerCase().includes(searchTxt) ||
-        seller.company_phone.toLowerCase().includes(searchTxt) ||
-        seller.address_line1.toLowerCase().includes(searchTxt) ||
+        seller?.company_name.toLowerCase()?.includes(searchTxt) ||
+        seller?.company_email.toLowerCase()?.includes(searchTxt) ||
+        seller?.company_phone.toLowerCase()?.includes(searchTxt) ||
+        seller?.address_line1.toLowerCase()?.includes(searchTxt) ||
         seller?.address_line2?.toLowerCase()?.includes(searchTxt) ||
         seller?.pincode?.toLowerCase()?.includes(searchTxt) ||
-        seller.city.toLowerCase().includes(searchTxt) ||
-        seller.state.toLowerCase().includes(searchTxt) ||
+        seller?.city.toLowerCase()?.includes(searchTxt) ||
+        seller?.state.toLowerCase()?.includes(searchTxt) ||
         (seller?.createdAt &&
           new Date(seller?.createdAt)
             ?.toISOString()
@@ -477,9 +477,9 @@ const Approvals: React.FC = () => {
     const searchTxt = bomSearchKey?.toLowerCase();
     const results = boms.filter(
       (bom: any) =>
-        bom.bom_name?.toLowerCase()?.includes(searchTxt) ||
-        bom.parts_count?.toString()?.toLowerCase()?.includes(searchTxt) ||
-        bom.total_cost?.toString()?.toLowerCase()?.includes(searchTxt) ||
+        bom?.bom_name?.toLowerCase()?.includes(searchTxt) ||
+        bom?.parts_count?.toString()?.toLowerCase()?.includes(searchTxt) ||
+        bom?.total_cost?.toString()?.toLowerCase()?.includes(searchTxt) ||
         (bom?.approved_by?.first_name + " " + bom?.approved_by?.last_name)
           ?.toString()
           ?.toLowerCase()

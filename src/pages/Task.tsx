@@ -78,6 +78,7 @@ const Task = () => {
         }
       );
 
+      console.log(response.data.data)
       const tasks = response.data.data.map((task) => {
         const sale = task?.sale_id?.length ? task.sale_id[0] : null;
         const product = sale?.product_id?.length ? sale.product_id[0] : null;
@@ -117,7 +118,8 @@ const Task = () => {
           token_status: sale?.token_status,
           token_ss: sale?.token_ss,
           isTokenVerify: sale?.isTokenVerify,
-          bom_name: sale?.bom[0]?.bom_name,
+          sample_bom_name: sale?.bom[0]?.bom_name,
+          bom_name: sale?.bom[1]?.bom_name,
         };
       });
 
@@ -254,7 +256,7 @@ const Task = () => {
           },
         }
       );
-      //console.log(response);
+
 
       toast.success(response.data.message);
       fetchTasks();
@@ -515,6 +517,11 @@ const Task = () => {
                   
                   ) : null}
 
+                  {task?.sample_bom_name ? (
+                    <Text fontSize="sm" color="blue">
+                    <strong className="text-black"> Sample BOM Name:</strong> {task?.sample_bom_name}
+                  </Text>
+                  ) : null}
                   {task?.bom_name ? (
                     <Text fontSize="sm" color="blue">
                     <strong className="text-black">BOM Name:</strong> {task?.bom_name}
@@ -555,9 +562,8 @@ const Task = () => {
                     </Button>
                   ) : null}
 
-                  {task?.design_status === "UnderProcessing" ? (
-                    <>
-                      {task?.bom.length > 0 ? (
+               
+                      {task?.bom.length > 2 ? (
                         <Badge colorScheme="green" fontSize="sm">
                           <strong>BOM:</strong> Created
                         </Badge>
@@ -581,8 +587,7 @@ const Task = () => {
                           Task Done
                         </Button>
                       ) : null}
-                    </>
-                  ) : null}
+                   
                 </HStack>
               ) : ["accountant", "acc"].includes(role.toLowerCase()) ? (
                 <HStack

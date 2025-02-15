@@ -224,7 +224,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({
                             {cell.column.id === "customer" &&
                               (row.original?.buyer || row.original?.supplier) && (
                                 <span>
-                                  {row.original?.buyer ? row.original.buyer.name : row.original.supplier.name}
+                                  {row.original?.buyer ? row.original?.buyer.name : row.original?.supplier.name}
                                 </span>
                               )}
                           </Td>

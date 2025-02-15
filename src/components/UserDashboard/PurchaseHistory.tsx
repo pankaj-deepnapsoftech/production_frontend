@@ -315,20 +315,7 @@ const PurchaseHistory = () => {
                    </Badge>
                   ) : null}
 
-                  {!purchase?.invoice &&
-                  purchase?.boms?.[0]?.is_production_started !== undefined ? (
-                    <Badge
-                      colorScheme={
-                        purchase.boms[0].is_production_started ? "green" : "red"
-                      }
-                      fontSize="sm"
-                    >
-                      Production:{" "}
-                      {purchase.boms[0].is_production_started
-                        ? "Started"
-                        : "Pending"}
-                    </Badge>
-                  ) : null}
+                
 
                   {purchase && purchase?.paymet_status ? (
                     <Badge
@@ -420,6 +407,11 @@ const PurchaseHistory = () => {
                       ).toFixed(2)}
                     </span>
                   </Text>
+                      {purchase?.productFile ? (
+                         <a href={purchase?.productFile} target="_blank" className="text-blue-500 font-semibold underline ">
+                          Product Image     
+                         </a>
+                      ) : null}
 
                   {purchase?.token_amt ? (
                     <Text

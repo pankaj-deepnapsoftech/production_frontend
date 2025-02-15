@@ -100,9 +100,7 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
       formDataToSend.append("productFile", formData.productFile);
     }
 
-    // for (let [key, value] of formDataToSend.entries()) {
-    //   console.log(key, value);
-    // }
+ 
 
     try {
       await axios.post(
@@ -161,8 +159,8 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
           >
             <option value="" disabled>Select a customer</option>
             {customers.map((customer: any) => (
-              <option key={customer._id} value={customer._id}>
-                {customer.full_name} {customer.company_name ? ` - ${customer.company_name}` : null}
+              <option key={customer?._id} value={customer?._id}>
+                {customer?.full_name} {customer?.company_name ? ` - ${customer?.company_name}` : null}
               </option>
             ))}
           </Select>
@@ -172,13 +170,13 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
           <FormLabel>Product</FormLabel>
           <Select
             name="product_id"
-            value={formData.product_id}
+            value={formData?.product_id}
             onChange={handleInputChange}
           >
             <option value="">Select a product</option>
             {products.map((product: any) => (
-              <option key={product._id} value={product._id}>
-                {product.name}
+              <option key={product?._id} value={product?._id}>
+                {product?.name}
               </option>
             ))}
           </Select>
@@ -186,17 +184,17 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
 
         <FormControl id="price" isRequired>
           <FormLabel>Price</FormLabel>
-          <Input type="number" name="price" value={formData.price} onChange={handleInputChange} />
+          <Input type="number" name="price" value={formData?.price} onChange={handleInputChange} />
         </FormControl>
 
         <FormControl id="product_qty" isRequired>
           <FormLabel>Product Quantity</FormLabel>
-          <Input type="number" name="product_qty" value={formData.product_qty} onChange={handleInputChange} />
+          <Input type="number" name="product_qty" value={formData?.product_qty} onChange={handleInputChange} />
         </FormControl>
 
         <FormControl id="GST" isRequired>
           <FormLabel>GST Type</FormLabel>
-          <RadioGroup onChange={handleGSTChange} value={formData.GST.toString()}>
+          <RadioGroup onChange={handleGSTChange} value={formData?.GST?.toString()}>
             <Stack direction="row">
               <Radio value="18">GST (18%)</Radio>
               <Radio value="12">GST (12%)</Radio>
@@ -212,7 +210,7 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
 
         <FormControl id="comment">
           <FormLabel>Remarks</FormLabel>
-          <Input type="text" name="comment" value={formData.comment} onChange={handleInputChange} placeholder="Further Details (if any)" />
+          <Input type="text" name="comment" value={formData?.comment} onChange={handleInputChange} placeholder="Further Details (if any)" />
         </FormControl>
 
         <Button type="submit" colorScheme="teal" size="lg" width="full">
