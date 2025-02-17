@@ -221,18 +221,7 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
     }
   };
 
-  const markProcessUndone = async () => {
-    const response = await fetch(
-      process.env.REACT_APP_BACKEND_URL +
-        `production-process/undone/${productionProcessId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${cookies?.access_token}`,
-        },
-      }
-    );
-  }
-
+  
   const fetchProcessDetailsHandler = async (id: string) => {
     try {
       setIsLoading(true);
@@ -745,17 +734,6 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
                 </Button>
               )}
 
-              { isCompleted ? (
-                 <Button              
-                 isLoading={isUpdating}
-                 type="button"
-                 className="mt-1 ml-5"
-                 colorScheme="purple"
-                 onClick={markProcessUndone}
-               >
-                 Mark as Undone
-               </Button>
-              ) : null}
             </div>
           </form>
         </div>

@@ -53,6 +53,7 @@ const Dispatch = () => {
           },
         }
       );
+      console.log(response.data?.data);    
       setData(response.data?.data);    
     } catch (error: any) {
       toast.error(error);
@@ -77,8 +78,8 @@ const Dispatch = () => {
 
   // Filter data based on selected dropdown values
   const filteredData = data?.filter((acc: any) => {
-    const paymentStatus = acc?.bom[0]?.sale_id[0]?.paymet_status || "";
-    const productStatus = acc?.bom[0]?.sale_id[0]?.product_status || "";
+    const paymentStatus = acc?.bom?.sale_id[0]?.paymet_status || "";
+    const productStatus = acc?.bom?.sale_id[0]?.product_status || "";
 
     return (
       (selectedPaymentStatus === "" ||
@@ -163,7 +164,7 @@ const Dispatch = () => {
               h="100%"
               w={2}
               bg={
-                acc?.bom[0]?.sale_id[0]?.product_status === "Dispatch"
+                acc?.bom?.sale_id[0]?.product_status === "Dispatch"
                   ? "orange"
                   : "green"
               }
@@ -175,12 +176,12 @@ const Dispatch = () => {
               <VStack align="start" w={{ base: "100%", md: "48%" }}>
                 <Text fontWeight="bold" fontSize="lg">
                   Sale By:{" "}
-                  {acc?.bom[0]?.sale_id[0]?.user_id[0]?.first_name || "N/A"}
+                  {acc?.bom?.sale_id[0]?.user_id[0]?.first_name || "N/A"}
                 </Text>
                 <Text fontWeight="bold" fontSize="sm" className="underline">
                   Date:{" "}
                   {new Date(
-                    acc?.bom[0]?.sale_id[0]?.createdAt
+                    acc?.bom?.sale_id[0]?.createdAt
                   ).toLocaleDateString()}
                 </Text>
               </VStack>
@@ -190,32 +191,32 @@ const Dispatch = () => {
                 align={{ base: "start", md: "end" }}
                 w={{ base: "100%", md: "48%" }}
               >
-                {acc?.bom[0]?.sale_id[0]?.paymet_status && (
+                {acc?.bom?.sale_id[0]?.paymet_status && (
                   <Badge
                     colorScheme={
-                      acc?.bom[0]?.sale_id[0]?.paymet_status === "Pending"
+                      acc?.bom?.sale_id[0]?.paymet_status === "Pending"
                         ? "orange"
                         : "green"
                     }
                     fontSize="sm"
                   >
                     Payment Status:{" "}
-                    {acc?.bom[0]?.sale_id[0]?.paymet_status === "Paied"
+                    {acc?.bom?.sale_id[0]?.paymet_status === "Paied"
                       ? "Paid"
-                      : acc?.bom[0]?.sale_id[0]?.paymet_status}
+                      : acc?.bom?.sale_id[0]?.paymet_status}
                   </Badge>
                 )}
 
-                {acc?.bom[0]?.sale_id[0]?.product_status && (
+                {acc?.bom?.sale_id[0]?.product_status && (
                   <Badge
                     colorScheme={
-                      acc?.bom[0]?.sale_id[0]?.product_status === "Dispatch"
+                      acc?.bom?.sale_id[0]?.product_status === "Dispatch"
                         ? "orange"
                         : "green"
                     }
                     fontSize="sm"
                   >
-                    Product Status: {acc?.bom[0]?.sale_id[0]?.product_status}
+                    Product Status: {acc?.bom?.sale_id[0]?.product_status}
                   </Badge>
                 )}
               </VStack>
@@ -233,15 +234,15 @@ const Dispatch = () => {
               <VStack align="start" w={{ base: "100%", md: "48%" }}>
                 <Text fontSize="sm">
                   <strong>Customer:</strong>{" "}
-                  {acc?.bom[0]?.sale_id[0]?.customer_id[0]?.full_name || "N/A"}
+                  {acc?.bom?.sale_id[0]?.customer_id[0]?.full_name || "N/A"}
                 </Text>
                 <Text fontSize="sm">
                   <strong>Product Name:</strong>{" "}
-                  {acc?.bom[0]?.sale_id[0]?.product_id[0]?.name || "N/A"}
+                  {acc?.bom?.sale_id[0]?.product_id[0]?.name || "N/A"}
                 </Text>
                 <Text fontSize="sm">
                   <strong>Quantity:</strong>{" "}
-                  {acc?.bom[0]?.sale_id[0]?.product_qty || "N/A"}
+                  {acc?.bom?.sale_id[0]?.product_qty || "N/A"}
                 </Text>
               </VStack>
 
@@ -251,18 +252,18 @@ const Dispatch = () => {
               >
                 <Text fontSize="sm">
                   <strong>Price:</strong>{" "}
-                  {acc?.bom[0]?.sale_id[0]?.price *
-                    acc?.bom[0]?.sale_id[0]?.product_qty || "N/A"}
+                  {acc?.bom?.sale_id[0]?.price *
+                    acc?.bom?.sale_id[0]?.product_qty || "N/A"}
                 </Text>
                 <Text fontSize="sm">
-                  <strong>GST :</strong> {acc?.bom[0]?.sale_id[0]?.GST}%
+                  <strong>GST :</strong> {acc?.bom?.sale_id[0]?.GST}%
                 </Text>
                 <Text fontSize="sm">
                   <strong>Total Price:</strong>{" "}
                   {calculateTotal(
-                    acc?.bom[0]?.sale_id[0]?.price,
-                    acc?.bom[0]?.sale_id[0]?.product_qty,
-                    acc?.bom[0]?.sale_id[0]?.GST
+                    acc?.bom?.sale_id[0]?.price,
+                    acc?.bom?.sale_id[0]?.product_qty,
+                    acc?.bom?.sale_id[0]?.GST
                   )}
                 </Text>
               </VStack>
@@ -277,20 +278,20 @@ const Dispatch = () => {
               flexWrap="wrap"
               className="sm:flex-col"
             >
-              {acc?.bom[0]?.sale_id[0]?.payment_verify === true && (
+              {acc?.bom?.sale_id[0]?.payment_verify === true && (
                 <Button
                   bgColor="white"
                   leftIcon={<TbTruckDelivery />}
                   _hover={{ bgColor: "green.500" }}
                   className="border border-green-500 hover:text-white"
-                  onClick={() => handleDispatch(acc?.bom[0]?.sale_id[0]?._id)}
+                  onClick={() => handleDispatch(acc?.bom?.sale_id[0]?._id)}
                   width={{ base: "full", sm: "auto" }}
                 >
                   Dispatch
                 </Button>
               )}
 
-              {acc?.bom[0]?.sale_id[0]?.customer_order_ss && (
+              {acc?.bom?.sale_id[0]?.customer_order_ss && (
                 <Button
                   bgColor="white"
                   leftIcon={<IoEyeSharp />}
@@ -299,7 +300,7 @@ const Dispatch = () => {
                   width={{ base: "full", sm: "auto" }}
                 >
                   <a
-                    href={acc?.bom[0]?.sale_id[0]?.customer_order_ss}
+                    href={acc?.bom?.sale_id[0]?.customer_order_ss}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

@@ -252,9 +252,9 @@ const AddBom: React.FC<AddBomProps> = ({
       console.log("finished good", finishedGood)
 
       const filteredData = response.data.boms.filter(
-        (bom: any) =>   bom?.finished_good?.item?.name?.toLowerCase()?.includes(finishedGood?.label?.toLowerCase())
+        (bom: any) =>
+          bom?.finished_good?.item?.name?.toLowerCase()?.trim() === finishedGood?.label?.toLowerCase()?.trim()
       );
-
       console.log("same..........",filteredData)
 
       setBomData(filteredData[0]);

@@ -304,18 +304,16 @@ const PurchaseHistory = () => {
                   ) : null}
 
                   {purchase?.token_status ? (
-                     <Badge colorScheme="green" fontSize="sm">
-                     Token Amount: Paid
-                   </Badge>
+                    <Badge colorScheme="green" fontSize="sm">
+                      Token Amount: Paid
+                    </Badge>
                   ) : null}
 
                   {purchase?.isSampleApprove ? (
-                     <Badge colorScheme="green" fontSize="sm">
-                     Sample Product: Approved
-                   </Badge>
+                    <Badge colorScheme="green" fontSize="sm">
+                      Sample Product: Approved
+                    </Badge>
                   ) : null}
-
-                
 
                   {purchase && purchase?.paymet_status ? (
                     <Badge
@@ -332,20 +330,7 @@ const PurchaseHistory = () => {
                         : purchase?.paymet_status}
                     </Badge>
                   ) : null}
-
-                  {purchase?.tracking_id && purchase?.tracking_web ? (
-                    <Text
-                      className="text-blue-500 underline cursor-pointer"
-                      onClick={() =>
-                        handleDelivery(
-                          purchase?.tracking_id,
-                          purchase?.tracking_web
-                        )
-                      }
-                    >
-                      Track
-                    </Text>
-                  ) : null}
+                  
 
                   {purchase?.product_status ? (
                     <Badge
@@ -388,6 +373,20 @@ const PurchaseHistory = () => {
                       {purchase?.price * purchase?.product_qty}
                     </span>
                   </Text>
+
+                  {purchase?.tracking_id && purchase?.tracking_web ? (
+                    <Text
+                      className="text-blue-500 underline cursor-pointer"
+                      onClick={() =>
+                        handleDelivery(
+                          purchase?.tracking_id,
+                          purchase?.tracking_web
+                        )
+                      }
+                    >
+                      Track Delivery
+                    </Text>
+                  ) : null}
                 </VStack>
 
                 <VStack
@@ -407,11 +406,15 @@ const PurchaseHistory = () => {
                       ).toFixed(2)}
                     </span>
                   </Text>
-                      {purchase?.productFile ? (
-                         <a href={purchase?.productFile} target="_blank" className="text-blue-500 font-semibold underline ">
-                          Product Image     
-                         </a>
-                      ) : null}
+                  {purchase?.productFile ? (
+                    <a
+                      href={purchase?.productFile}
+                      target="_blank"
+                      className="text-blue-500 font-semibold underline "
+                    >
+                      Product Image
+                    </a>
+                  ) : null}
 
                   {purchase?.token_amt ? (
                     <Text
@@ -424,7 +427,9 @@ const PurchaseHistory = () => {
                         )
                       }
                     >
-                     {purchase?.token_status ? "See Token Amount" : "Pay Now For Sample"} 
+                      {purchase?.token_status
+                        ? "See Token Amount"
+                        : "Pay Now For Sample"}
                     </Text>
                   ) : null}
                 </VStack>
@@ -442,9 +447,14 @@ const PurchaseHistory = () => {
                     onClick={() => {
                       onProductionOpen();
                       setDesignProcess(purchase?.empprocess);
-                      setSelectedProcess(
-                        purchase?.boms[0]?.production_processes[0]?.processes
-                      );
+
+                      // Check if boms[1] exists, otherwise use boms[0]
+                      const selectedBom =
+                        purchase?.boms[1] || purchase?.boms[0];
+                      const selectedProcess =
+                        selectedBom?.production_processes[0]?.processes;
+
+                      setSelectedProcess(selectedProcess);
                     }}
                   >
                     Track Production

@@ -63,6 +63,9 @@ const ProductTable: React.FC<ProductTableProps> = ({
   deleteProductHandler,
   approveProductHandler,
 }) => {
+
+  console.log(products);
+
   const columns: Column<{
     name: string;
     color:string,

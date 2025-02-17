@@ -563,7 +563,7 @@ const Task = () => {
                   ) : null}
 
                
-                      {task?.bom.length > 2 ? (
+                      {task?.bom.length === 2 ? (
                         <Badge colorScheme="green" fontSize="sm">
                           <strong>BOM:</strong> Created
                         </Badge>
