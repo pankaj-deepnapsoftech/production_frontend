@@ -186,12 +186,11 @@ const Sales = () => {
     return totalPrice;
   };
 
-
-  const handleSample = (id:any, approve:boolean) => {
+  const handleSample = (id: any, approve: boolean) => {
     setSelectedSale(id);
     setApproveStatus(approve);
     sampleDisclosure.onOpen();
-  }
+  };
 
   return (
     <div className="overflow-x-hidden">
@@ -345,12 +344,10 @@ const Sales = () => {
                         Token Amount :{" "}
                         {purchase?.token_status ? "Paid" : "Pending"}
                       </Badge>
-                    ) : null}                   
+                    ) : null}
 
                     {purchase?.isSampleApprove ? (
-                      <Badge
-                       colorScheme="green"
-                       fontSize="sm">
+                      <Badge colorScheme="green" fontSize="sm">
                         Sample Status: Approved
                       </Badge>
                     ) : null}
@@ -471,15 +468,21 @@ const Sales = () => {
                     Edit{" "}
                   </Button>
 
-
-                  {purchase?.token_ss ? (
+                  {purchase?.token_ss &&
+                  purchase?.boms[0]?.production_processes?.every(
+                    (processGroup) =>
+                      processGroup?.processes?.every(
+                        (process) => process?.done === true
+                      )
+                  ) ? (
                     <Button
                       bgColor="white"
                       _hover={{ bgColor: "red.500" }}
                       className="border border-red-500 hover:text-white"
                       w={{ base: "100%", md: "auto" }}
-                      onClick={()=> handleSample(purchase?._id, purchase?.isSampleApprove)}
-                      
+                      onClick={() =>
+                        handleSample(purchase?._id, purchase?.isSampleApprove)
+                      }
                     >
                       Approve Sample
                     </Button>
@@ -604,9 +607,11 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
-
-        {/* sample modal */}
-        <Modal isOpen={sampleDisclosure.isOpen} onClose={sampleDisclosure.onClose}>
+      {/* sample modal */}
+      <Modal
+        isOpen={sampleDisclosure.isOpen}
+        onClose={sampleDisclosure.onClose}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader> Approve Sample</ModalHeader>

@@ -1,7 +1,7 @@
 import { Box, Text, VStack, Badge, Progress } from "@chakra-ui/react";
 
-const TrackProduction = ({ designProcess, productionProcess }: any) => {
-
+const TrackProduction = ({ designProcess, productionProcess, stage }: any) => {
+  console.log(stage);
   const ColorChange = (color: any) => {
     if (color === "Pending") {
       return "orange";
@@ -40,13 +40,12 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
     if (done) {
       return 100;
     } else if (start) {
-      return 50; // UnderProcessing
+      return 50;
     } else {
-      return 20; // Pending
+      return 20; 
     }
   };
 
-  console.log(productionProcess);
 
   return (
     <Box p={4}>
@@ -104,15 +103,17 @@ const TrackProduction = ({ designProcess, productionProcess }: any) => {
 
       {/* Production Process Section */}
       <Box>
+        <Text className="text-gray-600 text-center">
+        {stage != "real" ? null : "The sample has been approved :)"}
+        </Text>
         <Text fontWeight="bold" fontSize="2xl" color="blue.600" mb={4}>
-          Production Process
+          {stage === "real" ? "Production Process": "Sample Process"}
         </Text>
         {productionProcess?.length === 0 || designProcess?.length === 0 ? (
           <Box>No production process data available.</Box>
         ) : (
           <VStack align="start" spacing={4} className="max-h-[20rem] overflow-y-scroll">
             {productionProcess?.map((stage: any, index: number) => {
-              // Get the process status and progress based on start and done
               const status = getProcessStatus(stage?.start, stage?.done);
               const progressValue = getProgressValue(stage?.start, stage?.done);
               const colorScheme = status === "Completed" ? "green" : status === "UnderProcessing" ? "blue" : "orange";

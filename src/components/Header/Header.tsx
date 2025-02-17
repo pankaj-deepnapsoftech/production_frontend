@@ -71,14 +71,7 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
         }
       );
 
-      toast({
-        title: "Success",
-        description: `All notifications marked as viewed`,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-
+   
       fetchNotification();
 
     } catch (error: any) {

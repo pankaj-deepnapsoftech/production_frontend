@@ -36,13 +36,13 @@ const Dispatch = () => {
   const [cookies] = useCookies();
   const [data, setData] = useState([]);
   const [saleId, setSaleId] = useState("");
-
+  const [trackId,setTrackId] = useState();
+  const [trackLink,setTrackLink] = useState();
   const [searchQuery, setSearchQuery] = useState("");
 
   const DispatchDisclosure = useDisclosure();
-  const [selectedPaymentStatus, setSelectedPaymentStatus] = useState(""); // Payment filter
-  const [selectedProductStatus, setSelectedProductStatus] = useState(""); // Product filter
-
+  const [selectedPaymentStatus, setSelectedPaymentStatus] = useState(""); 
+  const [selectedProductStatus, setSelectedProductStatus] = useState(""); 
   const fetchData = async () => {
     try {
       const response = await axios.get(
@@ -71,8 +71,10 @@ const Dispatch = () => {
     return totalPrice;
   };
 
-  const handleDispatch = (id: any) => {
+  const handleDispatch = (id: any , trackId:any, link:any) => {
     setSaleId(id);
+   setTrackId(trackId);
+   setTrackLink(link);
     DispatchDisclosure.onOpen();
   };
 
@@ -284,7 +286,7 @@ const Dispatch = () => {
                   leftIcon={<TbTruckDelivery />}
                   _hover={{ bgColor: "green.500" }}
                   className="border border-green-500 hover:text-white"
-                  onClick={() => handleDispatch(acc?.bom?.sale_id[0]?._id)}
+                  onClick={() => handleDispatch(acc?.bom?.sale_id[0]?._id, acc?.bom?.sale_id[0]?.tracking_id, acc?.bom?.sale_id[0]?.tracking_web)}
                   width={{ base: "full", sm: "auto" }}
                 >
                   Dispatch
@@ -326,6 +328,8 @@ const Dispatch = () => {
           <ModalBody>
             <DispatchData
               sale_id={saleId}
+              trackId = {trackId}
+              trackLink = {trackLink}
               onClose={DispatchDisclosure.onClose}
             />
           </ModalBody>

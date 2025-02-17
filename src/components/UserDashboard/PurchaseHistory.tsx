@@ -20,6 +20,7 @@ import {
   Textarea,
   RadioGroup,
   Radio,
+  Img,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -72,6 +73,8 @@ const PurchaseHistory = () => {
   const [customerApprove, setCustomerApprove] = useState("");
   const [tokenFile, setTokenFile] = useState("");
   const [amount, setAmount] = useState();
+  const [stage, setStage] = useState("");
+  const [productFile, setProductFile] = useState();
   const {
     isOpen: isProductionModalOpen,
     onOpen: onProductionOpen,
@@ -104,6 +107,12 @@ const PurchaseHistory = () => {
     isOpen: isTokenOpen,
     onOpen: onTokenOpen,
     onClose: onTokenClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isProductOpen,
+    onOpen: onProductOpen,
+    onClose: onProductClose,
   } = useDisclosure();
 
   const fetchPurchases = async () => {
@@ -199,6 +208,11 @@ const PurchaseHistory = () => {
     setTokenFile(tokenFile);
     setAmount(amount);
     onTokenOpen();
+  };
+
+  const handleProduct = (file: any) => {
+    setProductFile(file);
+    onProductOpen();
   };
 
   useEffect(() => {
@@ -330,7 +344,6 @@ const PurchaseHistory = () => {
                         : purchase?.paymet_status}
                     </Badge>
                   ) : null}
-                  
 
                   {purchase?.product_status ? (
                     <Badge
@@ -407,13 +420,12 @@ const PurchaseHistory = () => {
                     </span>
                   </Text>
                   {purchase?.productFile ? (
-                    <a
-                      href={purchase?.productFile}
-                      target="_blank"
+                    <Text
                       className="text-blue-500 font-semibold underline "
+                      onClick={() => handleProduct(purchase?.productFile)}
                     >
                       Product Image
-                    </a>
+                    </Text>
                   ) : null}
 
                   {purchase?.token_amt ? (
@@ -448,12 +460,13 @@ const PurchaseHistory = () => {
                       onProductionOpen();
                       setDesignProcess(purchase?.empprocess);
 
-                      // Check if boms[1] exists, otherwise use boms[0]
                       const selectedBom =
                         purchase?.boms[1] || purchase?.boms[0];
                       const selectedProcess =
                         selectedBom?.production_processes[0]?.processes;
 
+                      const bomstage = purchase?.boms[1] ? "real" : "sample";
+                      setStage(bomstage);
                       setSelectedProcess(selectedProcess);
                     }}
                   >
@@ -546,6 +559,7 @@ const PurchaseHistory = () => {
             <TrackProduction
               designProcess={designProcess}
               productionProcess={selectedProcess}
+              stage={stage}
             />
           </ModalBody>
         </ModalContent>
@@ -667,6 +681,18 @@ const PurchaseHistory = () => {
                 onClose={onTokenClose}
               />
             )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* product proof modal */}
+      <Modal isOpen={isProductOpen} onClose={onProductClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Product</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Img src={productFile} />
           </ModalBody>
         </ModalContent>
       </Modal>
