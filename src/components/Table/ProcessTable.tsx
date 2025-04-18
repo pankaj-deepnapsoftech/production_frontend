@@ -207,7 +207,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                   return (
                     <Tr
                       className="relative hover:bg-[#e4e4e4] hover:cursor-pointer text-base lg:text-sm"
-                      {...row.getRowProps()}
+                      {...row?.getRowProps()}
                     >
                       {row.cells.map((cell: Cell) => {
                         return (
@@ -274,9 +274,9 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                                 className="px-2 py-1 rounded-md"
                                 style={{
                                   backgroundColor:
-                                    statusStyles[row.original?.status].bg,
+                                    statusStyles[row.original?.status]?.bg,
                                   color:
-                                    statusStyles[row.original?.status].text,
+                                    statusStyles[row.original?.status]?.text,
                                 }}
                               >
                                 {row.original?.status.toUpperCase()}

@@ -654,7 +654,7 @@ const Sales = () => {
           <ModalBody>
             <CreateSale
               onClose={createDisclosure.onClose}
-              refresh={fetchPurchases}
+              refresh={fetchPurchases}  
             />
           </ModalBody>
           <ModalFooter>
