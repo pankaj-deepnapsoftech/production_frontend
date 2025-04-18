@@ -282,7 +282,7 @@ const Approvals: React.FC = () => {
       console.log("bom", data);;
       
       setBomRMs(data?.unapproved);
-      setFilteredBomRMs(data?.unapproved);
+      setFilteredBomRMs(data?.unapproved || []);
      // console.log(data.unapproved);
 
     } catch (err: any) {

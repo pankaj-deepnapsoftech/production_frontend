@@ -41,6 +41,8 @@ const Productions = () => {
   const [selectedSale, setSelectedSale] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
+  const [cookiesuser] = useCookies();
+  const role = cookiesuser?.role;
   const [pages, setPages] = useState(1);
   const [comment, setComment] = useState("");
   const [filterText, setFilterText] = useState("");
@@ -351,9 +353,12 @@ const Productions = () => {
                   {/* Task Details */}
                   <HStack justify="space-between" spacing={3} mt={3}>
                     <VStack align="start">
-                      <Text fontSize="sm">
-                        <strong>Price:</strong> {purchase?.price}
-                      </Text>
+                      
+                      {(role == "Accountant" || role == "Sales" || role == "admin") ? (
+                        <Text fontSize="sm">
+                          <strong>Price:</strong> {purchase?.price}
+                        </Text>
+                      ) : null}
 
                       <Text fontSize="sm">
                         <strong>Quantity:</strong> {purchase?.product_qty}

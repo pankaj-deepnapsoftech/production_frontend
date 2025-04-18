@@ -34,6 +34,7 @@ import { toast } from "react-toastify";
 
 const Dispatch = () => {
   const [cookies] = useCookies();
+  const role = cookies?.role;
   const [data, setData] = useState([]);
   const [saleId, setSaleId] = useState("");
   const [trackId,setTrackId] = useState();
@@ -252,22 +253,27 @@ const Dispatch = () => {
                 align={{ base: "start", md: "end" }}
                 w={{ base: "100%", md: "48%" }}
               >
-                <Text fontSize="sm">
-                  <strong>Price:</strong>{" "}
-                  {acc?.bom?.sale_id[0]?.price *
-                    acc?.bom?.sale_id[0]?.product_qty || "N/A"}
-                </Text>
+                {(role == "Accountant" || role == "Sales" || role == "admin") ? (
+                  <Text fontSize="sm">
+                    <strong>Price:</strong>{" "}
+                    {acc?.bom?.sale_id[0]?.price *
+                      acc?.bom?.sale_id[0]?.product_qty || "N/A"}
+                  </Text>
+                ) : null}
                 <Text fontSize="sm">
                   <strong>GST :</strong> {acc?.bom?.sale_id[0]?.GST}%
                 </Text>
-                <Text fontSize="sm">
-                  <strong>Total Price:</strong>{" "}
-                  {calculateTotal(
-                    acc?.bom?.sale_id[0]?.price,
-                    acc?.bom?.sale_id[0]?.product_qty,
-                    acc?.bom?.sale_id[0]?.GST
-                  )}
-                </Text>
+
+                {(role == "Accountant" || role == "Sales" || role == "admin") ? (
+                  <Text fontSize="sm">
+                    <strong>Total Price:</strong>{" "}
+                    {calculateTotal(
+                      acc?.bom?.sale_id[0]?.price,
+                      acc?.bom?.sale_id[0]?.product_qty,
+                      acc?.bom?.sale_id[0]?.GST
+                    )}
+                  </Text>
+                ) : null}
               </VStack>
             </HStack>
 

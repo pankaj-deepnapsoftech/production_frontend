@@ -22,6 +22,7 @@ import {
   useColorModeValue,
   Select,
   Spinner,
+  Img,
 } from "@chakra-ui/react";
 import { FaCheck, FaCloudUploadAlt, FaUpload } from "react-icons/fa";
 import { MdOutlineRefresh } from "react-icons/md";
@@ -57,6 +58,7 @@ const Task = () => {
   const tokenDisclosure = useDisclosure();
   const [tokenAmount, setTokenAmount] = useState();
   const [paymentFor, setPaymentFor] = useState("");
+  const [selectedData, setSelectedData] = useState<any>([]);
   const [filters, setFilters] = useState({
     status: "",
     date: "",
@@ -64,6 +66,11 @@ const Task = () => {
     productName: "",
     search: "",
   });
+  const {
+      isOpen: isAccountpreviewOpen,
+      onOpen: onAccountpreviewOpen,
+      onClose: onAccountpreviewClose,
+    } = useDisclosure();
 
   const fetchTasks = async () => {
     try {
@@ -120,6 +127,8 @@ const Task = () => {
           isTokenVerify: sale?.isTokenVerify,
           sample_bom_name: sale?.bom[0]?.bom_name,
           bom_name: sale?.bom[1]?.bom_name,
+          sale_design_approve: sale?.sale_design_approve,
+          sale_design_comment: sale?.sale_design_comment
         };
       });
 
@@ -297,6 +306,15 @@ const Task = () => {
     setSaleId(id);
     setTokenAmount(amount);
     tokenDisclosure.onOpen();
+  };
+
+  const openAccountModal = (
+    designFile: string,
+    purchase: object,
+    approve: string
+  ) => {
+    setSelectedData(purchase);
+    onAccountpreviewOpen();
   };
 
   return (
@@ -481,9 +499,13 @@ const Task = () => {
                 gap={4}
               >
                 <VStack align="start" w={{ base: "100%", md: "48%" }}>
-                  <Text fontSize="sm">
-                    <strong>Product Price:</strong> {task.productPrice}
-                  </Text>
+                  {(role == "Accountant" || role == "Sales" || role == "admin") ? (
+                    <Text fontSize="sm">
+                      <strong>Product Price:</strong> {task.productPrice}
+                    </Text>
+                  ) : null}
+
+
                   <Text fontSize="sm">
                     <strong>Quantity:</strong> {task.productQuantity}
                   </Text>
@@ -657,6 +679,30 @@ const Task = () => {
                     </Button>
                   ) : null}
 
+
+                    {task?.token_amt &&
+                      task?.token_status ? (
+                      <Button
+                        bgColor="white"
+                        leftIcon={<IoEyeSharp />}
+                        _hover={{ bgColor: "green.500" }}
+                        className="border border-green-500 hover:text-white"
+                          onClick={() => {
+                            openAccountModal(
+                              task?.designFile,
+                              task,
+                              task?.customer_approve
+                            )
+                          }}
+                        width={{ base: "full", sm: "auto" }}
+                      >
+                        Preview
+                      </Button>
+                    ) : null}
+
+
+                    
+
                   <Text fontSize="sm">
                     <strong>Date:</strong> {task.date}
                   </Text>
@@ -724,10 +770,27 @@ const Task = () => {
                       </Text>
                     ) : null}
                   </VStack>
+              
+                  {task?.sale_design_approve == "Approve" ? (
+                    <Badge colorScheme="green" fontSize="sm">
+                      Sales Design Approval: {task.sale_design_approve}
+                    </Badge>
+                  ) : task?.sale_design_approve == "Reject" ? (
+                    <VStack align="start">
+                      <Badge colorScheme="red" fontSize="sm">
+                        Sales Design Approval: {task.sale_design_approve}
+                      </Badge>
+                      <Text color="red.500">
+                        Feedback: {task.sale_design_comment}
+                      </Text>
+                      
+                    </VStack>
+                  ) : null}
 
                   <Text fontSize="sm">
                     <strong>Date:</strong> {task.date}
                   </Text>
+                  
                 </HStack>
               )}
             </Box>
@@ -898,6 +961,18 @@ const Task = () => {
               Cancel
             </Button>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* account payment preview */}
+      <Modal isOpen={isAccountpreviewOpen} onClose={onAccountpreviewClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Account Details</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Img src={selectedData?.token_ss} />
+          </ModalBody>
         </ModalContent>
       </Modal>
 

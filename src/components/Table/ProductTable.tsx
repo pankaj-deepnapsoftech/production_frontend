@@ -29,7 +29,7 @@ import {
 } from "react-table";
 import Loading from "../../ui/Loading";
 import { MainColor } from "../../constants/constants";
-
+import { useCookies } from "react-cookie";
 interface ProductTableProps {
   products: Array<{
     name: string;
@@ -208,6 +208,8 @@ const ProductTable: React.FC<ProductTableProps> = ({
     useSortBy,
     usePagination
   );
+  const [cookies] = useCookies();
+  const role = cookies?.role;
 
   return (
     <div>
@@ -274,10 +276,19 @@ const ProductTable: React.FC<ProductTableProps> = ({
                                 column.getSortByToggleProps()
                               )}
                             >
+                             
                               <p className="flex">
-                                {column.render("Header")}
+                                {
+                                  (role === "Accountant" || role === "Sales" || role === "admin")
+                                    ? column.render("Header")
+                                    : (column.Header !== 'Price')
+                                      ? column.render("Header")
+                                      : null
+                                }
+
+
                                 {column.isSorted && (
-                                  <span>
+                                  <span> 
                                     {column.isSortedDesc ? (
                                       <FaCaretDown />
                                     ) : (
@@ -322,12 +333,22 @@ const ProductTable: React.FC<ProductTableProps> = ({
                               ? "sticky top-0 left-[-2px] bg-[#f9fafc]"
                               : ""
                           } fontWeight="500" {...cell.getCellProps()}>
-                            {cell.column.id !== "createdAt" &&
-                              cell.column.id !== "updatedAt" &&
-                              cell.column.id !== "select" &&
-                              cell.column.id !== "inventory_category" &&
-                              cell.column.id !== "change" &&
-                              cell.render("Cell")}
+                            
+                            {
+                              (role === "Accountant" || role === "Sales" || role === "admin")
+                                ? (cell.column.id !== "createdAt" &&
+                                  cell.column.id !== "updatedAt" &&
+                                  cell.column.id !== "select" &&
+                                  cell.column.id !== "inventory_category" &&
+                                  cell.column.id !== "change" &&
+                                  cell.render("Cell"))
+                                : (cell.column.id !== "createdAt" &&
+                                  cell.column.id !== "updatedAt" && cell.column.id !== "price" &&
+                                  cell.column.id !== "select" &&
+                                  cell.column.id !== "inventory_category" &&
+                                  cell.column.id !== "change" &&
+                                  cell.render("Cell"))
+                            }
 
                             {cell.column.id === "createdAt" &&
                               row.original?.createdAt && (

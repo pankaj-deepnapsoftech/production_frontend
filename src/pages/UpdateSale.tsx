@@ -32,6 +32,7 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
     price: sale?.price || "",
     product_qty: sale?.product_qty || "",
     GST: sale?.GST,
+    discount: sale?.discount,
     comment: sale?.comment || "",
   });
 
@@ -96,6 +97,14 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
     }));
   };
 
+  const handleDiscountChange = (value: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      discount: Number(value),
+      formData
+    }));
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -122,6 +131,7 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
         product_qty: "",
         GST: { CGST: 0, SGST: 0, IGST: 0 },
         comment: "",
+        discount: ""
       });
 
       toast({
@@ -214,9 +224,22 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
           />
         </FormControl>
 
+
+        <FormControl>
+          <FormLabel>Discount</FormLabel>
+          <RadioGroup
+          onChange={handleDiscountChange} 
+            value={formData?.discount}
+          >
+            <Stack direction="row">
+              <Radio value="50">50% OFF</Radio>
+            </Stack>
+          </RadioGroup>
+        </FormControl>
+
        <FormControl id="GST" isRequired>
                <FormLabel>GST Type</FormLabel>
-               <RadioGroup onChange={handleGSTChange} value={formData.GST.toString()}>
+               <RadioGroup onChange={handleGSTChange} value={formData.GST}>
              <Stack direction="row">
                <Radio value="18">GST (18%)</Radio>
                <Radio value="12">GST (12%)</Radio>

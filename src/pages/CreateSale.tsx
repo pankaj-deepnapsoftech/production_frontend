@@ -26,7 +26,6 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
     comment: "",
     productFile: null, // New field for image
   });
-
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
   const [cookies] = useCookies();
@@ -84,6 +83,13 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
     }));
   };
 
+  const handleDiscountChange = (value: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      discount: Number(value),
+    }));
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -94,6 +100,7 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
     formDataToSend.append("price", formData.price);
     formDataToSend.append("product_qty", formData.product_qty);
     formDataToSend.append("GST", formData.GST.toString());
+    formDataToSend.append("discount", formData.discount);
     formDataToSend.append("comment", formData.comment);
     
     if (formData.productFile) {
@@ -191,6 +198,19 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
           <FormLabel>Product Quantity</FormLabel>
           <Input type="number" name="product_qty" value={formData?.product_qty} onChange={handleInputChange} />
         </FormControl>
+          
+        <FormControl>
+          <FormLabel>Discount</FormLabel>
+          <RadioGroup
+          onChange={handleDiscountChange} 
+            value={formData?.discount}
+          >
+            <Stack direction="row">
+              <Radio value="50">50% OFF</Radio>
+            </Stack>
+          </RadioGroup>
+        </FormControl>
+
 
         <FormControl id="GST" isRequired>
           <FormLabel>GST Type</FormLabel>
@@ -219,6 +239,7 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
       </form>
     </Box>
   );
+
 };
 
 export default CreateSale;

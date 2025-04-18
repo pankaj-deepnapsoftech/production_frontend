@@ -1,5 +1,6 @@
 //@ts-nocheck
 import { useEffect, useState } from "react";
+import Salestatus from "./Salestatus";
 import {
   Box,
   Spinner,
@@ -19,12 +20,14 @@ import {
   Divider,
   Input,
   Select,
+  Img,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
 import { FaEdit } from "react-icons/fa";
+import { IoEyeSharp } from "react-icons/io5";
 import CreateSale from "./CreateSale";
 import UpdateSale from "./UpdateSale";
 import { MdOutlineRefresh } from "react-icons/md";
@@ -32,6 +35,8 @@ import Assign from "./Assign";
 import Pagination from "./Pagination";
 import TokenAmount from "./TokenAmount";
 import SampleModal from "./SampleModal";
+
+import ViewDesign from "./ViewDesign";
 
 const Sales = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
@@ -57,6 +62,63 @@ const Sales = () => {
   const [tokenAmount, setTokenAmount] = useState();
   const [productionStatus, setProductionStatus] = useState("");
   const [approveStatus, setApproveStatus] = useState<boolean>();
+
+  const {
+    isOpen: isImageModalOpen,
+    onOpen: onImageOpen,
+    onClose: onImageClose,
+  } = useDisclosure();
+
+  
+  const [customerApprove, setCustomerApprove] = useState("");
+  const [selectedData, setSelectedData] = useState<any>([]);
+  const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
+
+  const openSalestatusModal = (
+    designFile: string,
+    purchase: object,
+    approve: string
+  ) => {
+    setSelectedDesign(designFile);
+    setSelectedData(purchase);
+    setCustomerApprove(approve);
+    onImageOpen();
+  };
+
+  const openAccountModal = (
+    designFile: string,
+    purchase: object,
+    approve: string
+  ) => {
+    setSelectedData(purchase);
+    onAccountpreviewOpen();
+  };
+
+
+  const openDesignModal = (
+    designFile: string,
+    purchase: object,
+    approve: string
+  ) => {
+    setSelectedDesign(designFile);
+    setSelectedData(purchase);
+    setCustomerApprove(approve);
+    onDesignerOpen();
+  };
+
+  const {
+    isOpen: isAccountpreviewOpen,
+    onOpen: onAccountpreviewOpen,
+    onClose: onAccountpreviewClose,
+  } = useDisclosure();
+
+  // designer preview
+  const {
+    isOpen: isDesignModalOpen,
+    onOpen: onDesignerOpen,
+    onClose: onDesignerClose,
+  } = useDisclosure();
+
   const role = cookies?.role;
   const token = cookies.access_token;
 
@@ -339,6 +401,21 @@ const Sales = () => {
                       </Badge>
                     ) : null}
 
+                    {purchase?.salestatus == "Reject" ? (
+                      <Badge colorScheme="red" fontSize="sm">
+                        Sales Department : Rejected
+                        <p>
+                          Feedback : {purchase?.salestatus_comment}
+                        </p>
+                      </Badge>
+                    ) : null}
+
+                    {purchase?.salestatus == "Approve" ? (
+                      <Badge colorScheme="green" fontSize="sm">
+                        Sales Department : Approved
+                      </Badge>
+                    ) : null}
+
                     {purchase?.token_status ? (
                       <Badge colorScheme="green" fontSize="sm">
                         Token Amount :{" "}
@@ -488,6 +565,62 @@ const Sales = () => {
                     </Button>
                   ) : null}
 
+                  {purchase?.token_status ? (
+                  <Button
+                    bgColor="white"
+                    _hover={{ bgColor: "green.500" }}
+                    className="border border-green-500 hover:text-white"
+                    w={{ base: "100%", md: "auto" }}
+                    onClick={() => {
+                      openAccountModal(
+                        purchase?.designFile,
+                        purchase,
+                        purchase?.customer_approve
+                      )
+                    }}
+                  >
+                    Preview
+                  </Button>
+                  ) : null}
+                  
+                  {purchase?.designFile && (
+                    <Button
+                      size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
+                      leftIcon={<IoEyeSharp />}
+                      bgColor="white"
+                      _hover={{ bgColor: "orange.500" }}
+                      className="border border-orange-500 hover:text-white w-full sm:w-auto"
+                      onClick={() =>
+                        openDesignModal(
+                          purchase?.designFile,
+                          purchase,
+                          purchase?.customer_approve
+                        )
+                      }
+                    >
+                      View Design
+                    </Button>
+                  )}
+                  
+                  {role === 'Sales' && (
+                    <Button
+                      bgColor="white"
+                      _hover={{ bgColor: "orange.500" }}
+                      className="border border-red-500 hover:text-white"
+                      w={{ base: "100%", md: "auto" }}
+                      onClick={() =>
+                        openSalestatusModal(
+                          purchase?.designFile,
+                          purchase,
+                          purchase?.salestatus
+                        )
+                      }
+                    >
+                      Status
+                    </Button>
+                  )}
+
+                  
                   <Button
                     bgColor="white"
                     _hover={{ bgColor: "orange.500" }}
@@ -500,6 +633,8 @@ const Sales = () => {
                   >
                     Assign
                   </Button>
+
+
                 </HStack>
               </Box>
             ))}
@@ -634,6 +769,56 @@ const Sales = () => {
               Cancel
             </Button>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* sales status Modal */}
+      <Modal isOpen={isImageModalOpen} onClose={onImageClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Sales Status</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {/* {selectedDesign && selectedData && ( */}
+              <Salestatus
+                designUrl={selectedDesign}
+                purchaseData={selectedData}
+                approve={customerApprove}
+                onClose={onImageClose}
+              />
+            {/* )} */}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* View Design Modal */}
+      <Modal isOpen={isDesignModalOpen} onClose={onDesignerClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Design</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedDesign && selectedData && (
+              <ViewDesign
+                designUrl={selectedDesign}
+                purchaseData={selectedData}
+                approve={customerApprove}
+                onClose={onDesignerClose}
+              />
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* account payment preview */}
+      <Modal isOpen={isAccountpreviewOpen} onClose={onAccountpreviewClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Account Details</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Img src={selectedData?.token_ss} />
+          </ModalBody>
         </ModalContent>
       </Modal>
 

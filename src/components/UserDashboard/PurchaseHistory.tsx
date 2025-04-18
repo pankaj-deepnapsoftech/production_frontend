@@ -92,6 +92,12 @@ const PurchaseHistory = () => {
   } = useDisclosure();
 
   const {
+    isOpen: isAccountpreviewOpen,
+    onOpen: onAccountpreviewOpen,
+    onClose: onAccountpreviewClose,
+  } = useDisclosure();
+
+  const {
     isOpen: isDeliveryOpen,
     onOpen: onDeliveryOpen,
     onClose: onDeliveryClose,
@@ -176,6 +182,16 @@ const PurchaseHistory = () => {
     setSelectedData(purchase);
     setCustomerApprove(approve);
     onImageOpen();
+  };
+
+
+  const openAccountModal = (
+    designFile: string,
+    purchase: object,
+    approve: string
+  ) => {
+    setSelectedData(purchase);
+    onAccountpreviewOpen();
   };
 
   const handlePayment = (id: any, payment_ss: string) => {
@@ -323,9 +339,37 @@ const PurchaseHistory = () => {
                     </Badge>
                   ) : null}
 
+                  {purchase?.sale_design_approve == "Approve" ? (
+                    <Badge colorScheme="green" fontSize="sm">
+                      Sale Design Approval: Approve 
+                    </Badge>
+                  ) : null}
+
+                  {purchase?.sale_design_approve == "Reject" ? (
+                    <Badge colorScheme="red" fontSize="sm">
+                      Sale Design Approval: Reject
+                      <p>Feedback: {purchase?.sale_design_comment}</p>
+                    </Badge>
+                  ) : null}
+
                   {purchase?.isSampleApprove ? (
                     <Badge colorScheme="green" fontSize="sm">
                       Sample Product: Approved
+                    </Badge>
+                  ) : null}
+
+                  {purchase?.salestatus == "Reject" ? (
+                    <Badge colorScheme="red" fontSize="sm">
+                      Sales Department : Rejected
+                      <p>
+                        Feedback : {purchase?.salestatus_comment}
+                      </p>
+                    </Badge>
+                  ) : null}
+
+                  {purchase?.salestatus == "Approve" ? (
+                    <Badge colorScheme="green" fontSize="sm">
+                      Sales Department : Approved
                     </Badge>
                   ) : null}
 
@@ -493,6 +537,25 @@ const PurchaseHistory = () => {
                   </Button>
                 )}
 
+                {purchase?.token_status && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
+                    leftIcon={<IoEyeSharp />}
+                    bgColor="white"
+                    _hover={{ bgColor: "orange.500" }}
+                    className="border border-orange-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      openAccountModal(
+                        purchase?.designFile,
+                        purchase,
+                        purchase?.customer_approve
+                      )
+                    }
+                  >
+                    Preview
+                  </Button>
+                )}
+
                 {purchase?.invoice && (
                   <>
                     <Button
@@ -580,6 +643,18 @@ const PurchaseHistory = () => {
                 onClose={onImageClose}
               />
             )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* account payment preview */}
+      <Modal isOpen={isAccountpreviewOpen} onClose={onAccountpreviewClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Account Details</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Img src={selectedData?.token_ss} />
           </ModalBody>
         </ModalContent>
       </Modal>

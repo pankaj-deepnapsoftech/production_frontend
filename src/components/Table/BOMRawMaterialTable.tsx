@@ -62,6 +62,7 @@ import {
     deleteProductHandler,
     approveProductHandler,
   }) => {
+    console.log(products)
     const columns: Column<{
       name: string;
       product_id: string;
@@ -201,6 +202,7 @@ import {
   
     return (
       <div>
+        
         {isLoadingProducts && <Loading />}
         {products.length === 0 && !isLoadingProducts && (
           <div className="mx-auto w-max">
