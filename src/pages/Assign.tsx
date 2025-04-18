@@ -21,7 +21,7 @@ import Select from "react-select"; // Import react-select
 
 const Assign = ({ empData, saleData, onClose }) => {
   const tasks = saleData?.assinedto;
-  console.log("assign", tasks);
+  console.log("assign", saleData);
 
   const [formData, setFormData] = useState({
     sale_id: saleData?._id,

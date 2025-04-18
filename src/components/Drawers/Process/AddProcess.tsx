@@ -125,8 +125,14 @@ const AddProcess: React.FC<AddProcess> = ({
     }
   }
 
+
+
   useEffect(()=>{
-    const results = items.map((item: any) => ({value: item._id, label: item.name}));
+    const results = items.map((item: any) => ({value: item._id,   label: `${
+      item?.color || item?.code
+        ? `${item?.name}/${item?.color}/${item?.code}`
+        : `${item?.name}`
+    } `,}));
     setItemNameOptions(results);
   }, [items])
 

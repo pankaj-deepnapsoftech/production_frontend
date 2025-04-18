@@ -192,7 +192,7 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
           <Input type="number" name="product_qty" value={formData?.product_qty} onChange={handleInputChange} />
         </FormControl>
 
-        <FormControl id="GST" isRequired>
+        <FormControl id="GST" >
           <FormLabel>GST Type</FormLabel>
           <RadioGroup onChange={handleGSTChange} value={formData?.GST?.toString()}>
             <Stack direction="row">

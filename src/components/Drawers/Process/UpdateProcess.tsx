@@ -29,6 +29,7 @@ import RawMaterial from "../../Dynamic Add Components/ProcessRawMaterial";
 import ScrapMaterial from "../../Dynamic Add Components/ScrapMaterial";
 import ProcessScrapMaterial from "../../Dynamic Add Components/ProcessScrapMaterial";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import axios from "axios";
 
 interface UpdateProcess {
   closeDrawerHandler: () => void;
@@ -194,7 +195,8 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
       setIsUpdating(false);
     }
   };
-  console.log(processes);
+
+
   const markProcessDoneHandler = async () => {
     try {
       setIsUpdating(true);
