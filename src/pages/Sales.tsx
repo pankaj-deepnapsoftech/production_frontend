@@ -322,6 +322,7 @@ const Sales = () => {
     assignId: any,
     payfor: string
   ) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     (id);
     setPaymentFile(payment);
     setVerifyStatus(verify);

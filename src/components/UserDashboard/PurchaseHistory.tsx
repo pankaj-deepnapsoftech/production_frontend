@@ -77,6 +77,8 @@ const PurchaseHistory = () => {
   const [amount, setAmount] = useState();
   const [stage, setStage] = useState("");
   const [deliveryproofuser, setdeliveryproofuser] = useState("");
+  const [halfPaymentId, setHalfPaymentId] = useState(null);
+  const [halfPaymentProof, setHalfPaymentProof] = useState(null);
   const [productFile, setProductFile] = useState();
   const {
     isOpen: isProductionModalOpen,
@@ -125,6 +127,12 @@ const PurchaseHistory = () => {
     onClose: onProductClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isHalfPaymentOpen,
+    onOpen: onHalfPaymentOpen,
+    onClose: isHalfPaymentClose,
+  } = useDisclosure();
+
   const fetchPurchases = async () => {
     try {
       setIsLoading(true);
@@ -144,8 +152,8 @@ const PurchaseHistory = () => {
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
-          error.message ||
-          "Failed to fetch purchase data"
+        error.message ||
+        "Failed to fetch purchase data"
       );
     } finally {
       setIsLoading(false);
@@ -171,8 +179,8 @@ const PurchaseHistory = () => {
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
-          error.message ||
-          "Failed to approve purchase"
+        error.message ||
+        "Failed to approve purchase"
       );
     }
   };
@@ -243,6 +251,30 @@ const PurchaseHistory = () => {
     onProductOpen();
   };
 
+  const handleHalfPaymentProf = async () => {
+    if (!halfPaymentProof) {
+      alert("image is required field");
+    };
+    const formData = new FormData();
+    formData.append("halfPayment", halfPaymentProof);
+    formData.append("half_payment_approve", false)
+    formData.append("half_payment_status", "Pending Approvel")
+
+    isHalfPaymentClose()
+
+    try {
+      const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}purchase/half-payement/${halfPaymentId._id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${cookies.access_token}`,
+        },
+      });
+      toast.success(res.data.message)
+    } catch (error) {
+      console.log(error)
+    }
+
+  };
+
   useEffect(() => {
     fetchPurchases();
   }, []);
@@ -291,9 +323,8 @@ const PurchaseHistory = () => {
               w={{ base: "100%", md: "auto" }} // Full width on smaller screens, auto on medium screens
             >
               <Box
-                className={`absolute top-0 left-0 h-full w-2 ${
-                  purchase?.Status === "Pending" ? "bg-red-500" : "bg-green-500"
-                }`}
+                className={`absolute top-0 left-0 h-full w-2 ${purchase?.Status === "Pending" ? "bg-red-500" : "bg-green-500"
+                  }`}
               ></Box>
 
               <HStack justify="space-between" mb={3} flexWrap="wrap" gap={4}>
@@ -351,9 +382,15 @@ const PurchaseHistory = () => {
                     </Badge>
                   ) : null}
 
+                  {purchase?.half_payment_status && (
+                    <Badge colorScheme={purchase?.half_payment_status === 'pending' ? "orange" : "green"} fontSize="sm">
+                      Half payement : {purchase?.half_payment_status}
+                    </Badge>
+                  )}
+
                   {purchase?.sale_design_approve == "Approve" ? (
                     <Badge colorScheme="green" fontSize="sm">
-                      Sale Design Approval: Approve 
+                      Sale Design Approval: Approve
                     </Badge>
                   ) : null}
 
@@ -587,6 +624,25 @@ const PurchaseHistory = () => {
                   </Button>
                 )}
 
+                {purchase?.half_payment && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
+                    leftIcon={<IoEyeSharp />}
+                    bgColor="white"
+                    _hover={{ bgColor: "orange.500" }}
+                    className="border border-orange-500 hover:text-white w-full sm:w-auto"
+                    onClick={() => {
+                      onHalfPaymentOpen();
+
+                      const filterdata = purchases.filter((item) => item._id === purchase?._id)[0];
+                      setHalfPaymentId(filterdata);
+                    }
+                    }
+                  >
+                    View and Pay
+                  </Button>
+                )}
+
                 {purchase?.invoice && (
                   <>
                     <Button
@@ -801,6 +857,43 @@ const PurchaseHistory = () => {
           <ModalCloseButton />
           <ModalBody>
             <Img src={productFile} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isHalfPaymentOpen} onClose={isHalfPaymentClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Half Payement And Pay</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+
+              <p className="text-gray-600 mb-6 text-center">
+                Half Price is: <span className="font-semibold text-black">₹ ${halfPaymentId?.half_payment}</span>
+              </p>
+
+              {halfPaymentId?.half_payment_image &&
+                <div className="py-2 h-36 w-full" >
+                  <img src={halfPaymentId?.half_payment_image} className="size-full bg-contain bg-center" />
+                </div>
+
+              }
+
+              {!halfPaymentId?.half_payment_approve && !halfPaymentId?.half_payment_approve  && <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50">
+                <p className="text-gray-500 mb-2">Upload an Image</p>
+                <label className="cursor-pointer">
+                  <input type="file" className="hidden" onChange={(e) => setHalfPaymentProof(e.target.files[0])} />
+                  <div className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Choose Image
+                  </div>
+                </label>
+              </div>}
+            </div>
+            <div className="pt-4 text-white font-medium flex gap-3 " >
+              <button className="py-2 px-3 bg-blue-600 rounded-lg" onClick={handleHalfPaymentProf} >submit</button>
+              <button className="py-2 px-3 bg-blue-600 rounded-lg" onClick={isHalfPaymentClose} >Close</button>
+            </div>
           </ModalBody>
         </ModalContent>
       </Modal>
