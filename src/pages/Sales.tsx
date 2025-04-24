@@ -1155,8 +1155,6 @@ const Sales = () => {
                 </ModalFooter>
               </ModalContent>
             </Modal>
-      
-
       <Pagination page={pages} setPage={setPages} length={purchases.length} />
     </div>
   );

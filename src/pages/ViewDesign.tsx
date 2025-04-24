@@ -99,9 +99,11 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
         Download
       </Button>
 
-
-      {approve === "Approve" ? (
-        <p className="text-orange-500 font-normal text-sm">You have already approved the design :)</p>
+      {approve ? (
+        <>
+          <p className="text-orange-500 font-normal text-sm">You have already {approve} the design :)</p>
+          <p>Feedback : {purchaseData?.sale_design_comment}</p>
+        </>
       ) : (
         <form onSubmit={handleSubmit}>
         <HStack align="center" justify="space-between" mb={4}>
