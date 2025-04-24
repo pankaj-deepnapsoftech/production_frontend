@@ -31,7 +31,7 @@ import PaymentModal from "./PaymentModal";
 import { TbTruckDelivery } from "react-icons/tb";
 import DispatchData from "./DispatchData";
 import { toast } from "react-toastify";
-
+import DeliveryProof from "../components/UserDashboard/DeliveryProof";
 const Dispatch = () => {
   const [cookies] = useCookies();
   const role = cookies?.role;
@@ -40,10 +40,13 @@ const Dispatch = () => {
   const [trackId,setTrackId] = useState();
   const [trackLink,setTrackLink] = useState();
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [purchaseId, setPurchaseId] = useState("");
   const DispatchDisclosure = useDisclosure();
+  const [orderFile, setOrderFile] = useState("");
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState(""); 
   const [selectedProductStatus, setSelectedProductStatus] = useState(""); 
+  const [deliveryproofuser, setdeliveryproofuser] = useState(""); 
+  
   const fetchData = async () => {
     try {
       const response = await axios.get(
@@ -90,6 +93,25 @@ const Dispatch = () => {
       (selectedProductStatus === "" || productStatus === selectedProductStatus)
     );
   });
+
+  const {
+      isOpen: isProofOpen,
+      onOpen: onProofOpen,
+      onClose: onProofClose,
+    } = useDisclosure();
+
+  const handleProof = (id: any, customerproof: any, dispatcherproof: any,) => {
+    setPurchaseId(id);
+    if (customerproof) {
+      setOrderFile(customerproof);
+      setdeliveryproofuser("Customer");
+    } 
+    if (dispatcherproof) {
+      setOrderFile(dispatcherproof);
+      setdeliveryproofuser("Dispatcher");
+    }
+    onProofOpen();
+  };
 
   return (
     <div className="overflow-x-hidden">
@@ -298,8 +320,7 @@ const Dispatch = () => {
                   Dispatch
                 </Button>
               )}
-
-              {acc?.bom?.sale_id[0]?.customer_order_ss && (
+              {(acc?.bom?.sale_id[0]?.customer_order_ss || acc?.bom?.sale_id[0]?.dispatcher_order_ss) && (
                 <Button
                   bgColor="white"
                   leftIcon={<IoEyeSharp />}
@@ -308,7 +329,7 @@ const Dispatch = () => {
                   width={{ base: "full", sm: "auto" }}
                 >
                   <a
-                    href={acc?.bom?.sale_id[0]?.customer_order_ss}
+                    href={acc?.bom?.sale_id[0]?.customer_order_ss || acc?.bom?.sale_id[0]?.dispatcher_order_ss}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -316,6 +337,21 @@ const Dispatch = () => {
                   </a>
                 </Button>
               )}
+
+              {acc?.bom?.sale_id[0]?.tracking_id && acc?.bom?.sale_id[0]?.tracking_web && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }}
+                    leftIcon={<FaCloudUploadAlt />}
+                    bgColor="white"
+                    _hover={{ bgColor: "blue.500" }}
+                    className="border border-blue-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      handleProof(acc?.bom?.sale_id[0]?._id, acc?.bom?.sale_id[0]?.customer_order_ss, acc?.bom?.sale_id[0]?.dispatcher_order_ss)
+                    }
+                  >
+                    Attach Delivery Proof
+                  </Button>
+                )}
             </HStack>
           </Box>
         </Box>
@@ -350,6 +386,27 @@ const Dispatch = () => {
               Cancel
             </Button>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+
+      {/* delivery proof modal */}
+      <Modal isOpen={isProofOpen} onClose={onProofClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Delivery</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {purchaseId && (
+              <DeliveryProof
+                id={purchaseId}
+                orderfile={orderFile}
+                userRole={role}
+                deliveryproofupload={deliveryproofuser}
+                onClose={onProofClose}
+              />
+            )}
+          </ModalBody>
         </ModalContent>
       </Modal>
     </div>

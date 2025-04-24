@@ -36,7 +36,6 @@ import UploadPayment from "./UploadPayment";
 import DeliveryProof from "./DeliveryProof";
 import moment from "moment";
 import TokenProof from "./TokenProof";
-
 interface Purchase {
   GST: {
     CGST: number;
@@ -59,12 +58,15 @@ const PurchaseHistory = () => {
   const [status, setStatus] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
+  const [cookiess] = useCookies();
+  const role = cookiess?.role;
   const [selectedProcess, setSelectedProcess] = useState<any>([]);
   const [payment, setPayment] = useState("");
   const [purchaseId, setPurchaseId] = useState("");
   const [selectedData, setSelectedData] = useState<any>([]);
   const [designProcess, setDesignProcess] = useState<any>([]);
   const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
+
   const [trackingId, setTrackingId] = useState("");
   const [orderFile, setOrderFile] = useState("");
   const [webLink, setWebLink] = useState("");
@@ -74,6 +76,7 @@ const PurchaseHistory = () => {
   const [tokenFile, setTokenFile] = useState("");
   const [amount, setAmount] = useState();
   const [stage, setStage] = useState("");
+  const [deliveryproofuser, setdeliveryproofuser] = useState("");
   const [productFile, setProductFile] = useState();
   const {
     isOpen: isProductionModalOpen,
@@ -85,6 +88,7 @@ const PurchaseHistory = () => {
     onOpen: onImageOpen,
     onClose: onImageClose,
   } = useDisclosure();
+
   const {
     isOpen: isPaymentOpen,
     onOpen: onPaymentOpen,
@@ -185,6 +189,8 @@ const PurchaseHistory = () => {
   };
 
 
+
+
   const openAccountModal = (
     designFile: string,
     purchase: object,
@@ -206,12 +212,18 @@ const PurchaseHistory = () => {
     onDeliveryOpen();
   };
 
-  const handleProof = (id: any, file: any) => {
+  const handleProof = (id: any, customerproof: any, dispatcherproof: any,) => {
     setPurchaseId(id);
-    setOrderFile(file);
+    if (customerproof) {
+      setOrderFile(customerproof);
+      setdeliveryproofuser("Customer");
+    }
+    if (dispatcherproof) {
+      setOrderFile(dispatcherproof);
+      setdeliveryproofuser("Dispatcher");
+    }
     onProofOpen();
   };
-
   const calculateTotalPrice = (price: number, qty: number, gst: number) => {
     const basePrice = price * qty;
     const gstVal = (basePrice * gst) / 100;
@@ -556,6 +568,25 @@ const PurchaseHistory = () => {
                   </Button>
                 )}
 
+                {purchase?.invoice_image && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
+                    leftIcon={<IoEyeSharp />}
+                    bgColor="white"
+                    _hover={{ bgColor: "orange.500" }}
+                    className="border border-orange-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      openInvoiceModal(
+                        purchase?.invoice_image,
+                        purchase,
+                        purchase?.customer_invoice_approve
+                      )
+                    }
+                  >
+                    Preview Invoice
+                  </Button>
+                )}
+
                 {purchase?.invoice && (
                   <>
                     <Button
@@ -600,7 +631,7 @@ const PurchaseHistory = () => {
                     _hover={{ bgColor: "blue.500" }}
                     className="border border-blue-500 hover:text-white w-full sm:w-auto"
                     onClick={() =>
-                      handleProof(purchase?._id, purchase?.customer_order_ss)
+                      handleProof(purchase?._id, purchase?.customer_order_ss, purchase?.dispatcher_order_ss)
                     }
                   >
                     Attach Delivery Proof
@@ -734,6 +765,8 @@ const PurchaseHistory = () => {
               <DeliveryProof
                 id={purchaseId}
                 orderfile={orderFile}
+                userRole={role}
+                deliveryproofupload={deliveryproofuser}
                 onClose={onProofClose}
               />
             )}

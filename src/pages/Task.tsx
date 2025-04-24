@@ -51,6 +51,7 @@ const Task = () => {
   const [saleId, setSaleId] = useState("");
   const [invoiceFile, setInvoiceFile] = useState("");
   const invoiceDisclosure = useDisclosure();
+  const sampleimageDisclosure = useDisclosure();
   const [paymentfile, setPaymentFile] = useState("");
   const paymentDisclosure = useDisclosure();
   const [verifystatus, setVerifyStatus] = useState(false);
@@ -66,6 +67,8 @@ const Task = () => {
     productName: "",
     search: "",
   });
+  const [halfAmountId, sethalfAmountId] = useState("")
+  const [halfAmount, sethalfAmount] = useState(null);
   const {
       isOpen: isAccountpreviewOpen,
       onOpen: onAccountpreviewOpen,
@@ -128,7 +131,8 @@ const Task = () => {
           sample_bom_name: sale?.bom[0]?.bom_name,
           bom_name: sale?.bom[1]?.bom_name,
           sale_design_approve: sale?.sale_design_approve,
-          sale_design_comment: sale?.sale_design_comment
+          sale_design_comment: sale?.sale_design_comment,
+          sample_image: sale?.sample_image
         };
       });
 
@@ -140,6 +144,8 @@ const Task = () => {
       setIsLoading(false);
     }
   };
+
+  const half_payment = useDisclosure()
 
 
   useEffect(() => {
@@ -316,6 +322,26 @@ const Task = () => {
     setSelectedData(purchase);
     onAccountpreviewOpen();
   };
+
+  const handleHalfPayment = async () => {
+    const data = {
+      half_payment: halfAmount,
+      half_payment_status: "pending",
+    }
+    try {
+      half_payment.onClose()
+      const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}purchase/update/${halfAmountId}`, data, {
+        headers: {
+          Authorization: `Bearer ${cookies?.access_token}`,
+        },
+      })
+      toast.success("Half Amount adied");
+
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className="overflow-x-hidden">
@@ -583,6 +609,7 @@ const Task = () => {
                       Accept Task
                     </Button>
                   ) : null}
+                  
 
                
                       {task?.bom.length === 2 ? (
@@ -599,6 +626,8 @@ const Task = () => {
                         </Button>
                       )}
 
+
+
                       {task?.design_status != "Completed" ? (
                         <Button
                           colorScheme="orange"
@@ -609,6 +638,16 @@ const Task = () => {
                           Task Done
                         </Button>
                       ) : null}
+
+                  {task?.sample_image ? (
+                    <Button
+                      colorScheme="teal"
+                      size="sm"
+                      onClick={() => handleAccept(task?.id)}
+                    >
+                      Preview Sample Image
+                    </Button>
+                  ) : null}
                    
                 </HStack>
               ) : ["accountant", "acc"].includes(role.toLowerCase()) ? (
@@ -657,6 +696,23 @@ const Task = () => {
                       Upload Invoice
                     </Button>
                   ) : null}
+
+                    {
+                      task?.isTokenVerify &&
+                      <Button
+                        bgColor="white"
+                        _hover={{ bgColor: "blue.500" }}
+                        className="border border-blue-500 hover:text-white"
+                        onClick={() => {
+                          half_payment.onOpen();
+                          sethalfAmountId(task?.sale_id)
+                        }
+                        }
+                        width={{ base: "full", sm: "auto" }}
+                      >
+                        Add half Payement
+                      </Button>
+                    }
 
                   {task?.customer_pyement_ss ? (
                     <Button
@@ -904,6 +960,32 @@ const Task = () => {
         </ModalContent>
       </Modal>
 
+      {/* sample image preview */}
+      <Modal
+        isOpen={sampleimageDisclosure.isOpen}
+        onClose={sampleimageDisclosure.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Sample Image Preview</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500" }}
+              className="border border-red-500 hover:text-white w-full ml-2"
+              mr={3}
+              onClick={() => sampleimageDisclosure.onClose()}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
       {/* Modal for  payment */}
       <Modal
         isOpen={paymentDisclosure.isOpen}
@@ -958,6 +1040,40 @@ const Task = () => {
               className="border border-red-500 hover:text-white w-full ml-2"
               onClick={tokenDisclosure.onClose}
             >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* half payment modal */}
+      <Modal isOpen={half_payment.isOpen} onClose={half_payment.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Enter Half Amount</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              {/* <FormLabel>Number</FormLabel> */}
+              <Input
+                type="number"
+                id="number-input"
+                placeholder="Enter a number"
+                value={halfAmount}
+                onChange={(e) => sethalfAmount(e.target.value)}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={handleHalfPayment}
+              isDisabled={!halfAmount}
+            >
+              Submit
+            </Button>
+            <Button variant="ghost" onClick={half_payment.onClose}>
               Cancel
             </Button>
           </ModalFooter>

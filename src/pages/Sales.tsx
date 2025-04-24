@@ -1,6 +1,8 @@
 //@ts-nocheck
 import { useEffect, useState } from "react";
 import Salestatus from "./Salestatus";
+import Sampleimage from "./Sampleimage";
+
 import {
   Box,
   Spinner,
@@ -20,13 +22,16 @@ import {
   Divider,
   Input,
   Select,
+  FormControl,
+  FormLabel,
+  useColorModeValue,
   Img,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaCloudUploadAlt } from "react-icons/fa";
 import { IoEyeSharp } from "react-icons/io5";
 import CreateSale from "./CreateSale";
 import UpdateSale from "./UpdateSale";
@@ -35,8 +40,9 @@ import Assign from "./Assign";
 import Pagination from "./Pagination";
 import TokenAmount from "./TokenAmount";
 import SampleModal from "./SampleModal";
-
+import UploadInvoice from "./UploadInvoice";
 import ViewDesign from "./ViewDesign";
+import PaymentModal from "./PaymentModal";
 
 const Sales = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
@@ -62,18 +68,32 @@ const Sales = () => {
   const [tokenAmount, setTokenAmount] = useState();
   const [productionStatus, setProductionStatus] = useState("");
   const [approveStatus, setApproveStatus] = useState<boolean>();
-
+  const [file, setFile] = useState(null);
+    const [invoiceFile, setInvoiceFile] = useState("");
   const {
     isOpen: isImageModalOpen,
     onOpen: onImageOpen,
     onClose: onImageClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isSampleModalOpen,
+    onOpen: onSampleOpen,
+    onClose: onSampleClose,
+  } = useDisclosure();
+
+  const [saleId, setSaleId] = useState("");
+  const invoiceDisclosure = useDisclosure();
+  const dropZoneBg = useColorModeValue("gray.100", "gray.700");
+  const paymentDisclosure = useDisclosure();
+  const [paymentfile, setPaymentFile] = useState("");
   
   const [customerApprove, setCustomerApprove] = useState("");
   const [selectedData, setSelectedData] = useState<any>([]);
+  const [verifystatus, setVerifyStatus] = useState(false);
   const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
-
+  const [assignId, setAssignId] = useState();
+  const [paymentFor, setPaymentFor] = useState("");
   const openSalestatusModal = (
     designFile: string,
     purchase: object,
@@ -85,6 +105,15 @@ const Sales = () => {
     onImageOpen();
   };
 
+  const openSampleImageModal = (
+    purchase: object,
+  ) => {
+    setSelectedData(purchase);
+    onSampleOpen();
+  };
+
+  
+
   const openAccountModal = (
     designFile: string,
     purchase: object,
@@ -92,6 +121,14 @@ const Sales = () => {
   ) => {
     setSelectedData(purchase);
     onAccountpreviewOpen();
+  };
+
+  const openInvoicepreviewModal = (
+    invoiceFile: string,
+    purchase: object,
+  ) => {
+    setSelectedData(purchase);
+    onInvoicepreviewOpen();
   };
 
 
@@ -110,6 +147,12 @@ const Sales = () => {
     isOpen: isAccountpreviewOpen,
     onOpen: onAccountpreviewOpen,
     onClose: onAccountpreviewClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isInvoicepreviewOpen,
+    onOpen: onInvoicepreviewOpen,
+    onClose: onInvoicepreviewClose,
   } = useDisclosure();
 
   // designer preview
@@ -252,6 +295,39 @@ const Sales = () => {
     setSelectedSale(id);
     setApproveStatus(approve);
     sampleDisclosure.onOpen();
+  };
+
+  const handleFileDrop = (event) => {
+    event.preventDefault();
+    if (event.dataTransfer.files && event.dataTransfer.files[0]) {
+      setFile(event.dataTransfer.files[0]);
+    }
+  };
+
+  const triggerFileInput = () => {
+    const fileInput = document.getElementById("file-input");
+    fileInput && fileInput.click();
+  };
+
+  const handleInvoiceUpload = (id: any, file: any) => {
+    setSaleId(id);
+    setInvoiceFile(file);
+    invoiceDisclosure.onOpen();
+  };
+
+  const handlePayment = (
+    id: any,
+    payment: string,
+    verify: boolean,
+    assignId: any,
+    payfor: string
+  ) => {
+    (id);
+    setPaymentFile(payment);
+    setVerifyStatus(verify);
+    setAssignId(assignId);
+    setPaymentFor(payfor);
+    paymentDisclosure.onOpen();
   };
 
   return (
@@ -401,6 +477,12 @@ const Sales = () => {
                       </Badge>
                     ) : null}
 
+                    {purchase?.half_payment_status && (
+                      <Badge colorScheme={purchase?.half_payment_status === 'pending' ? "orange" : "green"} fontSize="sm">
+                        Half payement : {purchase?.half_payment_status}
+                      </Badge>
+                    )}
+
                     {purchase?.salestatus == "Reject" ? (
                       <Badge colorScheme="red" fontSize="sm">
                         Sales Department : Rejected
@@ -413,6 +495,19 @@ const Sales = () => {
                     {purchase?.salestatus == "Approve" ? (
                       <Badge colorScheme="green" fontSize="sm">
                         Sales Department : Approved
+                      </Badge>
+                    ) : null}
+
+                    {purchase?.customer_invoice_approve == "Approve" ? (
+                      <Badge colorScheme="green" fontSize="sm">
+                        Customer Invoice : Approved
+                      </Badge>
+                    ) : null}
+
+                    {purchase?.customer_invoice_approve == "Reject" ? (
+                      <Badge colorScheme="red" fontSize="sm">
+                        Customer Invoice : Rejected <br/ >
+                        Customer Invoice Comment: {purchase?.customer_invoice_comment}
                       </Badge>
                     ) : null}
 
@@ -509,6 +604,21 @@ const Sales = () => {
                         Remarks{" "}
                       </Text>
                     )}
+                    
+                    {purchase?.invoice_image && (
+                      <Text
+                        className="text-blue-500 underline cursor-pointer"
+                        onClick={() =>
+                          openInvoicepreviewModal(
+                            purchase?.invoice_image,
+                            purchase
+                          )
+                        }
+                      >
+                        Preview invoice{" "}
+                      </Text>
+                    )}
+
                     {purchase?.designFile ? (
                       <a
                         href={purchase?.designFile}
@@ -529,6 +639,8 @@ const Sales = () => {
                         View Token Proof{" "}
                       </a>
                     ) : null}
+
+
                   </VStack>
                 </HStack>
 
@@ -594,13 +706,29 @@ const Sales = () => {
                         openDesignModal(
                           purchase?.designFile,
                           purchase,
-                          purchase?.customer_approve
+                          purchase?.sale_design_approve
                         )
                       }
                     >
                       View Design
                     </Button>
                   )}
+
+                  {role === 'Sales' && purchase?.token_amt && purchase?.token_status ? ( 
+                    <Button
+                      bgColor="white"
+                      _hover={{ bgColor: "orange.500" }}
+                      className="border border-red-500 hover:text-white"
+                      w={{ base: "100%", md: "auto" }}
+                      onClick={() =>
+                        openSampleImageModal(
+                          purchase,
+                        )
+                      }
+                    >
+                      Sample Image
+                    </Button>
+                  ): null}
                   
                   {role === 'Sales' && (
                     <Button
@@ -620,6 +748,59 @@ const Sales = () => {
                     </Button>
                   )}
 
+                  {(role === 'Sales' || role === 'admin') && (purchase?.customer_order_ss || purchase?.dispatcher_order_ss) && (
+                    <Button
+                      bgColor="white"
+                      leftIcon={<IoEyeSharp />}
+                      _hover={{ bgColor: "yellow.500" }}
+                      className="border border-yellow-500 hover:text-white"
+                      width={{ base: "full", sm: "auto" }}
+                    >
+                      <a
+                        href={purchase?.customer_order_ss || purchase?.dispatcher_order_ss}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View Delivery Proof
+                      </a>
+                    </Button>
+                  )}
+
+                  {purchase?.isTokenVerify ? (
+                    <Button
+                      bgColor="white"
+                      leftIcon={<FaCloudUploadAlt />}
+                      _hover={{ bgColor: "blue.500" }}
+                      className="border border-blue-500 hover:text-white"
+                      onClick={() =>
+                        handleInvoiceUpload(purchase?.sale_id, purchase?.invoice)
+                      }
+                      width={{ base: "full", sm: "auto" }}
+                    >
+                      Upload Invoice
+                    </Button>
+                  ) : null}
+
+                  {purchase?.customer_pyement_ss ? (
+                  <Button
+                    bgColor="white"
+                    leftIcon={<IoEyeSharp />}
+                    _hover={{ bgColor: "orange.500" }}
+                    className="border border-orange-500 hover:text-white"
+                    onClick={() =>
+                      handlePayment(
+                        purchase?.sale_id,
+                        purchase?.customer_pyement_ss,
+                        purchase?.payment_verify,
+                        purchase?.id,
+                        "payment"
+                      )
+                    }
+                    width={{ base: "full", sm: "auto" }}
+                  >
+                      View Payment
+                    </Button>
+                  ) : null}
                   
                   <Button
                     bgColor="white"
@@ -633,6 +814,9 @@ const Sales = () => {
                   >
                     Assign
                   </Button>
+
+
+
 
 
                 </HStack>
@@ -791,6 +975,24 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
+
+      {/* sample image Modal */}
+      <Modal isOpen={isSampleModalOpen} onClose={onSampleClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Sample Image</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {/* {selectedDesign && selectedData && ( */}
+            <Sampleimage
+              purchaseData={selectedData}
+              onClose={onSampleClose}
+            />
+            {/* )} */}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
       {/* View Design Modal */}
       <Modal isOpen={isDesignModalOpen} onClose={onDesignerClose}>
         <ModalOverlay />
@@ -821,6 +1023,84 @@ const Sales = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+      
+      {/* preview invoice */}
+      <Modal isOpen={isInvoicepreviewOpen} onClose={onInvoicepreviewClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Invoice Details</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>{selectedData?.invoice_remark}</Text>
+            <Img src={selectedData?.invoice_image} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+
+      {/* Modal for invoice upload, payment and dispatch */}
+      <Modal
+        isOpen={invoiceDisclosure.isOpen}
+        onClose={invoiceDisclosure.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Upload Invoice</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <UploadInvoice
+              sale_id={saleId}
+              invoicefile={invoiceFile}
+              onClose={invoiceDisclosure.onClose}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500" }}
+              className="border border-red-500 hover:text-white w-full ml-2"
+              mr={3}
+              onClick={() => invoiceDisclosure.onClose()}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal for  payment */}
+            <Modal
+              isOpen={paymentDisclosure.isOpen}
+              onClose={paymentDisclosure.onClose}
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Payment</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <PaymentModal
+                    sale_id={saleId}
+                    payment={paymentfile}
+                    verify={verifystatus}
+                    assign={assignId}
+                    payfor= {paymentFor}
+                    onClose={paymentDisclosure.onClose}
+                  />
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    bgColor="white"
+                    _hover={{ bgColor: "red.500" }}
+                    className="border border-red-500 hover:text-white w-full ml-2"
+                    mr={3}
+                    onClick={() => paymentDisclosure.onClose()}
+                  >
+                    Cancel
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+      
 
       <Pagination page={pages} setPage={setPages} length={purchases.length} />
     </div>

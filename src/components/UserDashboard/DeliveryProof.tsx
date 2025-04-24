@@ -16,7 +16,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
 
-const UploadPayment = ({ id, orderfile, onClose }) => {
+const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }) => {
   const [file, setFile] = useState(null);
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
   const [cookies] = useCookies(['access_token']);
@@ -43,6 +43,7 @@ const UploadPayment = ({ id, orderfile, onClose }) => {
 
     const formData = new FormData();
     formData.append("delivery", file);
+    formData.append("role", userRole)
 
     try {
       const token = cookies?.access_token
@@ -87,7 +88,7 @@ const UploadPayment = ({ id, orderfile, onClose }) => {
       <VStack spacing={4} align="stretch">
         {orderfile ? (
           <Text fontSize="sm" color="teal.500">
-            <strong className="text-black">You have already sended the proof : </strong>
+            <strong className="text-black">{deliveryproofupload} have already sended the proof : </strong>
             <a href={orderfile} target="_blank">
               Uploaded File
             </a>
