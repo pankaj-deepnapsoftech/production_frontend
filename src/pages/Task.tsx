@@ -59,6 +59,8 @@ const Task = () => {
   const tokenDisclosure = useDisclosure();
   const [tokenAmount, setTokenAmount] = useState();
   const [paymentFor, setPaymentFor] = useState("");
+  const [sampleimagefile, setsampleFile] = useState("");
+  
   const [selectedData, setSelectedData] = useState<any>([]);
   const [filters, setFilters] = useState({
     status: "",
@@ -297,6 +299,11 @@ const Task = () => {
     setSaleId(id);
     setInvoiceFile(file);
     invoiceDisclosure.onOpen();
+  };
+
+  const handleSampleImage = (file: any) => {
+    setsampleFile(file);
+    sampleimageDisclosure.onOpen();
   };
 
   const handlePayment = (
@@ -685,11 +692,11 @@ const Task = () => {
                     </Button>
                   ) : null}
 
-                  {task?.sample_image ? (
+                  {role == "Production" && task?.sample_image ? (
                     <Button
                       colorScheme="teal"
                       size="sm"
-                      onClick={() => handleAccept(task?.id)}
+                      onClick={() => handleSampleImage(task?.sample_image)}
                     >
                       Preview Sample Image
                     </Button>
@@ -1016,7 +1023,7 @@ const Task = () => {
           <ModalHeader>Sample Image Preview</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-
+            <img src={sampleimagefile} alt="Sample image preview" />
           </ModalBody>
           <ModalFooter>
             <Button

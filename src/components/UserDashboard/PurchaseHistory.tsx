@@ -80,6 +80,7 @@ const PurchaseHistory = () => {
   const [halfPaymentId, setHalfPaymentId] = useState(null);
   const [halfPaymentProof, setHalfPaymentProof] = useState(null);
   const [productFile, setProductFile] = useState();
+  const [proformaFile, setproformaFile] = useState();
   const {
     isOpen: isProductionModalOpen,
     onOpen: onProductionOpen,
@@ -128,10 +129,14 @@ const PurchaseHistory = () => {
   } = useDisclosure();
 
   const {
-    isOpen: isHalfPaymentOpen,
-    onOpen: onHalfPaymentOpen,
-    onClose: isHalfPaymentClose,
+    isOpen: isProformaOpen,
+    onOpen: onProformaOpen,
+    onClose: onProformaClose,
   } = useDisclosure();
+
+  const { isOpen: isHalfPaymentOpen,
+    onOpen: onHalfPaymentOpen,
+    onClose: isHalfPaymentClose, } = useDisclosure()
 
   const fetchPurchases = async () => {
     try {
@@ -274,6 +279,13 @@ const PurchaseHistory = () => {
     }
 
   };
+
+  const handleviewProform = (file: any) => {
+    setproformaFile(file);
+    onProformaOpen();
+  };
+
+
 
   useEffect(() => {
     fetchPurchases();
@@ -693,6 +705,20 @@ const PurchaseHistory = () => {
                     Attach Delivery Proof
                   </Button>
                 )}
+                {purchase?.performaInvoice && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }}
+                    leftIcon={<IoEyeSharp />}
+                    bgColor="white"
+                    _hover={{ bgColor: "blue.500" }}
+                    className="border border-blue-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      handleviewProform(purchase?.performaInvoice)
+                    }
+                  >
+                    Pro Forma Invoice
+                  </Button>
+                )}
               </div>
             </Box>
           ))
@@ -880,7 +906,7 @@ const PurchaseHistory = () => {
 
               }
 
-              {!halfPaymentId?.half_payment_approve && !halfPaymentId?.half_payment_approve  && <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50">
+              {!halfPaymentId?.half_payment_approve && !halfPaymentId?.half_payment_approve && <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50">
                 <p className="text-gray-500 mb-2">Upload an Image</p>
                 <label className="cursor-pointer">
                   <input type="file" className="hidden" onChange={(e) => setHalfPaymentProof(e.target.files[0])} />
@@ -894,6 +920,17 @@ const PurchaseHistory = () => {
               <button className="py-2 px-3 bg-blue-600 rounded-lg" onClick={handleHalfPaymentProf} >submit</button>
               <button className="py-2 px-3 bg-blue-600 rounded-lg" onClick={isHalfPaymentClose} >Close</button>
             </div>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      {/* proforma invoice modal */}
+      <Modal isOpen={isProformaOpen} onClose={onProformaClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Pro Forma Invoice</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Img src={proformaFile} alt="Proforma Invoice" />
           </ModalBody>
         </ModalContent>
       </Modal>

@@ -41,6 +41,7 @@ import Pagination from "./Pagination";
 import TokenAmount from "./TokenAmount";
 import SampleModal from "./SampleModal";
 import UploadInvoice from "./UploadInvoice";
+import ProformaInvoice from "./UpdateProformaInvoice";
 import ViewDesign from "./ViewDesign";
 import PaymentModal from "./PaymentModal";
 
@@ -84,6 +85,7 @@ const Sales = () => {
 
   const [saleId, setSaleId] = useState("");
   const invoiceDisclosure = useDisclosure();
+  const proformainvoiceDisclosure = useDisclosure();
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
   const paymentDisclosure = useDisclosure();
   const [paymentfile, setPaymentFile] = useState("");
@@ -315,6 +317,12 @@ const Sales = () => {
     invoiceDisclosure.onOpen();
   };
 
+  const handleUpdateForma = (id: any, file: any) => {
+    setSaleId(id);
+    setInvoiceFile(file);
+    proformainvoiceDisclosure.onOpen();
+  };
+  
   const handlePayment = (
     id: any,
     payment: string,
@@ -322,8 +330,7 @@ const Sales = () => {
     assignId: any,
     payfor: string
   ) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    (id);
+    setSaleId(id);
     setPaymentFile(payment);
     setVerifyStatus(verify);
     setAssignId(assignId);
@@ -767,6 +774,8 @@ const Sales = () => {
                     </Button>
                   )}
 
+                  
+
                   {purchase?.isTokenVerify ? (
                     <Button
                       bgColor="white"
@@ -779,6 +788,21 @@ const Sales = () => {
                       width={{ base: "full", sm: "auto" }}
                     >
                       Upload Invoice
+                    </Button>
+                  ) : null}
+
+                  {role === 'Sales' && purchase?.performaInvoice ? (
+                    <Button
+                      bgColor="white"
+                      leftIcon={<FaCloudUploadAlt />}
+                      _hover={{ bgColor: "blue.500" }}
+                      className="border border-blue-500 hover:text-white"
+                      onClick={() =>
+                        handleUpdateForma(purchase?._id, purchase?.performaInvoice)
+                      }
+                      width={{ base: "full", sm: "auto" }}
+                    >
+                      Update Pro Forma Invoice
                     </Button>
                   ) : null}
 
@@ -1062,6 +1086,36 @@ const Sales = () => {
               className="border border-red-500 hover:text-white w-full ml-2"
               mr={3}
               onClick={() => invoiceDisclosure.onClose()}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal update proforma invoice */}
+      <Modal
+        isOpen={proformainvoiceDisclosure.isOpen}
+        onClose={proformainvoiceDisclosure.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Upload Pro Forma Invoice</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <ProformaInvoice
+              sale_id={saleId}
+              invoicefile={invoiceFile}
+              onClose={proformainvoiceDisclosure.onClose}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500" }}
+              className="border border-red-500 hover:text-white w-full ml-2"
+              mr={3}
+              onClick={() => proformainvoiceDisclosure.onClose()}
             >
               Cancel
             </Button>
