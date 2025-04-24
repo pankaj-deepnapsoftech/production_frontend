@@ -78,6 +78,7 @@ const PurchaseHistory = () => {
   const [stage, setStage] = useState("");
   const [deliveryproofuser, setdeliveryproofuser] = useState("");
   const [productFile, setProductFile] = useState();
+  const [proformaFile, setproformaFile] = useState();
   const {
     isOpen: isProductionModalOpen,
     onOpen: onProductionOpen,
@@ -123,6 +124,12 @@ const PurchaseHistory = () => {
     isOpen: isProductOpen,
     onOpen: onProductOpen,
     onClose: onProductClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isProformaOpen,
+    onOpen: onProformaOpen,
+    onClose: onProformaClose,
   } = useDisclosure();
 
   const fetchPurchases = async () => {
@@ -242,6 +249,13 @@ const PurchaseHistory = () => {
     setProductFile(file);
     onProductOpen();
   };
+
+  const handleviewProform = (file: any) => {
+    setproformaFile(file);
+    onProformaOpen();
+  };
+
+  
 
   useEffect(() => {
     fetchPurchases();
@@ -637,6 +651,20 @@ const PurchaseHistory = () => {
                     Attach Delivery Proof
                   </Button>
                 )}
+                {purchase?.performaInvoice && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }}
+                    leftIcon={<IoEyeSharp />}
+                    bgColor="white"
+                    _hover={{ bgColor: "blue.500" }}
+                    className="border border-blue-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      handleviewProform(purchase?.performaInvoice)
+                    }
+                  >
+                    Pro Forma Invoice
+                  </Button>
+                )}
               </div>
             </Box>
           ))
@@ -801,6 +829,18 @@ const PurchaseHistory = () => {
           <ModalCloseButton />
           <ModalBody>
             <Img src={productFile} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* proforma invoice modal */}
+      <Modal isOpen={isProformaOpen} onClose={onProformaClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Pro Forma Invoice</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Img src={proformaFile} alt="Proforma Invoice" />
           </ModalBody>
         </ModalContent>
       </Modal>

@@ -25,6 +25,7 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
     GST: 0,
     comment: "",
     productFile: null, // New field for image
+    performaInvoice: null, // New field for image
   });
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
@@ -68,9 +69,12 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
   ) => {
     const { name, value, type } = e.target;
 
-    if (type === "file") {
+    if (name === "productFile") {
       const file = (e.target as HTMLInputElement).files?.[0] || null;
       setFormData((prevData) => ({ ...prevData, productFile: file }));
+    } if (name == "performaInvoice") {
+      const file = (e.target as HTMLInputElement).files?.[0] || null;
+      setFormData((prevData) => ({ ...prevData, performaInvoice: file }));
     } else {
       setFormData((prevData) => ({ ...prevData, [name]: value }));
     }
@@ -83,12 +87,7 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
     }));
   };
 
-  const handleDiscountChange = (value: string) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      discount: Number(value),
-    }));
-  }
+ 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,8 +99,11 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
     formDataToSend.append("price", formData.price);
     formDataToSend.append("product_qty", formData.product_qty);
     formDataToSend.append("GST", formData.GST.toString());
-    formDataToSend.append("discount", formData.discount);
     formDataToSend.append("comment", formData.comment);
+
+    if (formData.performaInvoice) {
+      formDataToSend.append("performaInvoice", formData.performaInvoice);
+    }
     
     if (formData.productFile) {
       formDataToSend.append("productFile", formData.productFile);
@@ -200,15 +202,8 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
         </FormControl>
           
         <FormControl>
-          <FormLabel>Discount</FormLabel>
-          <RadioGroup
-          onChange={handleDiscountChange} 
-            value={formData?.discount}
-          >
-            <Stack direction="row">
-              <Radio value="50">50% OFF</Radio>
-            </Stack>
-          </RadioGroup>
+          <FormLabel>Pro Forma Invoice</FormLabel>
+          <Input type="file" accept="image/*" name="performaInvoice" onChange={handleInputChange} />
         </FormControl>
 
 
