@@ -54,6 +54,7 @@ const AddProcess: React.FC<AddProcess> = ({
       scrap_store: scrapStore?.value,
     };
 
+    if (isAdding) return;
     try {
       setIsAdding(true);            
       const response = await addProcess(data).unwrap();

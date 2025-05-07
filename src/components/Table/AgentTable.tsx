@@ -277,9 +277,13 @@ const AgentTable: React.FC<AgentTableProps> = ({
                           <MdDeleteOutline
                             className="hover:scale-110"
                             size={16}
-                            onClick={() =>
-                              deleteAgentHandler(row.original?._id)
-                            }
+                            
+                            onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this buyer?")) {
+                                deleteAgentHandler(row.original?._id);
+                              }
+                            }}
+
                           />
                         )}
                         {approveAgentHandler && (

@@ -177,7 +177,7 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
       status: processStatus,
       _id: productionProcessId,
     };
-
+    if (isUpdating) return;
     try {
       setIsUpdating(true);
       const response = await updateProcess(data).unwrap();

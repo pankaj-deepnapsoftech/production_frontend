@@ -21,7 +21,7 @@ const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
   const [cookies] = useCookies(['access_token']);
   const Toast = useToast();
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
   const handleFileDrop = (event) => {
     event.preventDefault();
@@ -44,7 +44,8 @@ const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }
     const formData = new FormData();
     formData.append("delivery", file);
     formData.append("role", userRole)
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const token = cookies?.access_token
       const response = await axios.patch(
@@ -80,6 +81,8 @@ const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }
       });
 
       onClose(); // Close the modal or perform any other action
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -132,6 +135,7 @@ const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }
               mr={3}
               onClick={handleFileUpload}
               isDisabled={!file}
+              disabled={isSubmitting}
             >
               Upload
             </Button>

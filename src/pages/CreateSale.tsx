@@ -31,12 +31,13 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
   const [products, setProducts] = useState([]);
   const [cookies] = useCookies();
   const toast = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchDropdownData = async () => {
       try {
         const [customerRes, productRes] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_BACKEND_URL}customer/get-all`, {
+          axios.get(`${process.env.REACT_APP_BACKEND_URL}customer/getall`, {
             headers: { Authorization: `Bearer ${cookies.access_token}` },
           }),
           axios.get(`${process.env.REACT_APP_BACKEND_URL}product/all`, {
@@ -110,7 +111,8 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
     }
 
  
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}purchase/create`,
@@ -153,6 +155,8 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
         duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -203,7 +207,7 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
           
         <FormControl>
           <FormLabel>Pro Forma Invoice</FormLabel>
-          <Input type="file" accept="image/*" name="performaInvoice" onChange={handleInputChange} />
+          <Input type="file" accept="application/pdf,image/*" name="performaInvoice" onChange={handleInputChange} />
         </FormControl>
 
 
@@ -228,7 +232,9 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
           <Input type="text" name="comment" value={formData?.comment} onChange={handleInputChange} placeholder="Further Details (if any)" />
         </FormControl>
 
-        <Button type="submit" colorScheme="teal" size="lg" width="full">
+        <Button type="submit" colorScheme="teal" size="lg" width="full"
+          disabled={isSubmitting}>
+          {isSubmitting}
           Add Sale
         </Button>
       </form>

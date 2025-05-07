@@ -251,9 +251,11 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
                           <MdDeleteOutline
                             className="hover:scale-110"
                             size={16}
-                            onClick={() =>
-                              deleteRoleHandler(row.original?._id)
-                            }
+                            onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this role?")) {
+                                deleteRoleHandler(row.original?._id);
+                              }
+                            }}
                           />
                         )}
                       </Td>

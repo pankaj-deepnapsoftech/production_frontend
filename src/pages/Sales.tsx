@@ -469,7 +469,7 @@ const Sales = () => {
                       purchase?.designFile && (
                         <Badge
                           colorScheme={
-                            purchase?.customer_approve === "Approve"
+                            purchase?.customer_approve === "Approved"
                               ? "green"
                               : "red"
                           }
@@ -584,6 +584,11 @@ const Sales = () => {
                       {purchase?.product_id[0]?.name || "N/A"}
                     </Text>
                     <Text fontSize="sm">
+                      <strong>Product Price:</strong>{" "}
+                      {purchase?.price || "N/A"}
+                    </Text>
+                    
+                    <Text fontSize="sm">
                       <strong>Quantity:</strong> {purchase?.product_qty}
                     </Text>
                     <Text fontSize="sm">
@@ -603,6 +608,17 @@ const Sales = () => {
                         purchase?.GST
                       ).toFixed(2)}
                     </Text>
+
+                    {(purchase?.delivery_status_by_customer) ? (
+                    <Text fontSize="sm">
+                        <strong>Delivery Status :</strong> {purchase?.delivery_status_by_customer}
+                      <br />
+                        {purchase?.delivery_status_comment_by_customer && (
+                          <strong>Delivery Feedback :</strong>
+                        )}
+                        {purchase?.delivery_status_comment_by_customer}
+                    </Text>
+                    ) : null}
 
                     {purchase?.comment && (
                       <Text
@@ -633,7 +649,7 @@ const Sales = () => {
                         target="_blank"
                         className="text-blue-500 underline text-sm"
                       >
-                        Uploded Design File
+                        Uploaded Design File
                       </a>
                     ) : null}
 
@@ -647,6 +663,20 @@ const Sales = () => {
                         View Token Proof{" "}
                       </a>
                     ) : null}
+                    
+
+                    {role === 'Sales' && purchase?.performaInvoice ? (
+                      <a
+                        href={purchase?.performaInvoice}
+                        target="_blank"
+                        className="text-blue-500 underline text-sm"
+                      >
+                        {" "}
+                        View Pro Forma Invoice{" "}
+                      </a>
+                    ) : null}
+
+                    
 
 
                   </VStack>
@@ -685,23 +715,7 @@ const Sales = () => {
                     </Button>
                   ) : null}
 
-                  {purchase?.token_status ? (
-                  <Button
-                    bgColor="white"
-                    _hover={{ bgColor: "green.500" }}
-                    className="border border-green-500 hover:text-white"
-                    w={{ base: "100%", md: "auto" }}
-                    onClick={() => {
-                      openAccountModal(
-                        purchase?.designFile,
-                        purchase,
-                        purchase?.customer_approve
-                      )
-                    }}
-                  >
-                    Preview
-                  </Button>
-                  ) : null}
+                  
                   
                   {purchase?.designFile && (
                     <Button
@@ -775,7 +789,6 @@ const Sales = () => {
                   )}
 
                   
-
                   {purchase?.isTokenVerify ? (
                     <Button
                       bgColor="white"

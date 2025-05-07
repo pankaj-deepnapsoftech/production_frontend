@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   HStack,
-  Image,
   Radio,
   RadioGroup,
   Text,
@@ -15,15 +14,13 @@ import { useCookies } from "react-cookie";
 import { BiHappyHeartEyes, BiSad } from "react-icons/bi";
 
 // Define prop type for the component
-interface ViewDesignProps {
-  designUrl: string;
+interface DeliverystatusProps {
   purchaseData: any;
   onClose: any;
-  approve:string;
+  approve:any;
 }
 
-const ViewDesign: React.FC<ViewDesignProps> = ({
-  designUrl,
+const Deliverystatus: React.FC<DeliverystatusProps> = ({
   purchaseData,
   approve,
   onClose,
@@ -33,21 +30,19 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     const formData = {
       customer_approve: status,
       customer_design_comment: comment,
-      assined_to: purchaseData?.empprocess?.find((process: any) =>
-        process.assined_process.includes("design")
-      )?._id,
     };
     if (isSubmitting) return;
     setIsSubmitting(true);
     try {
       const response = await axios.patch(
-        `${process.env.REACT_APP_BACKEND_URL}purchase/image-status/${purchaseData?._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}purchase/delivery-status/${purchaseData}`,
         formData,
         {
           headers: { Authorization: `Bearer ${cookies.access_token}` },
@@ -76,44 +71,20 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
     }
   };
 
-  const handleDownload = () => {
-    fetch(designUrl)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "design-image";
-        link.click();
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((error) => console.error("Download failed", error));
-  };
-
+  
   return (
     <Box className="flex flex-col justify-center items-center">
-      <Image src={designUrl} alt="Design File" mb={4} />
-      <Button
-        size="sm"
-        bgColor="white"
-        _hover={{ bgColor: "green.500" }}
-        className="border border-green-500 hover:text-white mt-2 mb-5"
-        onClick={handleDownload}
-      >
-        Download
-      </Button>
-
-
-      {approve === "Approved" ? (
-        <p className="text-orange-500 font-normal text-sm">You have already approved the design :)</p>
+      {approve ? (
+        <p className="text-orange-500 font-normal text-sm">You have already change the delivery status: {approve})</p>
       ) : (
         <form onSubmit={handleSubmit}>
+            <Text className="mb-5">Have you received the delivery?</Text>
         <HStack align="center" justify="space-between" mb={4}>
           <RadioGroup onChange={setStatus} value={status}>
             <HStack spacing="24px">
               {/* Happy Option */}
               <Radio
-                value="Approved"
+                value="yes"
                 colorScheme="green"
                 size="lg"
                 _focus={{ boxShadow: "outline" }}
@@ -121,22 +92,22 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
                 <HStack spacing={2}>
                   <Box
                     as={BiHappyHeartEyes}
-                    color={status === "Approve" ? "green.500" : "gray.400"}
+                    color={status === "yes" ? "green.500" : "gray.400"}
                     fontSize="1.5rem"
                   />
                   <Text
                     fontSize="md"
-                    fontWeight={status === "Approve" ? "bold" : "normal"}
-                    color={status === "Approve" ? "green.500" : "gray.700"}
+                    fontWeight={status === "yes" ? "bold" : "normal"}
+                    color={status === "yes" ? "green.500" : "gray.700"}
                   >
-                    Approve
+                    Yes
                   </Text>
                 </HStack>
               </Radio>
 
               {/* Sad Option */}
               <Radio
-                value="Reject"
+                value="no"
                 colorScheme="red"
                 size="lg"
                 _focus={{ boxShadow: "outline" }}
@@ -144,15 +115,15 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
                 <HStack spacing={2}>
                   <Box
                     as={BiSad}
-                    color={status === "Reject" ? "red.500" : "gray.400"}
+                    color={status === "no" ? "red.500" : "gray.400"}
                     fontSize="1.5rem"
                   />
                   <Text
                     fontSize="md"
-                    fontWeight={status === "Reject" ? "bold" : "normal"}
-                    color={status === "Reject" ? "red.500" : "gray.700"}
+                    fontWeight={status === "no" ? "bold" : "normal"}
+                    color={status === "no" ? "red.500" : "gray.700"}
                   >
-                    Reject
+                    No
                   </Text>
                 </HStack>
               </Radio>
@@ -160,7 +131,7 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
           </RadioGroup>
         </HStack>
 
-        {status === "Reject" && (
+        {status === "no" && (
           <Textarea
             placeholder="Please provide feedback..."
             mt={2}
@@ -177,7 +148,7 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
           bgColor="white"
           _hover={{ bgColor: "blue.500" }}
           className="border border-blue-500 hover:text-white mt-2 w-full"
-          disabled={isSubmitting}
+              disabled={isSubmitting}
         >
           Submit
         </Button>
@@ -189,4 +160,4 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
   );
 };
 
-export default ViewDesign;
+export default Deliverystatus;

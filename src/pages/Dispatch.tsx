@@ -285,6 +285,16 @@ const Dispatch = () => {
                 <Text fontSize="sm">
                   <strong>GST :</strong> {acc?.bom?.sale_id[0]?.GST}%
                 </Text>
+                {(acc?.bom?.sale_id[0]?.delivery_status_by_customer) ? (
+                <Text fontSize="sm">
+                  <strong>Delivery Status :</strong> {acc?.bom?.sale_id[0]?.delivery_status_by_customer}
+                  <br />
+                    {acc?.bom?.sale_id[0]?.delivery_status_comment_by_customer && (
+                      <strong>Delivery Feedback :</strong>
+                    )}
+                    {acc?.bom?.sale_id[0]?.delivery_status_comment_by_customer}
+                </Text>
+                ) : null}
 
                 {(role == "Accountant" || role == "Sales" || role == "admin") ? (
                   <Text fontSize="sm">

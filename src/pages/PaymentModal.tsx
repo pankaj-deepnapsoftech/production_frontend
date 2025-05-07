@@ -9,6 +9,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
+import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { IoMdCheckmarkCircle } from "react-icons/io";
 
@@ -16,8 +17,11 @@ const PaymentModal = ({ sale_id, payment, verify, assign, payfor, onClose }) => 
   console.log(payfor)
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
   const verifyToken = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}purchase/verifyToken/${sale_id}`,
@@ -47,10 +51,14 @@ const PaymentModal = ({ sale_id, payment, verify, assign, payfor, onClose }) => 
         duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleVerify = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}purchase/verify-payement/${sale_id}`,
@@ -80,6 +88,8 @@ const PaymentModal = ({ sale_id, payment, verify, assign, payfor, onClose }) => 
         duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -90,8 +100,9 @@ const PaymentModal = ({ sale_id, payment, verify, assign, payfor, onClose }) => 
         <Text className="text-green-600 font-bold text-center">
          {payfor === "token" ? "Token Amount has been uploaded by the customer" : " Payment has been uploaded by the customer"}
         </Text>
-
-        <img src={payment} alt="payment proof" />
+        <a href={payment} target="_blank">
+          Click to view
+        </a>
 
         {verify === true ? (
           <Text className="text-green-600 space-x-2 flex items-center justify-center ">
@@ -100,7 +111,7 @@ const PaymentModal = ({ sale_id, payment, verify, assign, payfor, onClose }) => 
           </Text>
         ) : (
           <>
-            <Button colorScheme="green" onClick={payfor === "token" ? verifyToken : handleVerify }>
+              <Button colorScheme="green" disabled={isSubmitting} onClick={payfor === "token" ? verifyToken : handleVerify }>
               Verify
             </Button>
             <Text className="text-sm text-orange-500">

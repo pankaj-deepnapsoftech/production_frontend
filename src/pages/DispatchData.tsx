@@ -20,6 +20,7 @@ const DispatchData = ({ sale_id, trackId, trackLink, onClose }) => {
     tracking_id: "",
     tracking_web: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const toast = useToast();
   const [cookies] = useCookies(["access_token"]);
 
@@ -33,7 +34,8 @@ const DispatchData = ({ sale_id, trackId, trackLink, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}purchase/dispatch/${sale_id}`,
@@ -52,6 +54,7 @@ const DispatchData = ({ sale_id, trackId, trackLink, onClose }) => {
         duration: 5000,
         isClosable: true,
       });
+      onClose();
     } catch (error) {
       console.log(error);
       toast({
@@ -61,9 +64,12 @@ const DispatchData = ({ sale_id, trackId, trackLink, onClose }) => {
         duration: 5000,
         isClosable: true,
       });
+      onClose();
+    } finally {
+      setIsSubmitting(false);
     }
 
-    onClose();
+    
   };
 
   const formWidth = useBreakpointValue({ base: "100%", md: "50%" });
@@ -118,6 +124,7 @@ const DispatchData = ({ sale_id, trackId, trackLink, onClose }) => {
               colorScheme="blue"
               width="full"
               className="transition-all duration-300 hover:bg-blue-600"
+              disabled={isSubmitting}
             >
               Submit
             </Button>

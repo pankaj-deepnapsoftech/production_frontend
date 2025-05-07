@@ -65,7 +65,8 @@ const Approvals: React.FC = () => {
   const [updateAgent] = useUpdateAgentMutation();
   const [deleteBom] = useDeleteBomMutation();
   const [updateBom] = useUpdateBOMMutation();
-
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
   // For Unapproved Products
   const fetchUnapprovedProductsHandler = async () => {
     try {
@@ -246,12 +247,16 @@ const Approvals: React.FC = () => {
   };
 
   const approveBomHandler = async (id: string) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await updateBom({ _id: id, approved: true }).unwrap();
       toast.success(response.message);
       fetchUnapprovedBomsHandler();
     } catch (err: any) {
       toast.error(err?.data?.message || "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

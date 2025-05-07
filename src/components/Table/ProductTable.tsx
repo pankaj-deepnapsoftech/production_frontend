@@ -21,7 +21,6 @@ import {
   useSortBy,
   useTable,
   Column,
-  TableState,
   TableInstance,
   HeaderGroup,
   Row,
@@ -407,11 +406,13 @@ const ProductTable: React.FC<ProductTableProps> = ({
                         )}
                         {deleteProductHandler && (
                           <MdDeleteOutline
-                            className="hover:scale-110"
+                            className="hover:scale-110 cursor-pointer"
                             size={16}
-                            onClick={() =>
-                              deleteProductHandler(row.original?._id)
-                            }
+                            onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this product?")) {
+                                deleteProductHandler(row.original?._id);
+                              }
+                            }}
                           />
                         )}
                         {approveProductHandler && (

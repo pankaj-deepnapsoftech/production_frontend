@@ -26,7 +26,8 @@ const CreateCustomer: React.FC = ({ onClose, refresh }) => {
   const [gstNo, setGstNo] = useState("");
   const [cookies] = useCookies();
   const toast = useToast();
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -41,7 +42,8 @@ const CreateCustomer: React.FC = ({ onClose, refresh }) => {
         GST_NO: gstNo,
       }),
     };
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}customer/create`,
@@ -80,6 +82,8 @@ const CreateCustomer: React.FC = ({ onClose, refresh }) => {
         duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -191,6 +195,7 @@ const CreateCustomer: React.FC = ({ onClose, refresh }) => {
           size="lg"
           width="full"
           className="bg-teal-600 text-white"
+          disabled={isSubmitting}
         >
           Create Customer
         </Button>

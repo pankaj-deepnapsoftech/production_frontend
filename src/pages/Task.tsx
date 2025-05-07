@@ -60,6 +60,7 @@ const Task = () => {
   const [tokenAmount, setTokenAmount] = useState();
   const [paymentFor, setPaymentFor] = useState("");
   const [sampleimagefile, setsampleFile] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
   const [selectedData, setSelectedData] = useState<any>([]);
   const [filters, setFilters] = useState({
@@ -140,7 +141,8 @@ const Task = () => {
           sale_design_approve: sale?.sale_design_approve,
           sale_design_comment: sale?.sale_design_comment,
           sample_image: sale?.sample_image,
-          allsale: sale
+          allsale: sale,
+          isSampleApprove: sale?.isSampleApprove,
         };
       });
 
@@ -224,7 +226,8 @@ const Task = () => {
     formData.append("image", file);
     formData.append("assined_to", selectedTask.id);
     formData.append("assinedto_comment", comment);
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       // Upload the image to the backend
       const response = await axios.patch(
@@ -245,10 +248,14 @@ const Task = () => {
       console.error("Error uploading file:", error);
 
       onClose();
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleAccept = async (id) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}assined/update-status/${id}`,
@@ -265,6 +272,8 @@ const Task = () => {
       console.log(error);
 
       toast.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -350,7 +359,7 @@ const Task = () => {
           Authorization: `Bearer ${cookies?.access_token}`,
         },
       })
-      toast.success("Half Amount adied");
+      toast.success("Half Amount added");
 
 
     } catch (error) {
@@ -477,7 +486,7 @@ const Task = () => {
                     colorScheme={colorChange(task.design_status)}
                     fontSize="sm"
                   >
-                    <strong>Task:</strong> {task?.design_status}
+                    <strong>Task:</strong> {task?.design_status}d
                   </Badge>
 
                   {["acc", "account", "accountant", "dispatch", "dis"].includes(
@@ -658,6 +667,7 @@ const Task = () => {
                       colorScheme="teal"
                       size="sm"
                       onClick={() => handleAccept(task?.id)}
+                      disabled={isSubmitting}
                     >
                       Accept Task
                     </Button>
@@ -716,12 +726,13 @@ const Task = () => {
                       colorScheme="teal"
                       size="sm"
                       onClick={() => handleAccept(task?.id)}
+                      disabled={isSubmitting}
                     >
                       Accept Task
                     </Button>
                   ) : null}
 
-                  {task?.design_approval === "Approve" ? (
+                  {task?.design_approval === "Approved" ? (
                     <Button
                       bgColor="white"
                       _hover={{ bgColor: "purple.500" }}
@@ -751,7 +762,7 @@ const Task = () => {
                   ) : null}
 
                   {
-                    task?.bom?.length > 0 &&
+                      task?.isSampleApprove &&
                     <Button
                       bgColor="white"
                       _hover={{ bgColor: "blue.500" }}
@@ -763,7 +774,7 @@ const Task = () => {
                       }
                       width={{ base: "full", sm: "auto" }}
                     >
-                      Add half Payement
+                      Add half Payment
                     </Button>
                   }
 
@@ -789,27 +800,6 @@ const Task = () => {
                   ) : null}
 
 
-                  {task?.token_amt &&
-                    task?.token_status ? (
-                    <Button
-                      bgColor="white"
-                      leftIcon={<IoEyeSharp />}
-                      _hover={{ bgColor: "green.500" }}
-                      className="border border-green-500 hover:text-white"
-                      onClick={() => {
-                        openAccountModal(
-                          task?.designFile,
-                          task,
-                          task?.customer_approve
-                        )
-                      }}
-                      width={{ base: "full", sm: "auto" }}
-                    >
-                      Preview
-                    </Button>
-                  ) : null}
-
-
 
 
                   <Text fontSize="sm">
@@ -831,6 +821,7 @@ const Task = () => {
                         colorScheme="teal"
                         size="sm"
                         onClick={() => handleAccept(task?.id)}
+                            disabled={isSubmitting}
                       >
                         Accept Task
                       </Button>
@@ -973,6 +964,7 @@ const Task = () => {
               mr={3}
               onClick={handleFileUpload}
               isDisabled={!file}
+              disabled={isSubmitting}
             >
               Upload
             </Button>
@@ -1023,7 +1015,7 @@ const Task = () => {
           <ModalHeader>Sample Image Preview</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <img src={sampleimagefile} alt="Sample image preview" />
+            Click to view the <a href={sampleimagefile} target="_blank">Sample image</a>
           </ModalBody>
           <ModalFooter>
             <Button
@@ -1157,9 +1149,13 @@ const Task = () => {
           <ModalCloseButton />
           <ModalBody>
             <div>
-              <h3>View half payment Proof</h3>
               <div>
-                {halfAmountId?.allsale?.half_payment_image && <img src={halfAmountId?.allsale?.half_payment_image} />}
+                <h3>View half payment proof. &nbsp;
+                {halfAmountId?.allsale?.half_payment_image &&  
+                  <a href={halfAmountId?.allsale?.half_payment_image} target="_blank">
+                     Click to view
+                  </a>}
+                </h3>
               </div>
 
               {!halfAmountId?.allsale?.half_payment_approve && <div className="py-5 text-center " >

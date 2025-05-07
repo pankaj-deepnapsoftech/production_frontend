@@ -32,7 +32,6 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
     price: sale?.price || "",
     product_qty: sale?.product_qty || "",
     GST: sale?.GST,
-    discount: sale?.discount,
     comment: sale?.comment || "",
   });
 
@@ -41,13 +40,14 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
   const [users, setUsers] = useState([]);
   const [cookies] = useCookies();
   const toast = useToast();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
     // Fetch data for dropdowns
     const fetchDropdownData = async () => {
       try {
         const [customerRes, productRes, userRes] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_BACKEND_URL}customer/get-all`, {
+          axios.get(`${process.env.REACT_APP_BACKEND_URL}customer/getall`, {
             headers: { Authorization: `Bearer ${cookies.access_token}` },
           }),
           axios.get(`${process.env.REACT_APP_BACKEND_URL}product/all`, {
@@ -97,19 +97,11 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
     }));
   };
 
-  const handleDiscountChange = (value: string) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      discount: Number(value),
-      formData
-    }));
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     //console.log("formdata:", formData);
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       
       const response = await axios.put(
@@ -129,7 +121,7 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
         product_type: "finished goods",
         price: "",
         product_qty: "",
-        GST: { CGST: 0, SGST: 0, IGST: 0 },
+        GST: 0,
         comment: "",
         discount: ""
       });
@@ -155,6 +147,8 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
       });
 
       console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -224,22 +218,9 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
           />
         </FormControl>
 
-
-        <FormControl>
-          <FormLabel>Discount</FormLabel>
-          <RadioGroup
-          onChange={handleDiscountChange} 
-            value={formData?.discount}
-          >
-            <Stack direction="row">
-              <Radio value="50">50% OFF</Radio>
-            </Stack>
-          </RadioGroup>
-        </FormControl>
-
-       <FormControl id="GST" isRequired>
+       <FormControl id="GST">
                <FormLabel>GST Type</FormLabel>
-               <RadioGroup onChange={handleGSTChange} value={formData.GST}>
+          <RadioGroup onChange={handleGSTChange} value={formData?.GST?.toString()}>
              <Stack direction="row">
                <Radio value="18">GST (18%)</Radio>
                <Radio value="12">GST (12%)</Radio>
@@ -275,7 +256,7 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
           />
         </FormControl>
 
-        <Button type="submit" colorScheme="teal" size="lg" width="full">
+        <Button disabled={isSubmitting} type="submit" colorScheme="teal" size="lg" width="full">
           Update Sale
         </Button>
       </form>

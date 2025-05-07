@@ -97,10 +97,14 @@ const AddProduct: React.FC<AddProductProps> = ({
   ];
 
   const [addProduct] = useAddProductMutation();
-  const [isAddingProduct, setIsAddingProduct] = useState<boolean>(false);
+  
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
 
   const addProductHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       if (
         !name ||
@@ -146,6 +150,8 @@ const AddProduct: React.FC<AddProductProps> = ({
       closeDrawerHandler();
     } catch (err: any) {
       toast.error(err?.data?.message || err?.message || "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -406,6 +412,7 @@ const AddProduct: React.FC<AddProductProps> = ({
               type="submit"
               _hover={{ backgroundColor: "#14b8a6" }}
               className="mt-5 w-full py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+              disabled={isSubmitting}
             >
               Submit
             </Button>

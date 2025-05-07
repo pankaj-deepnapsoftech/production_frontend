@@ -62,6 +62,7 @@ const Entries: React.FC = () => {
   const { update } = useSelector((state) => state.Common);
   const dispatch = useDispatch();
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // Fetch entries from the backend
   useEffect(() => {
     const fetchEntries = async () => {
@@ -113,7 +114,8 @@ const Entries: React.FC = () => {
   const handleUpdate = async (updatedEntry: Entry) => {
     const token = cookies?.access_token;
     if (!token) return;
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       await axios.put(
         `${process.env.REACT_APP_BACKEND_URL}gard/update/${updatedentry?._id}`,
@@ -148,13 +150,16 @@ const Entries: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (entry: Entry) => {
     const token = cookies?.access_token;
     if (!token) return;
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       // Send DELETE request to the backend to delete the entry
       await axios.delete(
@@ -185,13 +190,16 @@ const Entries: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleOut = async (entry: Entry) => {
     const token = cookies?.access_token;
     if (!token) return;
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     // Update the status to "out"
     const updatedEntry = { ...entry, status: "out" };
 
@@ -229,6 +237,8 @@ const Entries: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

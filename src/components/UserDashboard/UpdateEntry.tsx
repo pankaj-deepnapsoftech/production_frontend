@@ -40,6 +40,8 @@ const UpdateEntry: React.FC<UpdateEntryProps> = ({
     ...entry,
   });
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
   const handleChange = (field: keyof Entry, value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -191,7 +193,7 @@ const UpdateEntry: React.FC<UpdateEntryProps> = ({
           </Select>
         </FormControl>
 
-        <Button type="submit" colorScheme="teal" className="w-full" size="lg">
+        <Button type="submit" colorScheme="teal" className="w-full" size="lg" disabled={isSubmitting}>
           Update Entry
         </Button>
         <Button

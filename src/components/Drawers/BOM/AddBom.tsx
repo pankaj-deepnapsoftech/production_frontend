@@ -35,7 +35,7 @@ const AddBom: React.FC<AddBomProps> = ({
   fetchBomsHandler,
 }) => {
   const [cookies] = useCookies();
-  const [bomName, setBomName] = useState<string | undefined>();
+  const [bomName, setBomName] = useState<any | undefined>();
   const [partsCount, setPartsCount] = useState<number>(0);
   const [totalPartsCost, setTotalPartsCost] = useState<number>(0);
   const [finishedGood, setFinishedGood] = useState<
@@ -64,6 +64,7 @@ const AddBom: React.FC<AddBomProps> = ({
     number | undefined
   >();
   const [otherCharges, setOtherCharges] = useState<number | undefined>();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [addBom] = useAddBomMutation();
   const location = useLocation();
@@ -120,6 +121,8 @@ const AddBom: React.FC<AddBomProps> = ({
 
     const fileInput = supportingDoc.current as HTMLInputElement;
     let pdfUrl;
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     if (fileInput && fileInput?.files && fileInput.files.length > 0) {
       try {
         const formData = new FormData();
@@ -143,6 +146,8 @@ const AddBom: React.FC<AddBomProps> = ({
       } catch (err: any) {
         toast.error(err.message || "Something went wrong during file upload");
         return;
+      } finally {
+        setIsSubmitting(false);
       }
     }
 
@@ -299,6 +304,14 @@ const AddBom: React.FC<AddBomProps> = ({
     fetchProductsHandler();
   }, []);
 
+  const handleBlur = () => {
+    if (bomName !== '') {
+      setBomName(generateBomName(bomName));
+    } else {
+      setBomName('');
+    }
+  }
+
   useEffect(() => {
     const modifiedProducts = products.map((prd) => ({
       value: prd._id,
@@ -310,6 +323,11 @@ const AddBom: React.FC<AddBomProps> = ({
     }));
     setProductOptions(modifiedProducts);
   }, [products]);
+
+  const generateBomName = (input: any): any => {
+    const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, '');
+    return `${input}-${timestamp}`;
+  };
 
   //console.log(products);
 
@@ -613,6 +631,7 @@ const AddBom: React.FC<AddBomProps> = ({
                     borderRadius="lg"
                     focusBorderColor="teal.500"
                     value={bomName}
+                    onBlur={handleBlur}
                     onChange={(e) => setBomName(e.target.value)}
                     type="text"
                     placeholder="Enter BOM Name"
@@ -666,6 +685,7 @@ const AddBom: React.FC<AddBomProps> = ({
                 className="mt-1"
                 color="white"
                 backgroundColor="#1640d6"
+                disabled={isSubmitting}
               >
                 Submit
               </Button>

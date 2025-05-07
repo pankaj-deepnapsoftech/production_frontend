@@ -99,7 +99,7 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
     },
   ]);
   const [isTableVisible, setIsTableVisible] = useState(true);
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const categoryOptions = [
     { value: "finished goods", label: "Finished Goods" },
     { value: "raw materials", label: "Raw Materials" },
@@ -115,6 +115,8 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
 
     const fileInput = supportingDoc.current as HTMLInputElement;
     let pdfUrl;
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     if (fileInput && fileInput?.files && fileInput.files.length > 0) {
       try {
         const formData = new FormData();
@@ -136,6 +138,8 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
       } catch (err: any) {
         toast.error(err.message || "Something went wrong during file upload");
         return;
+      } finally {
+        setIsSubmitting(false);
       }
     }
 
@@ -774,6 +778,7 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
               borderColor="#1640d6"
               backgroundColor="#ffffff"
               _hover={{ backgroundColor: "#1640d6", color: "#ffffff" }}
+              disabled={isSubmitting}
             >
               Submit
             </Button>

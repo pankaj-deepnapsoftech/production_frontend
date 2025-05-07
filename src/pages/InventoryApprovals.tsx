@@ -15,6 +15,8 @@ const InventoryApprovals: React.FC = () => {
   const [filteredData, setFilteredData] = useState<any>([]);
 
   const [isLoadingInventory, setIsLoadingInventory] = useState<boolean>(false);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
 
   const fetchInventoryHandler = async () => {
     try {
@@ -42,6 +44,8 @@ const InventoryApprovals: React.FC = () => {
   };
 
   const approveRmHandler = async (id: string)=>{
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try{
         const response = await fetch(process.env.REACT_APP_BACKEND_URL+'bom/approve/inventory/raw-materials', {
             method: "POST",
@@ -62,6 +66,8 @@ const InventoryApprovals: React.FC = () => {
     }
     catch(err: any){
         toast.error(err?.message || "Something went wrong")
+    } finally {
+      setIsSubmitting(false);
     }
   }
 

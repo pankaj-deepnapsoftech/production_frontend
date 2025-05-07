@@ -32,7 +32,7 @@ const InvoiceDesign: React.FC<InvoiceDesignProps> = ({
   const [comment, setComment] = useState<string>("");
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -40,6 +40,8 @@ const InvoiceDesign: React.FC<InvoiceDesignProps> = ({
       customer_invoice_approve: status,
       customer_invoice_comment: comment,
     };
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}purchase/invoice-status/${purchaseData?._id}`,
@@ -66,6 +68,8 @@ const InvoiceDesign: React.FC<InvoiceDesignProps> = ({
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -171,6 +175,7 @@ const InvoiceDesign: React.FC<InvoiceDesignProps> = ({
           bgColor="white"
           _hover={{ bgColor: "blue.500" }}
           className="border border-blue-500 hover:text-white mt-2 w-full"
+          disabled={isSubmitting}
         >
           Submit
         </Button>

@@ -13,10 +13,12 @@ interface ICustomerForgetProp {
 }
 
 const CoustomerForget: FC<ICustomerForgetProp> = ({ setStep,forgetEmail,setForgetEmail }): ReactElement => {
-   
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const verifyEmail = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         try {
             const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}customer/verify-email`,{email:forgetEmail});
             toast.success(res.data.message)
@@ -24,6 +26,8 @@ const CoustomerForget: FC<ICustomerForgetProp> = ({ setStep,forgetEmail,setForge
         } catch (error:any) {
             toast.error(error.response.data.message || "Something went Wrong")
             console.log(error)
+        } finally {
+            setIsSubmitting(false);
         }
     }
     return (
@@ -63,6 +67,7 @@ const CoustomerForget: FC<ICustomerForgetProp> = ({ setStep,forgetEmail,setForge
                 <button
                     style={{ boxShadow: "0 2px 0 rgba(5, 95, 255, 0.1)" }}
                     className="w-[100%] my-3 rounded-lg bg-[#1640d6] text-white py-2 font-bold disabled:cursor-not-allowed disabled:bg-[#b7b6b6]"
+                    disabled={isSubmitting}
                 >
                     verify
                 </button>

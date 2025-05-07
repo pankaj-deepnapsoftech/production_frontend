@@ -22,7 +22,8 @@ const UploadsampleImage = ({ purchaseData, onClose }) => {
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
   const [cookies] = useCookies();
   const Toast = useToast();
-
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
 
 
   const handleFileDrop = (event) => {
@@ -45,7 +46,8 @@ const UploadsampleImage = ({ purchaseData, onClose }) => {
 
     const formData = new FormData();
     formData.append("sample_image", file);
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}purchase/upload-sample-image/${purchaseData._id}`,
@@ -79,6 +81,8 @@ const UploadsampleImage = ({ purchaseData, onClose }) => {
       });
 
       onClose(); // Close the modal or perform any other action
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -131,6 +135,7 @@ const UploadsampleImage = ({ purchaseData, onClose }) => {
               mr={3}
               onClick={handleFileUpload}
               isDisabled={!file}
+                disabled={isSubmitting}
             >
               Upload
             </Button>

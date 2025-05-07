@@ -31,6 +31,7 @@ const Salestatus: React.FC<ViewDesignProps> = ({
   const [comment, setComment] = useState<string>("");
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
 
   const handleSubmit = async (e: any) => {
@@ -39,6 +40,9 @@ const Salestatus: React.FC<ViewDesignProps> = ({
         salestatus: status,
         salestatus_comment: comment,
     };
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
       const response = await axios.patch(
           `${process.env.REACT_APP_BACKEND_URL}purchase/updatesales/${purchaseData?._id}`,
@@ -65,6 +69,8 @@ const Salestatus: React.FC<ViewDesignProps> = ({
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false); 
     }
   };
 
@@ -150,6 +156,7 @@ const Salestatus: React.FC<ViewDesignProps> = ({
           bgColor="white"
           _hover={{ bgColor: "blue.500" }}
           className="border border-blue-500 hover:text-white mt-2 w-full"
+          disabled={isSubmitting}
         >
           Submit
         </Button>

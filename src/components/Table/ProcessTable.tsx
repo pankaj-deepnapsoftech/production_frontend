@@ -308,9 +308,12 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                           <MdDeleteOutline
                             className="hover:scale-110"
                             size={16}
-                            onClick={() =>
-                              deleteProcessHandler(row.original?._id)
-                            }
+                            onClick={() => {
+                              const confirmed = window.confirm("Are you sure you want to delete this production?");
+                              if (confirmed) {
+                                deleteProcessHandler(row.original?._id);
+                              }
+                            }}
                           />
                         )}
                       </Td>

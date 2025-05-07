@@ -32,7 +32,7 @@ const NewEntry: React.FC = () => {
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
   const dispatch = useDispatch()
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -40,9 +40,10 @@ const NewEntry: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {     
-      
+
       const res = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}gard/create`,
         formData,
@@ -79,6 +80,8 @@ const NewEntry: React.FC = () => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -214,7 +217,7 @@ const NewEntry: React.FC = () => {
             </Select>
           </FormControl>
 
-          <Button type="submit" colorScheme="teal" className="w-full" size="lg">
+          <Button type="submit" colorScheme="teal" className="w-full" size="lg" disabled={isSubmitting}>
             Add Entry
           </Button>
         </Box>

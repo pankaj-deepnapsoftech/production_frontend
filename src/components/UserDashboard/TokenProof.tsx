@@ -21,10 +21,7 @@ import {
     const dropZoneBg = useColorModeValue("gray.100", "gray.700");
     const [cookies] = useCookies(['access_token']);
     const Toast = useToast();
-  
-    console.log("tokenFile", tokenFile);
-    console.log("amount", amount)
-  
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const handleFileDrop = (event) => {
       event.preventDefault();
       if (event.dataTransfer.files && event.dataTransfer.files[0]) {
@@ -45,7 +42,8 @@ import {
   
       const formData = new FormData();
       formData.append("token_ss", file);
-  
+      if (isSubmitting) return;
+      setIsSubmitting(true);
       try {
         const token = cookies?.access_token
         const response = await axios.patch(
@@ -81,6 +79,8 @@ import {
         });
   
         onClose(); // Close the modal or perform any other action
+      } finally {
+        setIsSubmitting(false);
       }
     };
   
@@ -135,6 +135,7 @@ import {
                 mr={3}
                 onClick={handleFileUpload}
                 isDisabled={!file}
+                disabled={isSubmitting}
               >
                 Upload
               </Button>

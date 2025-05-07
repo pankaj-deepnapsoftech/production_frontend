@@ -30,6 +30,7 @@ import TrackProduction from "./TrackProduction";
 import Pagination from "../../pages/Pagination";
 import { BiHappyHeartEyes, BiSad } from "react-icons/bi";
 import ViewDesign from "./ViewDesign";
+import Deliverystatus from "./Deliverystatus";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { IoEyeSharp } from "react-icons/io5";
 import UploadPayment from "./UploadPayment";
@@ -81,6 +82,7 @@ const PurchaseHistory = () => {
   const [halfPaymentProof, setHalfPaymentProof] = useState(null);
   const [productFile, setProductFile] = useState();
   const [proformaFile, setproformaFile] = useState();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const {
     isOpen: isProductionModalOpen,
     onOpen: onProductionOpen,
@@ -114,6 +116,12 @@ const PurchaseHistory = () => {
     isOpen: isProofOpen,
     onOpen: onProofOpen,
     onClose: onProofClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isDeliverystatusOpen,
+    onOpen: onDeliverystatusOpen,
+    onClose: onDeliverystatusClose,
   } = useDisclosure();
 
   const {
@@ -237,6 +245,14 @@ const PurchaseHistory = () => {
     }
     onProofOpen();
   };
+
+  const handledeliverystatus = (id: any, approve: any) => {
+    console.log('approve == ', approve)
+    setPurchaseId(id);
+    setCustomerApprove(approve);
+    onDeliverystatusOpen()
+  }
+  
   const calculateTotalPrice = (price: number, qty: number, gst: number) => {
     const basePrice = price * qty;
     const gstVal = (basePrice * gst) / 100;
@@ -259,6 +275,7 @@ const PurchaseHistory = () => {
   const handleHalfPaymentProf = async () => {
     if (!halfPaymentProof) {
       alert("image is required field");
+      return;
     };
     const formData = new FormData();
     formData.append("halfPayment", halfPaymentProof);
@@ -266,7 +283,8 @@ const PurchaseHistory = () => {
     formData.append("half_payment_status", "Pending Approvel")
 
     isHalfPaymentClose()
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}purchase/half-payement/${halfPaymentId._id}`, formData, {
         headers: {
@@ -276,6 +294,8 @@ const PurchaseHistory = () => {
       toast.success(res.data.message)
     } catch (error) {
       console.log(error)
+    } finally {
+      setIsSubmitting(false);
     }
 
   };
@@ -396,7 +416,7 @@ const PurchaseHistory = () => {
 
                   {purchase?.half_payment_status && (
                     <Badge colorScheme={purchase?.half_payment_status === 'pending' ? "orange" : "green"} fontSize="sm">
-                      Half payement : {purchase?.half_payment_status}
+                      Half payment : {purchase?.half_payment_status}
                     </Badge>
                   )}
 
@@ -598,7 +618,7 @@ const PurchaseHistory = () => {
                   </Button>
                 )}
 
-                {purchase?.token_status && (
+                {/* {purchase?.token_status && (
                   <Button
                     size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
                     leftIcon={<IoEyeSharp />}
@@ -615,7 +635,7 @@ const PurchaseHistory = () => {
                   >
                     Preview
                   </Button>
-                )}
+                )} */}
 
                 {purchase?.invoice_image && (
                   <Button
@@ -705,6 +725,22 @@ const PurchaseHistory = () => {
                     Attach Delivery Proof
                   </Button>
                 )}
+
+                {purchase?.tracking_id && purchase?.tracking_web && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }}
+                    leftIcon={<FaCloudUploadAlt />}
+                    bgColor="white"
+                    _hover={{ bgColor: "blue.500" }}
+                    className="border border-blue-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      handledeliverystatus(purchase?._id, purchase?.delivery_status_by_customer)
+                    }
+                  >
+                    Delivery Status
+                  </Button>
+                )}
+
                 {purchase?.performaInvoice && (
                   <Button
                     size={{ base: "xs", sm: "sm" }}
@@ -754,6 +790,25 @@ const PurchaseHistory = () => {
                 purchaseData={selectedData}
                 approve={customerApprove}
                 onClose={onImageClose}
+              />
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+
+      {/* delivery Status Modal */}
+      <Modal isOpen={isDeliverystatusOpen} onClose={onDeliverystatusClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Design</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedData && (
+              <Deliverystatus
+                purchaseData={purchaseId}
+                approve={customerApprove}
+                onClose={onDeliverystatusClose}
               />
             )}
           </ModalBody>
@@ -890,18 +945,19 @@ const PurchaseHistory = () => {
       <Modal isOpen={isHalfPaymentOpen} onClose={isHalfPaymentClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>View Half Payement And Pay</ModalHeader>
+          <ModalHeader>View Half Payment And Pay</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-3">
               <p className="text-gray-600 mb-6 text-center">
                 Half Price is: <span className="font-semibold text-black">₹ ${halfPaymentId?.half_payment}</span>
               </p>
 
               {halfPaymentId?.half_payment_image &&
-                <div className="py-2 h-36 w-full" >
-                  <img src={halfPaymentId?.half_payment_image} className="size-full bg-contain bg-center" />
+                <div className="py-2 w-full text-center">
+                  <a href={halfPaymentId?.half_payment_image} target="_blank">
+                    Click to view
+                  </a>
                 </div>
 
               }
@@ -917,7 +973,8 @@ const PurchaseHistory = () => {
               </div>}
             </div>
             <div className="pt-4 text-white font-medium flex gap-3 " >
-              <button className="py-2 px-3 bg-blue-600 rounded-lg" onClick={handleHalfPaymentProf} >submit</button>
+              <button className="py-2 px-3 bg-blue-600 rounded-lg" onClick={handleHalfPaymentProf}
+                disabled={isSubmitting} >submit</button>
               <button className="py-2 px-3 bg-blue-600 rounded-lg" onClick={isHalfPaymentClose} >Close</button>
             </div>
           </ModalBody>
@@ -930,7 +987,7 @@ const PurchaseHistory = () => {
           <ModalHeader>View Pro Forma Invoice</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Img src={proformaFile} alt="Proforma Invoice" />
+            Click to view the <a className="text-blue-500 underline" href={proformaFile} target="_blank">Pro Forma Invoice</a>
           </ModalBody>
         </ModalContent>
       </Modal>
