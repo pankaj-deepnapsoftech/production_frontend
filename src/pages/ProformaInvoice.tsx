@@ -134,7 +134,7 @@ const ProformaInvoice: React.FC = () => {
 
         <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 items-start gap-x-2 w-full md:w-fit">
           <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
+            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
             rows={1}
             placeholder="Search"
             value={searchKey}
@@ -147,8 +147,8 @@ const ProformaInvoice: React.FC = () => {
             width={{ base: "-webkit-fill-available", md: 100 }}
             onClick={fetchProformaInvoiceHandler}
             leftIcon={<MdOutlineRefresh />}
-            color="#1640d6"
-            borderColor="#1640d6"
+            color="#319795"
+            borderColor="#319795"
             variant="outline"
           >
             Refresh

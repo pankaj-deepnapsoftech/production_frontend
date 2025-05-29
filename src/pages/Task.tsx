@@ -60,8 +60,8 @@ const Task = () => {
   const [tokenAmount, setTokenAmount] = useState();
   const [paymentFor, setPaymentFor] = useState("");
   const [sampleimagefile, setsampleFile] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const[limit, setLimit] = useState(10);
   const [selectedData, setSelectedData] = useState<any>([]);
   const [filters, setFilters] = useState({
     status: "",
@@ -88,7 +88,7 @@ const Task = () => {
       setIsLoading(true);
 
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}assined/get-assined?page=${page}`,
+        `${process.env.REACT_APP_BACKEND_URL}assined/get-assined?page=${page}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${cookies?.access_token}`,
@@ -160,7 +160,7 @@ const Task = () => {
 
   useEffect(() => {
     fetchTasks();
-  }, [cookies?.access_token, page]);
+  }, [cookies?.access_token, page, limit]);
 
   const handleFilterChange = (field, value) => {
     setFilters({ ...filters, [field]: value });
@@ -387,7 +387,71 @@ const Task = () => {
 
   return (
     <div className="overflow-x-hidden">
-      <HStack className="flex justify-between items-center mb-5 mt-5">
+
+      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+        Tasks
+      </div>
+
+      {/* Employees Page */}
+      <div className="w-full  flex justify-between gap-4 pb-2">
+        <div className="w-full">
+            <Input
+              placeholder="Search by Product or Manager"
+              fontSize="sm"
+              onChange={(e) => handleFilterChange("search", e.target.value)}
+              _focus={{
+                borderColor: "#0d9488", // or any Chakra color like "teal.400"
+                boxShadow: "0 0 0 1px #14b8a6" // optional for a ring-like effect
+              }}
+              transition="all 0.2s"
+            />
+        </div>
+        <div className="flex  justify-between gap-4">
+            <Select
+              placeholder="Status"
+              width="25%"
+              fontSize="sm"
+              onChange={(e) => handleFilterChange("status", e.target.value)}
+            >
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </Select>
+            <Input
+              type="date"
+              fontSize="sm"
+              w="200px"
+              onChange={(e) => handleFilterChange("date", e.target.value)}
+            />
+          <Button
+            fontSize={{ base: "14px", md: "14px" }}
+            paddingX={{ base: "10px", md: "12px" }}
+            onClick={fetchTasks}
+            leftIcon={<MdOutlineRefresh />}
+            color="#319795"
+            borderColor="#319795"
+            variant="outline"
+          >
+            Refresh
+          </Button>
+          <Select
+            value={limit}
+            onChange={(e) => {
+              const newSize = Number(e.target.value);
+              setLimit(newSize);
+            }}
+            width="80px"
+          >
+            {[10, 20, 50, 100, 100000].map((size) => (
+              <option key={size} value={size}>
+                {size === 100000 ? "All" : size}
+              </option>
+            ))}
+          </Select>
+        </div>
+        
+      </div>
+      
+      {/* <HStack className="flex justify-between items-center mb-5 mt-5">
         <Text className="text-lg font-bold">Tasks</Text>
         <HStack className="space-x-2">
           <Button
@@ -397,8 +461,8 @@ const Task = () => {
             width={{ base: "full", md: 100 }}
             onClick={fetchTasks}
             leftIcon={<MdOutlineRefresh />}
-            color="#1640d6"
-            borderColor="#1640d6"
+            color="#319795"
+            borderColor="#319795"
             variant="outline"
           >
             Refresh
@@ -436,7 +500,22 @@ const Task = () => {
             onChange={(e) => handleFilterChange("search", e.target.value)}
           />
         </FormControl>
-      </HStack>
+
+        <Select
+          value={limit}
+          onChange={(e) => {
+            const newSize = Number(e.target.value);
+            setLimit(newSize);
+          }}
+          width="80px"
+        >
+          {[10, 20, 50, 100, 100000].map((size) => (
+            <option key={size} value={size}>
+              {size === 100000 ? "All" : size}
+            </option>
+          ))}
+        </Select>
+      </HStack> */}
 
       {isLoading ? (
         <Box
@@ -482,12 +561,22 @@ const Task = () => {
                 </Text>
 
                 <VStack align="start">
-                  <Badge
-                    colorScheme={colorChange(task.design_status)}
-                    fontSize="sm"
-                  >
-                    <strong>Task:</strong> {task?.design_status}d
-                  </Badge>
+                {["acc", "account", "accountant"].includes(
+                    role.toLowerCase()
+                  ) ? (
+                    <Badge
+                      colorScheme={colorChange(task.design_status)}
+                      fontSize="sm"
+                    > 
+                      <strong>Task:</strong> {task?.design_status}{task?.design_status !== "UnderProcessing" ? "D" : ""}
+                    </Badge>
+                  ) : <Badge
+                  colorScheme={colorChange(task.design_status)}
+                  fontSize="sm"
+                >
+                  <strong>Task:</strong> {task?.design_status}
+                </Badge>}
+                  
 
                   {["acc", "account", "accountant", "dispatch", "dis"].includes(
                     role.toLowerCase()
@@ -627,8 +716,7 @@ const Task = () => {
                       <strong className="text-black">BOM Name:</strong> {task?.bom_name}
                     </Text>
                   ) : null}
-
-                  {task?.token_ss ? (
+                  {role != "Production" && task?.token_ss ? (
                     <Text
                       className="text-blue-500 underline text-sm cursor-pointer"
                       onClick={() =>
@@ -645,8 +733,7 @@ const Task = () => {
                       View Token Proof{" "}
                     </Text>
                   ) : null}
-                  {console.log(task)}
-                  {task?.allsale?.half_payment_image ? (
+                  {role != "Production" && task?.allsale?.half_payment_image ? (
                     <Text
                       className="text-blue-500 underline text-sm cursor-pointer"
                       onClick={() => { onViewHalfPaymentssOpen(); sethalfAmountId(task) }}
@@ -714,6 +801,7 @@ const Task = () => {
 
                 </HStack>
               ) : ["accountant", "acc"].includes(role.toLowerCase()) ? (
+                
                 <HStack
                   justify="space-between"
                   mt={3}

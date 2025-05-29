@@ -161,6 +161,7 @@ const PurchaseHistory = () => {
         }
       );
       setPurchases(response.data?.data);
+      console.log('purchase length =', purchases.length);
       console.log(response.data.data);
     } catch (error: any) {
       toast.error(
@@ -175,6 +176,8 @@ const PurchaseHistory = () => {
 
   const handleApprove = async (purchaseId: string) => {
     try {
+      if (isSubmitting) return;
+      setIsSubmitting(true);
       const token = cookies.access_token;
       if (!token) throw new Error("Authentication token not found");
 
@@ -195,6 +198,8 @@ const PurchaseHistory = () => {
         error.message ||
         "Failed to approve purchase"
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -309,7 +314,7 @@ const PurchaseHistory = () => {
 
   useEffect(() => {
     fetchPurchases();
-  }, []);
+  }, [pages]);
 
   return (
     <div className="md:ml-80 sm:ml-0 overflow-x-hidden">
@@ -324,8 +329,8 @@ const PurchaseHistory = () => {
           width="100px"
           onClick={fetchPurchases}
           leftIcon={<MdOutlineRefresh />}
-          color="#1640d6"
-          borderColor="#1640d6"
+          color="#319795"
+            borderColor="#319795"
           variant="outline"
         >
           Refresh
@@ -381,6 +386,7 @@ const PurchaseHistory = () => {
                       bg="orange.400"
                       _hover={{ bg: "orange.500" }}
                       color="white"
+                      disabled={isSubmitting}
                       onClick={() => handleApprove(purchase?._id)}
                     >
                       Approve
@@ -544,9 +550,10 @@ const PurchaseHistory = () => {
                       ).toFixed(2)}
                     </span>
                   </Text>
+                  
                   {purchase?.productFile ? (
                     <Text
-                      className="text-blue-500 font-semibold underline "
+                      className="text-blue-500 font-semibold underline cursor-pointer"
                       onClick={() => handleProduct(purchase?.productFile)}
                     >
                       Product Image

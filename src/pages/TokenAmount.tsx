@@ -90,14 +90,14 @@ const TokenAmount = ({ sale, onClose, refresh, tokenAmount }) => {
              </FormControl>
      
              <div className="flex justify-between space-x-2">    
-               <Button
-                 colorScheme="blue"
-                 onClick={handleSubmit}
-                 className="w-full"
-                 disabled={isSubmitting}
-               >
+                <Button
+                  colorScheme="blue"
+                  onClick={handleSubmit}
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
                  Submit
-               </Button>
+                </Button>
              </div>
            </form>
       )}

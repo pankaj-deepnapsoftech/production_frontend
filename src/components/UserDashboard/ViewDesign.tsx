@@ -167,7 +167,6 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
             resize="vertical"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            focusBorderColor="red.500"
           />
         )}
 

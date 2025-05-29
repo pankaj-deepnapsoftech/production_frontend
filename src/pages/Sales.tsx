@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Salestatus from "./Salestatus";
 import Sampleimage from "./Sampleimage";
+import Orderimage from "./Orderimage";
 
 import {
   Box,
@@ -35,7 +36,7 @@ import { FaEdit, FaCloudUploadAlt } from "react-icons/fa";
 import { IoEyeSharp } from "react-icons/io5";
 import CreateSale from "./CreateSale";
 import UpdateSale from "./UpdateSale";
-import { MdOutlineRefresh } from "react-icons/md";
+import { MdOutlineRefresh, MdOutlineTaskAlt } from "react-icons/md";
 import Assign from "./Assign";
 import Pagination from "./Pagination";
 import TokenAmount from "./TokenAmount";
@@ -44,6 +45,8 @@ import UploadInvoice from "./UploadInvoice";
 import ProformaInvoice from "./UpdateProformaInvoice";
 import ViewDesign from "./ViewDesign";
 import PaymentModal from "./PaymentModal";
+
+import TrackProduction from "../components/UserDashboard/TrackProduction";
 
 const Sales = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
@@ -70,7 +73,12 @@ const Sales = () => {
   const [productionStatus, setProductionStatus] = useState("");
   const [approveStatus, setApproveStatus] = useState<boolean>();
   const [file, setFile] = useState(null);
-    const [invoiceFile, setInvoiceFile] = useState("");
+  const [invoiceFile, setInvoiceFile] = useState("");
+  const [designProcess, setDesignProcess] = useState<any>([]);
+  const [selectedProcess, setSelectedProcess] = useState<any>([]);
+  const [halfAmountId, sethalfAmountId] = useState("")
+  const [halfAmount, sethalfAmount] = useState(null);
+  const [stage, setStage] = useState("");
   const {
     isOpen: isImageModalOpen,
     onOpen: onImageOpen,
@@ -82,6 +90,18 @@ const Sales = () => {
     onOpen: onSampleOpen,
     onClose: onSampleClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isOrderModalOpen,
+    onOpen: onOrderOpen,
+    onClose: onOrderClose,
+  } = useDisclosure();
+
+  const {
+      isOpen: isProductionModalOpen,
+      onOpen: onProductionOpen,
+      onClose: onProductionClose,
+    } = useDisclosure();
 
   const [saleId, setSaleId] = useState("");
   const invoiceDisclosure = useDisclosure();
@@ -96,6 +116,8 @@ const Sales = () => {
   const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
   const [assignId, setAssignId] = useState();
   const [paymentFor, setPaymentFor] = useState("");
+  const[limit, setLimit] = useState(10);
+  const half_payment = useDisclosure()
   const openSalestatusModal = (
     designFile: string,
     purchase: object,
@@ -112,6 +134,13 @@ const Sales = () => {
   ) => {
     setSelectedData(purchase);
     onSampleOpen();
+  };
+
+  const openSampleOrderModal = (
+    purchase: object,
+  ) => {
+    setSelectedData(purchase);
+    onOrderOpen();
   };
 
   
@@ -164,6 +193,12 @@ const Sales = () => {
     onClose: onDesignerClose,
   } = useDisclosure();
 
+  const handleTokenClick = (id: any, amount: number) => {
+    setSaleId(id);
+    setTokenAmount(amount);
+    tokenDisclosure.onOpen();
+  };
+
   const role = cookies?.role;
   const token = cookies.access_token;
 
@@ -177,9 +212,9 @@ const Sales = () => {
 
       let url = "";
       if (role === "admin") {
-        url = `${process.env.REACT_APP_BACKEND_URL}purchase/getAll?page=${pages}`;
+        url = `${process.env.REACT_APP_BACKEND_URL}purchase/getAll?page=${pages}&limit=${limit}`;
       } else {
-        url = `${process.env.REACT_APP_BACKEND_URL}purchase/getOne?page=${pages}`;
+        url = `${process.env.REACT_APP_BACKEND_URL}purchase/getOne?page=${pages}&limit=${limit}`;
       }
 
       const response = await axios.get(url, {
@@ -189,7 +224,7 @@ const Sales = () => {
       });
 
       setPurchases(response.data.data);
-      console.log(response.data.data);
+      console.log("djebdh ", purchases.length);
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
@@ -236,7 +271,7 @@ const Sales = () => {
   useEffect(() => {
     fetchPurchases();
     fetchEmployees();
-  }, [pages]);
+  }, [pages, limit]);
 
   useEffect(() => {
     if (!purchases.length) {
@@ -338,47 +373,77 @@ const Sales = () => {
     paymentDisclosure.onOpen();
   };
 
+  const handleHalfPayment = async () => {
+    const data = {
+      half_payment: halfAmount,
+      half_payment_status: "pending",
+    }
+    try {
+      half_payment.onClose()
+      const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}purchase/update/${halfAmountId.sale_id}`, data, {
+        headers: {
+          Authorization: `Bearer ${cookies?.access_token}`,
+        },
+      })
+      toast.success("Half Amount added");
+
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  
+
   return (
     <div className="overflow-x-hidden">
-      <Box p={5}>
-        <Text className="text-lg font-bold">Sales</Text>
-        <HStack className="flex-wrap justify-between items-center mb-5 mt-5 space-y-4 md:space-y-0">
-          <Box
-            display="grid"
-            gridTemplateColumns={{ base: "1fr", lg: "repeat(3, 1fr)" }}
-            gap={4}
-            width="100%"
-          >
-            <Input
+      <Box>
+      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+        Sales
+      </div>
+
+      {/* Sales Page */}
+      <div className="w-full  flex justify-between gap-4 pb-2">
+        <div className="w-full">
+          <Input
               type="text"
               placeholder="Search Sale..."
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
               className="w-full md:w-auto"
+              _focus={{
+                borderColor: "#0d9488", // or any Chakra color like "teal.400"
+                boxShadow: "0 0 0 1px #14b8a6" // optional for a ring-like effect
+              }}
+              transition="all 0.2s"
             />
-            <Input
+        </div>
+        <div className="flex  justify-between gap-4">
+           <Input
               type="date"
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
-              className="w-full md:w-auto"
+              // className="w-[120px] md:w-[140px]"
+              width={{ base: "120px", md: "140px" }}
             />
             <Select
-              placeholder="Filter by Sale Status"
+              placeholder="Sale Status"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full md:w-auto"
+              width={{ base: "120px", md: "140px" }}
             >
               <option value="Pending">Pending</option>
               <option value="Approved">Approved</option>
             </Select>
-          </Box>
 
-          <HStack className="space-x-2 w-full md:w-auto justify-end">
+
             <Button
-              bgColor="white"
-              _hover={{ bgColor: "blue.500" }}
-              className="border border-blue-500 hover:text-white px-5 w-full md:w-auto"
               onClick={createDisclosure.onOpen}
+
+              color="#ffffff"
+              backgroundColor="#0d9488"
+              _hover={{backgroundColor:"#14b8a6"}}
+              className="py-3  text-white rounded-lg focus:ring-2"
             >
               Add New Sale
             </Button>
@@ -389,14 +454,33 @@ const Sales = () => {
               width={{ base: "full", md: 100 }}
               onClick={fetchPurchases}
               leftIcon={<MdOutlineRefresh />}
-              color="#1640d6"
-              borderColor="#1640d6"
+              color="#319795"
+              borderColor="#319795"
               variant="outline"
             >
               Refresh
             </Button>
-          </HStack>
-        </HStack>
+
+            <div className="flex justify-end mb-2">
+              <Select
+                value={limit}
+                onChange={(e) => {
+                  const newSize = Number(e.target.value);
+                  setLimit(newSize);
+                }}
+                width="80px"
+              >
+                {[10, 20, 50, 100, 100000].map((size) => (
+                  <option key={size} value={size}>
+                    {size === 100000 ? "All" : size}
+                  </option>
+                ))}
+              </Select>
+            </div>
+
+        </div>
+        
+      </div>
 
         {isLoading ? (
           <Box
@@ -597,6 +681,31 @@ const Sales = () => {
                     </Text>
                   </VStack>
                   <VStack align="start" w={{ base: "100%", md: "auto" }}>
+                    {/* {role === 'Sales' && purchase.Status === "Approved" && (
+                      <Button
+                        size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
+                        bgColor="white"
+                        leftIcon={<MdOutlineTaskAlt />}
+                        _hover={{ bgColor: "green.500" }}
+                        className="border border-green-500 hover:text-white w-full sm:w-auto"
+                        onClick={() => {
+                          onProductionOpen();
+                          setDesignProcess(purchase?.empprocess);
+    
+                          const selectedBom =
+                            purchase?.boms[1] || purchase?.boms[0];
+                          const selectedProcess =
+                            selectedBom?.production_processes[0]?.processes;
+    
+                          const bomstage = purchase?.boms[1] ? "real" : "sample";
+                          setStage(bomstage);
+                          setSelectedProcess(selectedProcess);
+                        }}
+                      >
+                        Track Production
+                      </Button>
+                    )} */}
+
                     <Text fontSize="sm">
                       <strong>GST :</strong> {purchase?.GST}%
                     </Text>
@@ -675,10 +784,6 @@ const Sales = () => {
                         View Pro Forma Invoice{" "}
                       </a>
                     ) : null}
-
-                    
-
-
                   </VStack>
                 </HStack>
 
@@ -751,6 +856,25 @@ const Sales = () => {
                       Sample Image
                     </Button>
                   ): null}
+
+                  {/* {["sales", "admin"].includes(
+                    role.toLowerCase()) && purchase?.allsale?.half_payment_image ? (
+                    <Button
+                      bgColor="white"
+                      _hover={{ bgColor: "orange.500" }}
+                      className="border border-red-500 hover:text-white"
+                      w={{ base: "100%", md: "auto" }}
+                      onClick={() =>
+                        openSampleOrderModal(
+                          purchase,
+                        )
+                      }
+                    >
+                      Order Image
+                    </Button>
+                  ) : null} */}
+
+                  
                   
                   {role === 'Sales' && (
                     <Button
@@ -818,6 +942,40 @@ const Sales = () => {
                       Update Pro Forma Invoice
                     </Button>
                   ) : null}
+                  
+                  {/* {["sales", "admin"].includes(
+                    role.toLowerCase()
+                  ) && purchase?.customer_approve === "Approved" ? (
+                    <Button
+                      bgColor="white"
+                      _hover={{ bgColor: "purple.500" }}
+                      className="border border-purple-500 hover:text-white"
+                      w={{ base: "100%", md: "auto" }}
+                      onClick={() =>
+                        handleTokenClick(purchase?._id, purchase?.token_amt)
+                      }
+                    >
+                      Add Token Amount{" "}
+                    </Button>
+                  ) : null} */}
+
+                  {/* {["sales", "admin"].includes(
+                    role.toLowerCase()
+                  ) && purchase?.isSampleApprove &&
+                    <Button
+                      bgColor="white"
+                      _hover={{ bgColor: "blue.500" }}
+                      className="border border-blue-500 hover:text-white"
+                        onClick={() => {
+                          half_payment.onOpen();
+                          sethalfAmountId(purchase)
+                        }
+                      }
+                      width={{ base: "full", sm: "auto" }}
+                    >
+                      Add half Payment
+                    </Button>
+                  } */}
 
                   {purchase?.customer_pyement_ss ? (
                   <Button
@@ -852,17 +1010,47 @@ const Sales = () => {
                   >
                     Assign
                   </Button>
-
-
-
-
-
                 </HStack>
               </Box>
             ))}
           </Box>
         )}
       </Box>
+
+
+      {/* half payment modal */}
+      <Modal isOpen={half_payment.isOpen} onClose={half_payment.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Enter Half Amount</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              {/* <FormLabel>Number</FormLabel> */}
+              <Input
+                type="number"
+                id="number-input"
+                placeholder="Enter a number"
+                value={halfAmountId?.allsale?.half_payment ? halfAmountId?.allsale?.half_payment : halfAmount}
+                onChange={(e) => sethalfAmount(e.target.value)}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={handleHalfPayment}
+              isDisabled={!halfAmount}
+            >
+              Submit
+            </Button>
+            <Button variant="ghost" onClick={half_payment.onClose}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
       {/* Create Sale Modal */}
       <Modal
@@ -871,7 +1059,7 @@ const Sales = () => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add a new Sale</ModalHeader>
+          <ModalHeader>Add A New Sale</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <CreateSale
@@ -1031,6 +1219,23 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
+      {/* Order image Modal */}
+      <Modal isOpen={isOrderModalOpen} onClose={onOrderClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Order Image</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {/* {selectedDesign && selectedData && ( */}
+            <Orderimage
+              purchaseData={selectedData}
+              onClose={onSampleClose}
+            />
+            {/* )} */}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
       {/* View Design Modal */}
       <Modal isOpen={isDesignModalOpen} onClose={onDesignerClose}>
         <ModalOverlay />
@@ -1129,6 +1334,49 @@ const Sales = () => {
               className="border border-red-500 hover:text-white w-full ml-2"
               mr={3}
               onClick={() => proformainvoiceDisclosure.onClose()}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Track Production Modal */}
+      <Modal isOpen={isProductionModalOpen} onClose={onProductionClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Track Production</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <TrackProduction
+              designProcess={designProcess}
+              productionProcess={selectedProcess}
+              stage={stage}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* token modal */}
+      <Modal isOpen={tokenDisclosure.isOpen} onClose={tokenDisclosure.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader> Sample Token Amount</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <TokenAmount
+              sale={saleId}
+              onClose={tokenDisclosure.onClose}
+              refresh={fetchPurchases}
+              tokenAmount={tokenAmount}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500" }}
+              className="border border-red-500 hover:text-white w-full ml-2"
+              onClick={tokenDisclosure.onClose}
             >
               Cancel
             </Button>

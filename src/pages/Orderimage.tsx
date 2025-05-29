@@ -16,13 +16,16 @@ import axios from "axios";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
 
-const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }) => {
+const UploadorderImage = ({ purchaseData, onClose }) => {
+  console.log('purchase_data', purchaseData)
   const [file, setFile] = useState(null);
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
-  const [cookies] = useCookies(['access_token']);
+  const [cookies] = useCookies();
   const Toast = useToast();
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
+
+
   const handleFileDrop = (event) => {
     event.preventDefault();
     if (event.dataTransfer.files && event.dataTransfer.files[0]) {
@@ -42,25 +45,22 @@ const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }
     }
 
     const formData = new FormData();
-    formData.append("delivery", file);
-    formData.append("role", userRole);
+    formData.append("sample_image", file);
     if (isSubmitting) return;
     setIsSubmitting(true);
     try {
-      const token = cookies?.access_token
       const response = await axios.patch(
-        `${process.env.REACT_APP_BACKEND_URL}purchase/delivery/${id}`,
+        `${process.env.REACT_APP_BACKEND_URL}purchase/upload-order-image/${purchaseData._id}`,
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${cookies?.access_token}`,
             "Content-Type": "multipart/form-data",
           },
         }
       );
 
-     
-
+ 
       Toast({
         title: "Success",
         description: "File Uploaded Successfully :) ",
@@ -71,7 +71,6 @@ const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }
 
       onClose(); // Close the modal or perform any other action
     } catch (error) {
-      console.error("Error uploading file:", error);
       Toast({
         title: "Error",
         description: "Failed to upload the File :( ",
@@ -79,7 +78,6 @@ const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }
         duration: 5000,
         isClosable: true,
       });
-
       onClose(); // Close the modal or perform any other action
     } finally {
       setIsSubmitting(false);
@@ -89,17 +87,17 @@ const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }
   return (
     <div>
       <VStack spacing={4} align="stretch">
-        {orderfile ? (
+        {purchaseData?.sample_image ? (
           <Text fontSize="sm" color="teal.500">
-            <strong className="text-black">{deliveryproofupload} have already sended the proof : </strong>
-            <a href={orderfile} target="_blank">
+            <strong className="text-black">You have already uploaded the file : </strong>
+            <a href={purchaseData?.sample_image} target="_blank">
               Uploaded File
             </a>
           </Text>
         ) : (
           <>
             <FormControl>
-              <FormLabel>Upload Delivery Proof Screenshort</FormLabel>
+              <FormLabel>Upload File</FormLabel>
               <Box
                 p={4}
                 borderWidth="2px"
@@ -135,7 +133,7 @@ const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }
               mr={3}
               onClick={handleFileUpload}
               isDisabled={!file}
-              disabled={isSubmitting}
+                disabled={isSubmitting}
             >
               Upload
             </Button>
@@ -146,4 +144,4 @@ const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }
   );
 };
 
-export default UploadPayment;
+export default UploadorderImage;

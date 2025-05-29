@@ -32,6 +32,7 @@ import { TbTruckDelivery } from "react-icons/tb";
 import DispatchData from "./DispatchData";
 import { toast } from "react-toastify";
 import DeliveryProof from "../components/UserDashboard/DeliveryProof";
+import Pagination from "./Pagination";
 const Dispatch = () => {
   const [cookies] = useCookies();
   const role = cookies?.role;
@@ -43,6 +44,7 @@ const Dispatch = () => {
   const [purchaseId, setPurchaseId] = useState("");
   const DispatchDisclosure = useDisclosure();
   const [orderFile, setOrderFile] = useState("");
+  const [pages, setPages] = useState(1);
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState(""); 
   const [selectedProductStatus, setSelectedProductStatus] = useState(""); 
   const [deliveryproofuser, setdeliveryproofuser] = useState(""); 
@@ -50,7 +52,7 @@ const Dispatch = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}production-process/accountant-data`,
+        `${process.env.REACT_APP_BACKEND_URL}production-process/accountant-data?page=${pages}`,
         {
           headers: {
             Authorization: `Bearer ${cookies?.access_token}`,
@@ -59,6 +61,7 @@ const Dispatch = () => {
       );
       console.log(response.data?.data);    
       setData(response.data?.data);    
+      console.log('data.length ', data.length)
     } catch (error: any) {
       toast.error(error);
     }
@@ -66,7 +69,7 @@ const Dispatch = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [pages]);
 
   const calculateTotal = (price: number, qty: number, gst: number) => {
     const basePrice = price * qty;
@@ -115,9 +118,11 @@ const Dispatch = () => {
 
   return (
     <div className="overflow-x-hidden">
-      <Box p={5}>
-        <Text className="text-lg font-bold">Completed Products</Text>
-        <HStack className="flex justify-between items-center mb-5 mt-5">
+      <Box>
+        <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+          Completed Products
+        </div>
+        <HStack className="flex justify-between items-center mb-2">
           {/* filters */}
           <FormControl>
             <FormLabel fontSize="sm">Payment Status</FormLabel>
@@ -153,8 +158,8 @@ const Dispatch = () => {
               width={{ base: "-webkit-fill-available", md: 100 }}
               leftIcon={<MdOutlineRefresh />}
               onClick={fetchData}
-              color="#1640d6"
-              borderColor="#1640d6"
+              color="#319795"
+              borderColor="#319795"
               variant="outline"
               className="mt-6"
             >
@@ -419,6 +424,8 @@ const Dispatch = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+
+      <Pagination page={pages} setPage={setPages} length={data.length} />
     </div>
   );
 };

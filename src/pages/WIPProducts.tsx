@@ -29,7 +29,8 @@ const WIPProducts: React.FC = () => {
   const [productId, setProductId] = useState<string | undefined>(); // Product Id to be updated or deleted
   const [searchKey, setSearchKey] = useState<string | undefined>();
   const [filteredData, setFilteredData] = useState<any>([]);
-
+  const [workprogress, setworkprogress] = useState<any>([]);
+  
   // Bulk upload menu
   const [showBulkUploadMenu, setShowBulkUploadMenu] = useState<boolean>(false);
 
@@ -110,6 +111,7 @@ const WIPProducts: React.FC = () => {
         throw new Error(results?.message);
       }
       setData(results.products);
+      setworkprogress(results.transformData);
       setFilteredData(results.products);
     } catch (error: any) {
       toast.error(error?.message || "Something went wrong");
@@ -244,13 +246,13 @@ const WIPProducts: React.FC = () => {
         </div>
 
         <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 items-start gap-x-2 w-full md:w-fit">
-          <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
+          {/* <textarea
+            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
             rows={1}
             placeholder="Search"
             value={searchKey}
             onChange={(e) => setSearchKey(e.target.value)}
-          />
+          /> */}
           <Button
             fontSize={{ base: "14px", md: "14px" }}
             paddingX={{ base: "10px", md: "12px" }}
@@ -258,8 +260,8 @@ const WIPProducts: React.FC = () => {
             width={{ base: "-webkit-fill-available", md: 100 }}
             onClick={fetchProductsHandler}
             leftIcon={<MdOutlineRefresh />}
-            color="#1640d6"
-            borderColor="#1640d6"
+            color="#319795"
+            borderColor="#319795"
             variant="outline"
           >
             Refresh
@@ -270,10 +272,10 @@ const WIPProducts: React.FC = () => {
       <div>
         <WIPProductTable
           isLoadingProducts={isLoadingProducts}
-          products={filteredData}
-          openUpdateProductDrawerHandler={openUpdateProductDrawerHandler}
-          openProductDetailsDrawerHandler={openProductDetailsDrawerHandler}
-          deleteProductHandler={deleteProductHandler}
+          products={workprogress}
+          // openUpdateProductDrawerHandler={openUpdateProductDrawerHandler}
+          // openProductDetailsDrawerHandler={openProductDetailsDrawerHandler}
+          // deleteProductHandler={deleteProductHandler}
         />
       </div>
     </div>

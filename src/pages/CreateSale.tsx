@@ -69,13 +69,12 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
-
-    if (name === "productFile") {
+    if (type === "file") {
       const file = (e.target as HTMLInputElement).files?.[0] || null;
-      setFormData((prevData) => ({ ...prevData, productFile: file }));
-    } if (name == "performaInvoice") {
-      const file = (e.target as HTMLInputElement).files?.[0] || null;
-      setFormData((prevData) => ({ ...prevData, performaInvoice: file }));
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: file,
+      }));
     } else {
       setFormData((prevData) => ({ ...prevData, [name]: value }));
     }
@@ -105,7 +104,7 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
     if (formData.performaInvoice) {
       formDataToSend.append("performaInvoice", formData.performaInvoice);
     }
-    
+    console.log("productFile = ", formData.productFile)
     if (formData.productFile) {
       formDataToSend.append("productFile", formData.productFile);
     }
@@ -234,7 +233,6 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
 
         <Button type="submit" colorScheme="teal" size="lg" width="full"
           disabled={isSubmitting}>
-          {isSubmitting}
           Add Sale
         </Button>
       </form>

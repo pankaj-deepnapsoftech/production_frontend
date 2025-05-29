@@ -174,3 +174,72 @@ input[type=number] {
     opacity: 0; 
     animation-delay: 3s;
   }
+
+
+  /* styles.css */
+
+/* Horizontally and vertically center text in all cells */
+.ag-theme-alpine .ag-cell {
+  display: flex;
+  align-items: center;   /* vertical alignment: center */
+  justify-content: left; /* horizontal alignment: center */
+  padding: 0; /* optional: reduce padding */
+  text-align: left;
+}
+
+/* To align text at the top: */
+.ag-theme-alpine .ag-cell.align-top {
+  align-items: flex-start;
+}
+
+/* To align text at the bottom: */
+.ag-theme-alpine .ag-cell.align-bottom {
+  align-items: flex-end;
+}
+
+/* --- Header Cell Styling --- */
+.ag-theme-alpine .ag-header-cell-label {
+  display: flex;
+  align-items: center;       /* Vertical center */
+  justify-content: left;   /* Horizontal center */
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+/* Optional: Consistent font & padding */
+.ag-theme-alpine .ag-header-cell {
+  padding: 0;
+  font-weight: bold;
+}
+
+.ag-header-cell-label {
+  white-space: normal !important;
+  line-height: 1.2;
+  padding: 10px;
+}
+
+/* Add this to your CSS file */
+.ag-theme-alpine .ag-header-cell {
+  border: 1px solid #bfbfbf; /* You can customize the border style and color */
+}
+
+
+li:hover span:nth-child(2) {
+  opacity: 1;
+  pointer-events: auto;
+}
+li:hover span:nth-child(3) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+::selection {
+  background: #319795;
+  color: #fff; /* Optional: change text color on selection */
+}
+
+input:focus {
+  border-color: #319795; /* Change this to any color you prefer */
+  outline: #14b8a6; /* Optional: removes the default focus outline */
+}
