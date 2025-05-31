@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Intro from "../components/Authentication/Intro";
+// import Intro from "../components/Authentication/Intro";
 import { Link, useNavigate } from "react-router-dom";
 import LoginComponent from "../components/Authentication/LoginComponent";
 import ForgetPasswordComponent from "../components/Authentication/ForgetPasswordComponent";
@@ -19,10 +19,10 @@ const Login: React.FC = () => {
 
   return (
     <div className="w-full min-h-[100vh] flex">
-      <Intro />
+      {/* <Intro /> */}
 
       {/* LOGIN AREA */}
-      <div className="h-[100vh] w-full xl:w-[50%] flex flex-col items-center justify-center">
+      <div className="h-[100vh] w-full flex flex-col items-center justify-center">
         {/* Login Section */}
         {showLoginComponent && (
           <LoginComponent
@@ -36,9 +36,9 @@ const Login: React.FC = () => {
           />
         )}
         {/* Forget Password Section */}
-        {showForgetPasswordComponent && (
+        {/* {showForgetPasswordComponent && (
           <ForgetPasswordComponent email={email} setEmail={setEmail} password={password} setPassword={setPassword} />
-        )}
+        )} */}
       </div>
     </div>
   );

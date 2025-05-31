@@ -13,10 +13,10 @@ const Register: React.FC = () => {
 
   return (
     <div className="w-full min-h-[100vh] flex">
-      <Intro />
+      {/* <Intro /> */}
 
       {/* REGISTER AREA */}
-      <div className="h-[100vh] w-full xl:w-[50%] flex flex-col items-center justify-center">
+      <div className="h-[100vh] w-full flex flex-col items-center justify-center">
         {/* Register Component */}
         {showRegisterComponent && <RegisterComponent email={email} setEmail={setEmail} setShowRegisterComponent={setShowRegisterComponent} setShowOTPVerificationComponent={setShowOTPVerificationComponent} />}
         {/* OTP Verification Component */}
