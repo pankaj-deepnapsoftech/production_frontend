@@ -36,9 +36,9 @@ const Login: React.FC = () => {
           />
         )}
         {/* Forget Password Section */}
-        {/* {showForgetPasswordComponent && (
+        {showForgetPasswordComponent && (
           <ForgetPasswordComponent email={email} setEmail={setEmail} password={password} setPassword={setPassword} />
-        )} */}
+        )}
       </div>
     </div>
   );
