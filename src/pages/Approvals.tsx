@@ -11,7 +11,11 @@ import {
 } from "../redux/api/api";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import { Button } from "@chakra-ui/react";
+import { 
+  Button,
+  Tabs,
+  TabList,
+  Tab, TabPanels, TabPanel } from "@chakra-ui/react";
 import { MdOutlineRefresh } from "react-icons/md";
 import ProductTable from "../components/Table/ProductTable";
 import StoreTable from "../components/Table/StoreTable";
@@ -65,6 +69,8 @@ const Approvals: React.FC = () => {
   const [updateAgent] = useUpdateAgentMutation();
   const [deleteBom] = useDeleteBomMutation();
   const [updateBom] = useUpdateBOMMutation();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<number>(0);
 
   // For Unapproved Products
   const fetchUnapprovedProductsHandler = async () => {
@@ -246,12 +252,16 @@ const Approvals: React.FC = () => {
   };
 
   const approveBomHandler = async (id: string) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await updateBom({ _id: id, approved: true }).unwrap();
       toast.success(response.message);
       fetchUnapprovedBomsHandler();
     } catch (err: any) {
       toast.error(err?.data?.message || "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -508,264 +518,329 @@ const Approvals: React.FC = () => {
     return <div className="text-center text-red-500">You are not allowed to access this route.</div>
   }
 
+  const tabsData = [
+    {
+      id: "Products",
+      label: "Products",
+    },
+    {
+      id: "Stores",
+      label: "Stores",
+    },
+    {
+      id: "Buyers",
+      label: "Buyers",
+    },
+    {
+      id: "Suppliers",
+      label: "Suppliers",
+    },
+    {
+      id: "BOMs",
+      label: "BOMs",
+    },
+    {
+      id: "Inventory",
+      label: "Inventory",
+    },
+  ]
+
   return (
     <div>
-      {/* PRODUCTS */}
-      <div>
-        {/* Products Page */}
-        <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
-          <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
-            Products for Approval
-          </div>
+      <Tabs variant="unstyled" isFitted>
+      <TabList
+        justifyContent="center"
+        borderBottom="2px solid"
+        borderColor="gray.200"
+        flexWrap="wrap"
+        gap={3}
+        px={4}
+      >
+        {tabsData.map((tab) => (
+          <Tab
+            key={tab.id}
+            fontWeight="semibold"
+            fontSize="md"
+            px={6}
+            py={2}
+            bg="gray.100"
+            color="gray.600"
+            boxShadow="sm"
+            transition="all 0.1s ease"
+            _selected={{
+              bgGradient: "linear(to-r, #14b8a6, #319795)",
+              color: "white",
+              boxShadow: "lg",
+              transform: "scale(1.05)",
+            }}
+            _hover={{
+              bg: "gray.200",
+              transform: "translateY(-2px)",
+              boxShadow: "md",
+            }}
+          >
+            {tab.label}
+          </Tab>
+        ))}
+      </TabList>
 
-          <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
-            <textarea
-              className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
-              rows={1}
-              //   width="220px"
-              placeholder="Search"
-              value={productSearchKey}
-              onChange={(e) => setProductSearchKey(e.target.value)}
-            />
-            <Button
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 100 }}
-              onClick={fetchUnapprovedProductsHandler}
-              leftIcon={<MdOutlineRefresh />}
-              color="#1640d6"
-              borderColor="#1640d6"
-              variant="outline"
-            >
-              Refresh
-            </Button>
-          </div>
-        </div>
+        <TabPanels>
 
-        <div>
-          <ProductTable
-            isLoadingProducts={isLoadingProducts}
-            products={filteredProducts}
-            deleteProductHandler={deleteProductHandler}
-            approveProductHandler={approveProductHandler}
-          />
-        </div>
-      </div>
+        <TabPanel>
+          {/* PRODUCTS */}
+        
+            {/* Products Page */}
+            <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
+              <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
+                Products for Approval
+              </div>
 
-      {/* STORES */}
-      <div className="mt-10">
-        {/* Stores Page */}
-        <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
-          <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
-            Stores for Approval
-          </div>
+              <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
+                <textarea
+                  className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
+                  rows={1}
+                  //   width="220px"
+                  placeholder="Search"
+                  value={productSearchKey}
+                  onChange={(e) => setProductSearchKey(e.target.value)}
+                />
+                <Button
+                  fontSize={{ base: "14px", md: "14px" }}
+                  paddingX={{ base: "10px", md: "12px" }}
+                  paddingY={{ base: "0", md: "3px" }}
+                  width={{ base: "-webkit-fill-available", md: 100 }}
+                  onClick={fetchUnapprovedProductsHandler}
+                  leftIcon={<MdOutlineRefresh />}
+                  color="#319795"
+                  borderColor="#319795"
+                  variant="outline"
+                >
+                  Refresh
+                </Button>
+              </div>
+            </div>
+            <div>
+              <ProductTable
+                isLoadingProducts={isLoadingProducts}
+                products={filteredProducts}
+                deleteProductHandler={deleteProductHandler}
+                approveProductHandler={approveProductHandler}
+              />
+            </div>
+        </TabPanel>
 
-          <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
-            <textarea
-              className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
-              rows={1}
-              //   width="220px"
-              placeholder="Search"
-              value={storeSearchKey}
-              onChange={(e) => setStoreSearchKey(e.target.value)}
-            />
-            <Button
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 100 }}
-              onClick={fetchUnapprovedStoresHandler}
-              leftIcon={<MdOutlineRefresh />}
-              color="#1640d6"
-              borderColor="#1640d6"
-              variant="outline"
-            >
-              Refresh
-            </Button>
-          </div>
-        </div>
+        <TabPanel>
+          {/* STORES */}
+            {/* Stores Page */}
+            <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
+              <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
+                Stores for Approval
+              </div>
 
-        <div>
-          <StoreTable
-            isLoadingStores={isLoadingStores}
-            stores={filteredStores}
-            deleteStoreHandler={deleteStoreHandler}
-            approveStoreHandler={approveStoreHandler}
-          />
-        </div>
-      </div>
+              <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
+                <textarea
+                  className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
+                  rows={1}
+                  //   width="220px"
+                  placeholder="Search"
+                  value={storeSearchKey}
+                  onChange={(e) => setStoreSearchKey(e.target.value)}
+                />
+                <Button
+                  fontSize={{ base: "14px", md: "14px" }}
+                  paddingX={{ base: "10px", md: "12px" }}
+                  paddingY={{ base: "0", md: "3px" }}
+                  width={{ base: "-webkit-fill-available", md: 100 }}
+                  onClick={fetchUnapprovedStoresHandler}
+                  leftIcon={<MdOutlineRefresh />}
+                  color="#319795"
+                  borderColor="#319795"
+                  variant="outline"
+                >
+                  Refresh
+                </Button>
+              </div>
+            </div>
+            <div>
+              <StoreTable
+                isLoadingStores={isLoadingStores}
+                stores={filteredStores}
+                deleteStoreHandler={deleteStoreHandler}
+                approveStoreHandler={approveStoreHandler}
+              />
+            </div>
+        </TabPanel>
+          
+          <TabPanel>
+          {/* BUYERS */}
+            {/* Buyers Page */}
+            <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
+              <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
+                Buyers for Approval
+              </div>
 
-      {/* BUYERS */}
-      <div className="mt-10">
-        {/* Buyers Page */}
-        <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
-          <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
-            Buyers for Approval
-          </div>
+              <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
+                <textarea
+                  className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
+                  rows={1}
+                  //   width="220px"
+                  placeholder="Search"
+                  value={buyerSearchKey}
+                  onChange={(e) => setBuyerSearchKey(e.target.value)}
+                />
+                <Button
+                  fontSize={{ base: "14px", md: "14px" }}
+                  paddingX={{ base: "10px", md: "12px" }}
+                  paddingY={{ base: "0", md: "3px" }}
+                  width={{ base: "-webkit-fill-available", md: 100 }}
+                  onClick={fetchUnapprovedBuyersHandler}
+                  leftIcon={<MdOutlineRefresh />}
+                  color="#319795"
+                  borderColor="#319795"
+                  variant="outline"
+                >
+                  Refresh
+                </Button>
+              </div>
+            </div>
+            <div>
+              <AgentTable
+                isLoadingAgents={isLoadingBuyers}
+                agents={filteredBuyers}
+                deleteAgentHandler={deleteAgentHandler}
+                approveAgentHandler={approveAgentHandler}
+              />
+            </div>
+          </TabPanel>
 
-          <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
-            <textarea
-              className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
-              rows={1}
-              //   width="220px"
-              placeholder="Search"
-              value={buyerSearchKey}
-              onChange={(e) => setBuyerSearchKey(e.target.value)}
-            />
-            <Button
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 100 }}
-              onClick={fetchUnapprovedBuyersHandler}
-              leftIcon={<MdOutlineRefresh />}
-              color="#1640d6"
-              borderColor="#1640d6"
-              variant="outline"
-            >
-              Refresh
-            </Button>
-          </div>
-        </div>
+          <TabPanel>
+          {/* SELLERS */}
+            {/* Buyers Page */}
+            <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
+              <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
+                Suppliers for Approval
+              </div>
 
-        <div>
-          <AgentTable
-            isLoadingAgents={isLoadingBuyers}
-            agents={filteredBuyers}
-            deleteAgentHandler={deleteAgentHandler}
-            approveAgentHandler={approveAgentHandler}
-          />
-        </div>
-      </div>
+              <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
+                <textarea
+                  className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
+                  rows={1}
+                  //   width="220px"
+                  placeholder="Search"
+                  value={sellerSearchKey}
+                  onChange={(e) => setSellerSearchKey(e.target.value)}
+                />
+                <Button
+                  fontSize={{ base: "14px", md: "14px" }}
+                  paddingX={{ base: "10px", md: "12px" }}
+                  paddingY={{ base: "0", md: "3px" }}
+                  width={{ base: "-webkit-fill-available", md: 100 }}
+                  onClick={fetchUnapprovedSellersHandler}
+                  leftIcon={<MdOutlineRefresh />}
+                  color="#319795"
+                  borderColor="#319795"
+                  variant="outline"
+                >
+                  Refresh
+                </Button>
+              </div>
+            </div>
+            <div>
+              <AgentTable
+                isLoadingAgents={isLoadingSellers}
+                agents={filteredSellers}
+                deleteAgentHandler={deleteAgentHandler}
+                approveAgentHandler={approveAgentHandler}
+              />
+            </div>
+          </TabPanel>
 
-      {/* SELLERS */}
-      <div className="mt-10">
-        {/* Buyers Page */}
-        <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
-          <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
-            Suppliers for Approval
-          </div>
+          <TabPanel>
+          {/* BOMs */}
+            {/* BOM Page */}
+            <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
+              <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
+                BOMs for Approval
+              </div>
 
-          <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
-            <textarea
-              className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
-              rows={1}
-              //   width="220px"
-              placeholder="Search"
-              value={sellerSearchKey}
-              onChange={(e) => setSellerSearchKey(e.target.value)}
-            />
-            <Button
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 100 }}
-              onClick={fetchUnapprovedSellersHandler}
-              leftIcon={<MdOutlineRefresh />}
-              color="#1640d6"
-              borderColor="#1640d6"
-              variant="outline"
-            >
-              Refresh
-            </Button>
-          </div>
-        </div>
+              <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
+                <textarea
+                  className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
+                  rows={1}
+                  //   width="220px"
+                  placeholder="Search"
+                  value={bomSearchKey}
+                  onChange={(e) => setBomSearchKey(e.target.value)}
+                />
+                <Button
+                  fontSize={{ base: "14px", md: "14px" }}
+                  paddingX={{ base: "10px", md: "12px" }}
+                  paddingY={{ base: "0", md: "3px" }}
+                  width={{ base: "-webkit-fill-available", md: 100 }}
+                  onClick={fetchUnapprovedBomsHandler}
+                  leftIcon={<MdOutlineRefresh />}
+                  color="#319795"
+                  borderColor="#319795"
+                  variant="outline"
+                >
+                  Refresh
+                </Button>
+              </div>
+            </div>
+            <div>
+              <BOMTable
+                isLoadingBoms={isLoadingBoms}
+                boms={filteredBoms}
+                deleteBomHandler={deleteBomHandler}
+                approveBomHandler={approveBomHandler}
+              />
+            </div>
+          </TabPanel>
 
-        <div>
-          <AgentTable
-            isLoadingAgents={isLoadingSellers}
-            agents={filteredSellers}
-            deleteAgentHandler={deleteAgentHandler}
-            approveAgentHandler={approveAgentHandler}
-          />
-        </div>
-      </div>
+          <TabPanel>
+          {/* BOM Raw Materials */}
+            {/* BOM Raw Material Page */}
+            <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
+              <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
+                Inventory for Approval
+              </div>
 
-      {/* BOMs */}
-      <div className="mt-10">
-        {/* BOM Page */}
-        <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
-          <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
-            BOMs for Approval
-          </div>
+              <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
+                <textarea
+                  className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
+                  rows={1}
+                  //   width="220px"
+                  placeholder="Search"
+                  value={bomRMSearchKey}
+                  onChange={(e) => setBomRMSearchKey(e.target.value)}
+                />
+                <Button
+                  fontSize={{ base: "14px", md: "14px" }}
+                  paddingX={{ base: "10px", md: "12px" }}
+                  paddingY={{ base: "0", md: "3px" }}
+                  width={{ base: "-webkit-fill-available", md: 100 }}
+                  onClick={fetchUnapprovedBomRMsHandler}
+                  leftIcon={<MdOutlineRefresh />}
+                  color="#319795"
+                  borderColor="#319795"
+                  variant="outline"
+                >
+                  Refresh
+                </Button>
+              </div>
+            </div>
+            <div>
+              <BOMRawMaterialTable
+                isLoadingProducts={isLoadingBomRMs}
+                products={filteredBomRMs}
+                approveProductHandler={approveBomRMHandler}
+              />
+            </div>
+          </TabPanel>
 
-          <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
-            <textarea
-              className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
-              rows={1}
-              //   width="220px"
-              placeholder="Search"
-              value={bomSearchKey}
-              onChange={(e) => setBomSearchKey(e.target.value)}
-            />
-            <Button
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 100 }}
-              onClick={fetchUnapprovedBomsHandler}
-              leftIcon={<MdOutlineRefresh />}
-              color="#1640d6"
-              borderColor="#1640d6"
-              variant="outline"
-            >
-              Refresh
-            </Button>
-          </div>
-        </div>
+        </TabPanels>
+      </Tabs>
 
-        <div>
-          <BOMTable
-            isLoadingBoms={isLoadingBoms}
-            boms={filteredBoms}
-            deleteBomHandler={deleteBomHandler}
-            approveBomHandler={approveBomHandler}
-          />
-        </div>
-      </div>
-
-      {/* BOM Raw Materials */}
-      <div className="mt-10">
-        {/* BOM Raw Material Page */}
-        <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-8">
-          <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
-            Inventory for Approval
-          </div>
-
-          <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
-            <textarea
-              className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
-              rows={1}
-              //   width="220px"
-              placeholder="Search"
-              value={bomRMSearchKey}
-              onChange={(e) => setBomRMSearchKey(e.target.value)}
-            />
-            <Button
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 100 }}
-              onClick={fetchUnapprovedBomRMsHandler}
-              leftIcon={<MdOutlineRefresh />}
-              color="#1640d6"
-              borderColor="#1640d6"
-              variant="outline"
-            >
-              Refresh
-            </Button>
-          </div>
-        </div>
-
-        <div>
-          <BOMRawMaterialTable
-            isLoadingProducts={isLoadingBomRMs}
-            products={filteredBomRMs}
-            approveProductHandler={approveBomRMHandler}
-          />
-        </div>
-      </div>
     </div>
   );
 };

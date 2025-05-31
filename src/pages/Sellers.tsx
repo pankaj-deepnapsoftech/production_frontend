@@ -1,4 +1,4 @@
-import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { Button, FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { useCookies } from "react-cookie";
 import { MdOutlineRefresh } from "react-icons/md";
@@ -190,40 +190,33 @@ const Sellers: React.FC = () => {
         />
       )}
 
-      <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between mb-2">
-        <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
-          Suppliers
-        </div>
+      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+        Suppliers
+      </div>
 
-        <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 items-start gap-x-2 w-full md:w-fit">
+      {/* Employees Page */}
+      <div className="w-full  flex justify-between gap-4">
+        <div className="w-full">
           <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
+            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
             rows={1}
             placeholder="Search"
             value={searchKey}
             onChange={(e) => setSearchKey(e.target.value)}
           />
-          <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 100 }}
-            onClick={fetchSellersHandler}
-            leftIcon={<MdOutlineRefresh />}
-            color="#1640d6"
-            borderColor="#1640d6"
-            variant="outline"
-          >
-            Refresh
-          </Button>
+        </div>
+        <div className="flex  justify-between gap-4">
+        
           <Button
             fontSize={{ base: "14px", md: "14px" }}
             paddingX={{ base: "10px", md: "12px" }}
             paddingY={{ base: "0", md: "3px" }}
             width={{ base: "-webkit-fill-available", md: 200 }}
             onClick={openAddSellerDrawerHandler}
-            color="white"
-            backgroundColor={MainColor}
+            color="#ffffff"
+              backgroundColor={MainColor}
+              _hover={{backgroundColor:"#14b8a6"}}
+              className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
           >
             Add New Supplier
           </Button>
@@ -234,8 +227,10 @@ const Sellers: React.FC = () => {
               paddingY={{ base: "0", md: "3px" }}
               width={{ base: "-webkit-fill-available", md: 200 }}
               onClick={() => setShowBulkUploadMenu(true)}
-              color="white"
+              color="#ffffff"
               backgroundColor={MainColor}
+              _hover={{backgroundColor:"#14b8a6"}}
+              className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
               rightIcon={<AiFillFileExcel size={22} />}
             >
               Bulk Upload
@@ -296,8 +291,33 @@ const Sellers: React.FC = () => {
               </div>
             )}
           </div>
+          <Button
+            fontSize={{ base: "14px", md: "14px" }}
+            paddingX={{ base: "10px", md: "12px" }}
+            paddingY={{ base: "0", md: "3px" }}
+            width={{ base: "-webkit-fill-available", md: 100 }}
+            onClick={fetchSellersHandler}
+            leftIcon={<MdOutlineRefresh />}
+            color="#319795"
+            borderColor="#319795"
+            variant="outline"
+          >
+            Refresh
+          </Button>
+          <Select
+            // onChange={(e) => setPageSize(e.target.value)}
+            width="80px"
+          >
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+            <option value={100000}>All</option>
+          </Select>
         </div>
+        
       </div>
+   
 
       <div>
         <AgentTable

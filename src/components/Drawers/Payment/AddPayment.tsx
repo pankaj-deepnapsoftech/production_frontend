@@ -154,7 +154,7 @@ const AddPayment: React.FC<AddPayment> = ({ closeDrawerHandler, id }) => {
               type="submit"
               className="mt-1"
               color="white"
-              backgroundColor="#1640d6"
+              backgroundColor="#319795"
             >
               Submit
             </Button>

@@ -127,15 +127,7 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
       )}
       {!isLoadingProcess && process.length > 0 && (
         <div>
-          <div className="flex justify-end mb-2">
-            <Select onChange={(e) => setPageSize(e.target.value)} width="80px">
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-              <option value={100000}>All</option>
-            </Select>
-          </div>
+          
           <TableContainer maxHeight="600px" overflowY="auto">
             <Table variant="simple" {...getTableProps()}>
               <Thead className="text-sm font-semibold">
@@ -308,9 +300,12 @@ const ProcessTable: React.FC<ProcessTableProps> = ({
                           <MdDeleteOutline
                             className="hover:scale-110"
                             size={16}
-                            onClick={() =>
-                              deleteProcessHandler(row.original?._id)
-                            }
+                            onClick={() => {
+                              const confirmed = window.confirm("Are you sure you want to delete this production?");
+                              if (confirmed) {
+                                deleteProcessHandler(row.original?._id);
+                              }
+                            }}
                           />
                         )}
                       </Td>

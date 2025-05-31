@@ -30,13 +30,13 @@ import TrackProduction from "./TrackProduction";
 import Pagination from "../../pages/Pagination";
 import { BiHappyHeartEyes, BiSad } from "react-icons/bi";
 import ViewDesign from "./ViewDesign";
+import Deliverystatus from "./Deliverystatus";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { IoEyeSharp } from "react-icons/io5";
 import UploadPayment from "./UploadPayment";
 import DeliveryProof from "./DeliveryProof";
 import moment from "moment";
 import TokenProof from "./TokenProof";
-
 interface Purchase {
   GST: {
     CGST: number;
@@ -59,12 +59,15 @@ const PurchaseHistory = () => {
   const [status, setStatus] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [cookies] = useCookies(["access_token"]);
+  const [cookiess] = useCookies();
+  const role = cookiess?.role;
   const [selectedProcess, setSelectedProcess] = useState<any>([]);
   const [payment, setPayment] = useState("");
   const [purchaseId, setPurchaseId] = useState("");
   const [selectedData, setSelectedData] = useState<any>([]);
   const [designProcess, setDesignProcess] = useState<any>([]);
   const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
+
   const [trackingId, setTrackingId] = useState("");
   const [orderFile, setOrderFile] = useState("");
   const [webLink, setWebLink] = useState("");
@@ -74,7 +77,12 @@ const PurchaseHistory = () => {
   const [tokenFile, setTokenFile] = useState("");
   const [amount, setAmount] = useState();
   const [stage, setStage] = useState("");
+  const [deliveryproofuser, setdeliveryproofuser] = useState("");
+  const [halfPaymentId, setHalfPaymentId] = useState(null);
+  const [halfPaymentProof, setHalfPaymentProof] = useState(null);
   const [productFile, setProductFile] = useState();
+  const [proformaFile, setproformaFile] = useState();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const {
     isOpen: isProductionModalOpen,
     onOpen: onProductionOpen,
@@ -85,6 +93,7 @@ const PurchaseHistory = () => {
     onOpen: onImageOpen,
     onClose: onImageClose,
   } = useDisclosure();
+
   const {
     isOpen: isPaymentOpen,
     onOpen: onPaymentOpen,
@@ -110,6 +119,12 @@ const PurchaseHistory = () => {
   } = useDisclosure();
 
   const {
+    isOpen: isDeliverystatusOpen,
+    onOpen: onDeliverystatusOpen,
+    onClose: onDeliverystatusClose,
+  } = useDisclosure();
+
+  const {
     isOpen: isTokenOpen,
     onOpen: onTokenOpen,
     onClose: onTokenClose,
@@ -120,6 +135,16 @@ const PurchaseHistory = () => {
     onOpen: onProductOpen,
     onClose: onProductClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isProformaOpen,
+    onOpen: onProformaOpen,
+    onClose: onProformaClose,
+  } = useDisclosure();
+
+  const { isOpen: isHalfPaymentOpen,
+    onOpen: onHalfPaymentOpen,
+    onClose: isHalfPaymentClose, } = useDisclosure()
 
   const fetchPurchases = async () => {
     try {
@@ -136,12 +161,13 @@ const PurchaseHistory = () => {
         }
       );
       setPurchases(response.data?.data);
+      console.log('purchase length =', purchases.length);
       console.log(response.data.data);
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
-          error.message ||
-          "Failed to fetch purchase data"
+        error.message ||
+        "Failed to fetch purchase data"
       );
     } finally {
       setIsLoading(false);
@@ -150,6 +176,8 @@ const PurchaseHistory = () => {
 
   const handleApprove = async (purchaseId: string) => {
     try {
+      if (isSubmitting) return;
+      setIsSubmitting(true);
       const token = cookies.access_token;
       if (!token) throw new Error("Authentication token not found");
 
@@ -167,9 +195,11 @@ const PurchaseHistory = () => {
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
-          error.message ||
-          "Failed to approve purchase"
+        error.message ||
+        "Failed to approve purchase"
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -183,6 +213,8 @@ const PurchaseHistory = () => {
     setCustomerApprove(approve);
     onImageOpen();
   };
+
+
 
 
   const openAccountModal = (
@@ -206,12 +238,26 @@ const PurchaseHistory = () => {
     onDeliveryOpen();
   };
 
-  const handleProof = (id: any, file: any) => {
+  const handleProof = (id: any, customerproof: any, dispatcherproof: any,) => {
     setPurchaseId(id);
-    setOrderFile(file);
+    if (customerproof) {
+      setOrderFile(customerproof);
+      setdeliveryproofuser("Customer");
+    }
+    if (dispatcherproof) {
+      setOrderFile(dispatcherproof);
+      setdeliveryproofuser("Dispatcher");
+    }
     onProofOpen();
   };
 
+  const handledeliverystatus = (id: any, approve: any) => {
+    console.log('approve == ', approve)
+    setPurchaseId(id);
+    setCustomerApprove(approve);
+    onDeliverystatusOpen()
+  }
+  
   const calculateTotalPrice = (price: number, qty: number, gst: number) => {
     const basePrice = price * qty;
     const gstVal = (basePrice * gst) / 100;
@@ -231,9 +277,44 @@ const PurchaseHistory = () => {
     onProductOpen();
   };
 
+  const handleHalfPaymentProf = async () => {
+    if (!halfPaymentProof) {
+      alert("image is required field");
+      return;
+    };
+    const formData = new FormData();
+    formData.append("halfPayment", halfPaymentProof);
+    formData.append("half_payment_approve", false)
+    formData.append("half_payment_status", "Pending Approvel")
+
+    isHalfPaymentClose()
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}purchase/half-payement/${halfPaymentId._id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${cookies.access_token}`,
+        },
+      });
+      toast.success(res.data.message)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsSubmitting(false);
+    }
+
+  };
+
+  const handleviewProform = (file: any) => {
+    setproformaFile(file);
+    onProformaOpen();
+  };
+
+
+
   useEffect(() => {
     fetchPurchases();
-  }, []);
+  }, [pages]);
 
   return (
     <div className="md:ml-80 sm:ml-0 overflow-x-hidden">
@@ -248,8 +329,8 @@ const PurchaseHistory = () => {
           width="100px"
           onClick={fetchPurchases}
           leftIcon={<MdOutlineRefresh />}
-          color="#1640d6"
-          borderColor="#1640d6"
+          color="#319795"
+            borderColor="#319795"
           variant="outline"
         >
           Refresh
@@ -279,9 +360,8 @@ const PurchaseHistory = () => {
               w={{ base: "100%", md: "auto" }} // Full width on smaller screens, auto on medium screens
             >
               <Box
-                className={`absolute top-0 left-0 h-full w-2 ${
-                  purchase?.Status === "Pending" ? "bg-red-500" : "bg-green-500"
-                }`}
+                className={`absolute top-0 left-0 h-full w-2 ${purchase?.Status === "Pending" ? "bg-red-500" : "bg-green-500"
+                  }`}
               ></Box>
 
               <HStack justify="space-between" mb={3} flexWrap="wrap" gap={4}>
@@ -306,6 +386,7 @@ const PurchaseHistory = () => {
                       bg="orange.400"
                       _hover={{ bg: "orange.500" }}
                       color="white"
+                      disabled={isSubmitting}
                       onClick={() => handleApprove(purchase?._id)}
                     >
                       Approve
@@ -339,9 +420,15 @@ const PurchaseHistory = () => {
                     </Badge>
                   ) : null}
 
+                  {purchase?.half_payment_status && (
+                    <Badge colorScheme={purchase?.half_payment_status === 'pending' ? "orange" : "green"} fontSize="sm">
+                      Half payment : {purchase?.half_payment_status}
+                    </Badge>
+                  )}
+
                   {purchase?.sale_design_approve == "Approve" ? (
                     <Badge colorScheme="green" fontSize="sm">
-                      Sale Design Approval: Approve 
+                      Sale Design Approval: Approve
                     </Badge>
                   ) : null}
 
@@ -463,9 +550,10 @@ const PurchaseHistory = () => {
                       ).toFixed(2)}
                     </span>
                   </Text>
+                  
                   {purchase?.productFile ? (
                     <Text
-                      className="text-blue-500 font-semibold underline "
+                      className="text-blue-500 font-semibold underline cursor-pointer"
                       onClick={() => handleProduct(purchase?.productFile)}
                     >
                       Product Image
@@ -537,7 +625,7 @@ const PurchaseHistory = () => {
                   </Button>
                 )}
 
-                {purchase?.token_status && (
+                {/* {purchase?.token_status && (
                   <Button
                     size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
                     leftIcon={<IoEyeSharp />}
@@ -553,6 +641,44 @@ const PurchaseHistory = () => {
                     }
                   >
                     Preview
+                  </Button>
+                )} */}
+
+                {purchase?.invoice_image && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
+                    leftIcon={<IoEyeSharp />}
+                    bgColor="white"
+                    _hover={{ bgColor: "orange.500" }}
+                    className="border border-orange-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      openInvoiceModal(
+                        purchase?.invoice_image,
+                        purchase,
+                        purchase?.customer_invoice_approve
+                      )
+                    }
+                  >
+                    Preview Invoice
+                  </Button>
+                )}
+
+                {purchase?.half_payment && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
+                    leftIcon={<IoEyeSharp />}
+                    bgColor="white"
+                    _hover={{ bgColor: "orange.500" }}
+                    className="border border-orange-500 hover:text-white w-full sm:w-auto"
+                    onClick={() => {
+                      onHalfPaymentOpen();
+
+                      const filterdata = purchases.filter((item) => item._id === purchase?._id)[0];
+                      setHalfPaymentId(filterdata);
+                    }
+                    }
+                  >
+                    View and Pay
                   </Button>
                 )}
 
@@ -600,10 +726,40 @@ const PurchaseHistory = () => {
                     _hover={{ bgColor: "blue.500" }}
                     className="border border-blue-500 hover:text-white w-full sm:w-auto"
                     onClick={() =>
-                      handleProof(purchase?._id, purchase?.customer_order_ss)
+                      handleProof(purchase?._id, purchase?.customer_order_ss, purchase?.dispatcher_order_ss)
                     }
                   >
                     Attach Delivery Proof
+                  </Button>
+                )}
+
+                {purchase?.tracking_id && purchase?.tracking_web && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }}
+                    leftIcon={<FaCloudUploadAlt />}
+                    bgColor="white"
+                    _hover={{ bgColor: "blue.500" }}
+                    className="border border-blue-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      handledeliverystatus(purchase?._id, purchase?.delivery_status_by_customer)
+                    }
+                  >
+                    Delivery Status
+                  </Button>
+                )}
+
+                {purchase?.performaInvoice && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }}
+                    leftIcon={<IoEyeSharp />}
+                    bgColor="white"
+                    _hover={{ bgColor: "blue.500" }}
+                    className="border border-blue-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      handleviewProform(purchase?.performaInvoice)
+                    }
+                  >
+                    Pro Forma Invoice
                   </Button>
                 )}
               </div>
@@ -641,6 +797,25 @@ const PurchaseHistory = () => {
                 purchaseData={selectedData}
                 approve={customerApprove}
                 onClose={onImageClose}
+              />
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+
+      {/* delivery Status Modal */}
+      <Modal isOpen={isDeliverystatusOpen} onClose={onDeliverystatusClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Design</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedData && (
+              <Deliverystatus
+                purchaseData={purchaseId}
+                approve={customerApprove}
+                onClose={onDeliverystatusClose}
               />
             )}
           </ModalBody>
@@ -734,6 +909,8 @@ const PurchaseHistory = () => {
               <DeliveryProof
                 id={purchaseId}
                 orderfile={orderFile}
+                userRole={role}
+                deliveryproofupload={deliveryproofuser}
                 onClose={onProofClose}
               />
             )}
@@ -768,6 +945,56 @@ const PurchaseHistory = () => {
           <ModalCloseButton />
           <ModalBody>
             <Img src={productFile} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isHalfPaymentOpen} onClose={isHalfPaymentClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Half Payment And Pay</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-3">
+              <p className="text-gray-600 mb-6 text-center">
+                Half Price is: <span className="font-semibold text-black">₹ ${halfPaymentId?.half_payment}</span>
+              </p>
+
+              {halfPaymentId?.half_payment_image &&
+                <div className="py-2 w-full text-center">
+                  <a href={halfPaymentId?.half_payment_image} target="_blank">
+                    Click to view
+                  </a>
+                </div>
+
+              }
+
+              {!halfPaymentId?.half_payment_approve && !halfPaymentId?.half_payment_approve && <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50">
+                <p className="text-gray-500 mb-2">Upload an Image</p>
+                <label className="cursor-pointer">
+                  <input type="file" className="hidden" onChange={(e) => setHalfPaymentProof(e.target.files[0])} />
+                  <div className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Choose Image
+                  </div>
+                </label>
+              </div>}
+            </div>
+            <div className="pt-4 text-white font-medium flex gap-3 " >
+              <button className="py-2 px-3 bg-blue-600 rounded-lg" onClick={handleHalfPaymentProf}
+                disabled={isSubmitting} >submit</button>
+              <button className="py-2 px-3 bg-blue-600 rounded-lg" onClick={isHalfPaymentClose} >Close</button>
+            </div>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      {/* proforma invoice modal */}
+      <Modal isOpen={isProformaOpen} onClose={onProformaClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Pro Forma Invoice</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Click to view the <a className="text-blue-500 underline" href={proformaFile} target="_blank">Pro Forma Invoice</a>
           </ModalBody>
         </ModalContent>
       </Modal>

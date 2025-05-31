@@ -33,10 +33,12 @@ const Assign = ({ empData, saleData, onClose }) => {
   const [isEditMode, setIsEditMode] = useState(false); // Track if it's an edit operation
   const [editTaskId, setEditTaskId] = useState(null); // Track the task being edited
 
+
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
   const token = cookies?.access_token;
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,7 +48,8 @@ const Assign = ({ empData, saleData, onClose }) => {
   // Handle task creation or update
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       if (!token) {
         throw new Error("Authentication token not found");
@@ -115,6 +118,8 @@ const Assign = ({ empData, saleData, onClose }) => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -232,7 +237,11 @@ const Assign = ({ empData, saleData, onClose }) => {
                   <Button
                     bgColor="red.500"
                     _hover="red.400"
-                    onClick={() => handleDelete(task?._id)}
+                    onClick={() => {
+                      if (window.confirm("Are you sure you want to delete?")) {
+                        handleDelete(task?._id);
+                      }
+                    }}
                   >
                     <MdDelete className="text-white" />
                   </Button>
@@ -254,7 +263,7 @@ const Assign = ({ empData, saleData, onClose }) => {
         <Text fontWeight="bold" fontSize="lg" color="teal.500" mb={4}>
           {isEditMode ? "Update Task" : "Assign Task"}
         </Text>
-        <FormControl mb={4}>
+        <FormControl mb={4} isRequired>
           <FormLabel>Select Employee</FormLabel>
           <Select
             name="assined_to"
@@ -270,7 +279,7 @@ const Assign = ({ empData, saleData, onClose }) => {
             isSearchable={true} // Make it searchable
           />
         </FormControl>
-        <FormControl mb={4}>
+        <FormControl mb={4} isRequired>
           <FormLabel>Define Process</FormLabel>
           <Input
             name="assined_process"
@@ -294,6 +303,7 @@ const Assign = ({ empData, saleData, onClose }) => {
           colorScheme="blue"
           onClick={handleFormSubmit}
           className="w-full"
+          disabled={isSubmitting}
         >
           {isEditMode ? "Update" : "Assign"}
         </Button>

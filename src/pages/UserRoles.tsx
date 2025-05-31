@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Select } from "@chakra-ui/react";
 import { MdOutlineRefresh } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,7 +27,8 @@ const UserRole: React.FC = () => {
   const [filteredRoles, setFilteredRoles] = useState<any[]>([]);
   const [isLoadingRoles, setIsLoadingRoles] = useState<boolean>(false);
   const [roleId, setRoleId] = useState<string | undefined>();
-
+  const [PageSize, setPageSize] = useState<number>(10);;
+  
   const {
     isAddRoleDrawerOpened,
     isUpdateRoleDrawerOpened,
@@ -161,20 +162,34 @@ const UserRole: React.FC = () => {
           fetchUserRolesHandler={fetchRolesHandler}
         />
       )}
+      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+        User Roles
+      </div>
 
-      <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-2">
-        <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
-          User Roles
-        </div>
-
-        <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
+      <div className="  w-full  flex justify-between gap-4">
+        <div className="w-full">
           <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
+            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
             rows={1}
             placeholder="Search"
             value={searchKey}
             onChange={(e) => setSearchKey(e.target.value)}
           />
+        </div>
+        <div className="flex  justify-between gap-4">
+        <Button
+          fontSize={{ base: "14px", md: "14px" }}
+          paddingX={{ base: "10px", md: "12px" }}
+          paddingY={{ base: "0", md: "3px" }}
+          onClick={openAddRoleDrawerHandler}
+          color="#ffffff"
+          backgroundColor={MainColor}
+          _hover={{backgroundColor:"#14b8a6"}}
+          className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+        >
+          Add New Role
+        </Button>
+
           <Button
             fontSize={{ base: "14px", md: "14px" }}
             paddingX={{ base: "10px", md: "12px" }}
@@ -182,28 +197,32 @@ const UserRole: React.FC = () => {
             width={{ base: "-webkit-fill-available", md: 100 }}
             onClick={fetchRolesHandler}
             leftIcon={<MdOutlineRefresh />}
-            color="#1640d6"
-            borderColor="#1640d6"
+            color="#319795"
+            borderColor="#319795"
             variant="outline"
           >
             Refresh
           </Button>
-          <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 200 }}
-            onClick={openAddRoleDrawerHandler}
-            color="white"
-            backgroundColor={MainColor}
+          <Select
+            onChange={(e) => setPageSize(Number(e.target.value))}
+            width="80px"
+            
           >
-            Add New Role
-          </Button>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+            <option value={100000}>All</option>
+          </Select>
         </div>
+
+
+
       </div>
 
       <div>
         <UserRoleTable
+          pageSize={PageSize}
           roles={filteredRoles}
           isLoadingRoles={isLoadingRoles}
           deleteRoleHandler={deleteRoleHandler}

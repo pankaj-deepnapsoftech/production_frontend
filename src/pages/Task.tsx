@@ -51,6 +51,7 @@ const Task = () => {
   const [saleId, setSaleId] = useState("");
   const [invoiceFile, setInvoiceFile] = useState("");
   const invoiceDisclosure = useDisclosure();
+  const sampleimageDisclosure = useDisclosure();
   const [paymentfile, setPaymentFile] = useState("");
   const paymentDisclosure = useDisclosure();
   const [verifystatus, setVerifyStatus] = useState(false);
@@ -58,6 +59,9 @@ const Task = () => {
   const tokenDisclosure = useDisclosure();
   const [tokenAmount, setTokenAmount] = useState();
   const [paymentFor, setPaymentFor] = useState("");
+  const [sampleimagefile, setsampleFile] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const[limit, setLimit] = useState(10);
   const [selectedData, setSelectedData] = useState<any>([]);
   const [filters, setFilters] = useState({
     status: "",
@@ -66,18 +70,25 @@ const Task = () => {
     productName: "",
     search: "",
   });
+  const [halfAmountId, sethalfAmountId] = useState("")
+  const [halfAmount, sethalfAmount] = useState(null);
   const {
-      isOpen: isAccountpreviewOpen,
-      onOpen: onAccountpreviewOpen,
-      onClose: onAccountpreviewClose,
-    } = useDisclosure();
+    isOpen: isAccountpreviewOpen,
+    onOpen: onAccountpreviewOpen,
+    onClose: onAccountpreviewClose,
+  } = useDisclosure();
+
+  const { isOpen: isViewHalfPaymentssOpen,
+    onOpen: onViewHalfPaymentssOpen,
+    onClose: onViewHalfPaymentssClose,
+  } = useDisclosure();
 
   const fetchTasks = async () => {
     try {
       setIsLoading(true);
 
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}assined/get-assined?page=${page}`,
+        `${process.env.REACT_APP_BACKEND_URL}assined/get-assined?page=${page}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${cookies?.access_token}`,
@@ -128,12 +139,15 @@ const Task = () => {
           sample_bom_name: sale?.bom[0]?.bom_name,
           bom_name: sale?.bom[1]?.bom_name,
           sale_design_approve: sale?.sale_design_approve,
-          sale_design_comment: sale?.sale_design_comment
+          sale_design_comment: sale?.sale_design_comment,
+          sample_image: sale?.sample_image,
+          allsale: sale,
+          isSampleApprove: sale?.isSampleApprove,
         };
       });
 
       setTasks(tasks);
-     
+
     } catch (error) {
       toast.error(error);
     } finally {
@@ -141,10 +155,12 @@ const Task = () => {
     }
   };
 
+  const half_payment = useDisclosure()
+
 
   useEffect(() => {
     fetchTasks();
-  }, [cookies?.access_token, page]);
+  }, [cookies?.access_token, page, limit]);
 
   const handleFilterChange = (field, value) => {
     setFilters({ ...filters, [field]: value });
@@ -210,7 +226,8 @@ const Task = () => {
     formData.append("image", file);
     formData.append("assined_to", selectedTask.id);
     formData.append("assinedto_comment", comment);
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       // Upload the image to the backend
       const response = await axios.patch(
@@ -231,10 +248,14 @@ const Task = () => {
       console.error("Error uploading file:", error);
 
       onClose();
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleAccept = async (id) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}assined/update-status/${id}`,
@@ -251,6 +272,8 @@ const Task = () => {
       console.log(error);
 
       toast.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -287,12 +310,17 @@ const Task = () => {
     invoiceDisclosure.onOpen();
   };
 
+  const handleSampleImage = (file: any) => {
+    setsampleFile(file);
+    sampleimageDisclosure.onOpen();
+  };
+
   const handlePayment = (
     id: any,
     payment: string,
     verify: boolean,
     assignId: any,
-    payfor:string
+    payfor: string
   ) => {
     setSaleId(id);
     setPaymentFile(payment);
@@ -317,9 +345,113 @@ const Task = () => {
     onAccountpreviewOpen();
   };
 
+  console.log(halfAmountId)
+
+  const handleHalfPayment = async () => {
+    const data = {
+      half_payment: halfAmount,
+      half_payment_status: "pending",
+    }
+    try {
+      half_payment.onClose()
+      const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}purchase/update/${halfAmountId.sale_id}`, data, {
+        headers: {
+          Authorization: `Bearer ${cookies?.access_token}`,
+        },
+      })
+      toast.success("Half Amount added");
+
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleVerifyImage = async () => {
+    const data = {
+      half_payment_status: "Paid",
+      half_payment_approve: true
+    }
+    onViewHalfPaymentssClose()
+    try {
+      const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}purchase/update/${halfAmountId.sale_id}`, data, {
+        headers: {
+          Authorization: `Bearer ${cookies?.access_token}`,
+        },
+      })
+      toast.success("Half amount Verify")
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className="overflow-x-hidden">
-      <HStack className="flex justify-between items-center mb-5 mt-5">
+
+      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+        Tasks
+      </div>
+
+      {/* Employees Page */}
+      <div className="w-full  flex justify-between gap-4 pb-2">
+        <div className="w-full">
+            <Input
+              placeholder="Search by Product or Manager"
+              fontSize="sm"
+              onChange={(e) => handleFilterChange("search", e.target.value)}
+              _focus={{
+                borderColor: "#0d9488", // or any Chakra color like "teal.400"
+                boxShadow: "0 0 0 1px #14b8a6" // optional for a ring-like effect
+              }}
+              transition="all 0.2s"
+            />
+        </div>
+        <div className="flex  justify-between gap-4">
+            <Select
+              placeholder="Status"
+              width="25%"
+              fontSize="sm"
+              onChange={(e) => handleFilterChange("status", e.target.value)}
+            >
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </Select>
+            <Input
+              type="date"
+              fontSize="sm"
+              w="200px"
+              onChange={(e) => handleFilterChange("date", e.target.value)}
+            />
+          <Button
+            fontSize={{ base: "14px", md: "14px" }}
+            paddingX={{ base: "10px", md: "12px" }}
+            onClick={fetchTasks}
+            leftIcon={<MdOutlineRefresh />}
+            color="#319795"
+            borderColor="#319795"
+            variant="outline"
+          >
+            Refresh
+          </Button>
+          <Select
+            value={limit}
+            onChange={(e) => {
+              const newSize = Number(e.target.value);
+              setLimit(newSize);
+            }}
+            width="80px"
+          >
+            {[10, 20, 50, 100, 100000].map((size) => (
+              <option key={size} value={size}>
+                {size === 100000 ? "All" : size}
+              </option>
+            ))}
+          </Select>
+        </div>
+        
+      </div>
+      
+      {/* <HStack className="flex justify-between items-center mb-5 mt-5">
         <Text className="text-lg font-bold">Tasks</Text>
         <HStack className="space-x-2">
           <Button
@@ -329,8 +461,8 @@ const Task = () => {
             width={{ base: "full", md: 100 }}
             onClick={fetchTasks}
             leftIcon={<MdOutlineRefresh />}
-            color="#1640d6"
-            borderColor="#1640d6"
+            color="#319795"
+            borderColor="#319795"
             variant="outline"
           >
             Refresh
@@ -368,7 +500,22 @@ const Task = () => {
             onChange={(e) => handleFilterChange("search", e.target.value)}
           />
         </FormControl>
-      </HStack>
+
+        <Select
+          value={limit}
+          onChange={(e) => {
+            const newSize = Number(e.target.value);
+            setLimit(newSize);
+          }}
+          width="80px"
+        >
+          {[10, 20, 50, 100, 100000].map((size) => (
+            <option key={size} value={size}>
+              {size === 100000 ? "All" : size}
+            </option>
+          ))}
+        </Select>
+      </HStack> */}
 
       {isLoading ? (
         <Box
@@ -414,18 +561,28 @@ const Task = () => {
                 </Text>
 
                 <VStack align="start">
-                  <Badge
-                    colorScheme={colorChange(task.design_status)}
-                    fontSize="sm"
-                  >
-                    <strong>Task:</strong> {task?.design_status}
-                  </Badge>
+                {["acc", "account", "accountant"].includes(
+                    role.toLowerCase()
+                  ) ? (
+                    <Badge
+                      colorScheme={colorChange(task.design_status)}
+                      fontSize="sm"
+                    > 
+                      <strong>Task:</strong> {task?.design_status}{task?.design_status !== "UnderProcessing" ? "D" : ""}
+                    </Badge>
+                  ) : <Badge
+                  colorScheme={colorChange(task.design_status)}
+                  fontSize="sm"
+                >
+                  <strong>Task:</strong> {task?.design_status}
+                </Badge>}
+                  
 
                   {["acc", "account", "accountant", "dispatch", "dis"].includes(
                     role.toLowerCase()
                   ) &&
-                  task?.token_amt &&
-                  task?.token_status === false ? (
+                    task?.token_amt &&
+                    task?.token_status === false ? (
                     <Badge colorScheme="orange" fontSize="sm">
                       Token Amount : Pending
                     </Badge>
@@ -434,8 +591,8 @@ const Task = () => {
                   {["acc", "account", "accountant", "dispatch", "dis"].includes(
                     role.toLowerCase()
                   ) &&
-                  task?.token_amt &&
-                  task?.token_status ? (
+                    task?.token_amt &&
+                    task?.token_status ? (
                     <Badge colorScheme="green" fontSize="sm">
                       Token Amount : Paid
                     </Badge>
@@ -443,10 +600,10 @@ const Task = () => {
 
                   {["acc", "account", "accountant", "dispatch", "dis"].includes(
                     role.toLowerCase()
-                  ) && task?.isTokenVerify === false? (
+                  ) && task?.isTokenVerify === false ? (
                     <Badge colorScheme="orange" fontSize="sm">
                       Token Verification :{" "}
-                     Pending
+                      Pending
                     </Badge>
                   ) : null}
 
@@ -458,6 +615,16 @@ const Task = () => {
                       Verified
                     </Badge>
                   ) : null}
+
+                  {["acc", "account", "accountant", "dispatch", "dis"].includes(
+                    role.toLowerCase()
+                  ) && task?.allsale?.half_payment_status ? (
+                    <Badge colorScheme="green" fontSize="sm">
+                      Half Payment Status :{" "}
+                      {task?.allsale?.half_payment_status}
+                    </Badge>
+                  ) : null}
+
 
                   {["acc", "account", "accountant", "dispatch", "dis"].includes(
                     role.toLowerCase()
@@ -520,15 +687,15 @@ const Task = () => {
                         <strong>Sale By:</strong> {task.sale_by}
                       </Text>
                       <Text fontSize="sm">
-                    <strong>Assigned By:</strong> {task.assignedBy}
-                  </Text>
+                        <strong>Assigned By:</strong> {task.assignedBy}
+                      </Text>
                     </>
                   ) : null}
                 </VStack>
                 <VStack
                   align={{ base: "start", md: "end" }}
                   w={{ base: "100%", md: "48%" }}
-                >                 
+                >
                   <Text fontSize="sm">
                     <strong>Assigned Process:</strong> {task?.assined_process}
                   </Text>
@@ -536,28 +703,27 @@ const Task = () => {
                     <Text fontSize="sm" >
                       <strong>Remarks:</strong> {task?.assinedby_comment}
                     </Text>
-                  
+
                   ) : null}
 
                   {task?.sample_bom_name ? (
                     <Text fontSize="sm" color="blue">
-                    <strong className="text-black"> Sample BOM Name:</strong> {task?.sample_bom_name}
-                  </Text>
+                      <strong className="text-black"> Sample BOM Name:</strong> {task?.sample_bom_name}
+                    </Text>
                   ) : null}
                   {task?.bom_name ? (
                     <Text fontSize="sm" color="blue">
-                    <strong className="text-black">BOM Name:</strong> {task?.bom_name}
-                  </Text>
+                      <strong className="text-black">BOM Name:</strong> {task?.bom_name}
+                    </Text>
                   ) : null}
-
-                  {task?.token_ss ? (
-                    <Text                     
+                  {role != "Production" && task?.token_ss ? (
+                    <Text
                       className="text-blue-500 underline text-sm cursor-pointer"
                       onClick={() =>
                         handlePayment(
                           task?.sale_id,
                           task?.token_ss,
-                          task?.isTokenVerify,                       
+                          task?.isTokenVerify,
                           task?.id,
                           "token"
                         )
@@ -565,6 +731,15 @@ const Task = () => {
                     >
                       {" "}
                       View Token Proof{" "}
+                    </Text>
+                  ) : null}
+                  {role != "Production" && task?.allsale?.half_payment_image ? (
+                    <Text
+                      className="text-blue-500 underline text-sm cursor-pointer"
+                      onClick={() => { onViewHalfPaymentssOpen(); sethalfAmountId(task) }}
+                    >
+                      {" "}
+                      View Half payment {" "}
                     </Text>
                   ) : null}
                 </VStack>
@@ -579,39 +754,54 @@ const Task = () => {
                       colorScheme="teal"
                       size="sm"
                       onClick={() => handleAccept(task?.id)}
+                      disabled={isSubmitting}
                     >
                       Accept Task
                     </Button>
                   ) : null}
 
-               
-                      {task?.bom.length === 2 ? (
-                        <Badge colorScheme="green" fontSize="sm">
-                          <strong>BOM:</strong> Created
-                        </Badge>
-                      ) : (
-                        <Button
-                          colorScheme="teal"
-                          size="sm"
-                          onClick={() => handleBOM(task?.sale_id)}
-                        >
-                          Create BOM
-                        </Button>
-                      )}
 
-                      {task?.design_status != "Completed" ? (
-                        <Button
-                          colorScheme="orange"
-                          leftIcon={<FaCheck />}
-                          size="sm"
-                          onClick={() => handleDone(task?.id)}
-                        >
-                          Task Done
-                        </Button>
-                      ) : null}
-                   
+
+                  {task?.bom.length === 2 ? (
+                    <Badge colorScheme="green" fontSize="sm">
+                      <strong>BOM:</strong> Created
+                    </Badge>
+                  ) : (
+                    <Button
+                      colorScheme="teal"
+                      size="sm"
+                      onClick={() => handleBOM(task?.sale_id)}
+                    >
+                      Create BOM
+                    </Button>
+                  )}
+
+
+
+                  {task?.design_status != "Completed" ? (
+                    <Button
+                      colorScheme="orange"
+                      leftIcon={<FaCheck />}
+                      size="sm"
+                      onClick={() => handleDone(task?.id)}
+                    >
+                      Task Done
+                    </Button>
+                  ) : null}
+
+                  {role == "Production" && task?.sample_image ? (
+                    <Button
+                      colorScheme="teal"
+                      size="sm"
+                      onClick={() => handleSampleImage(task?.sample_image)}
+                    >
+                      Preview Sample Image
+                    </Button>
+                  ) : null}
+
                 </HStack>
               ) : ["accountant", "acc"].includes(role.toLowerCase()) ? (
+                
                 <HStack
                   justify="space-between"
                   mt={3}
@@ -624,12 +814,13 @@ const Task = () => {
                       colorScheme="teal"
                       size="sm"
                       onClick={() => handleAccept(task?.id)}
+                      disabled={isSubmitting}
                     >
                       Accept Task
                     </Button>
                   ) : null}
 
-                  {task?.design_approval === "Approve" ? (
+                  {task?.design_approval === "Approved" ? (
                     <Button
                       bgColor="white"
                       _hover={{ bgColor: "purple.500" }}
@@ -658,6 +849,23 @@ const Task = () => {
                     </Button>
                   ) : null}
 
+                  {
+                      task?.isSampleApprove &&
+                    <Button
+                      bgColor="white"
+                      _hover={{ bgColor: "blue.500" }}
+                      className="border border-blue-500 hover:text-white"
+                      onClick={() => {
+                        half_payment.onOpen();
+                        sethalfAmountId(task)
+                      }
+                      }
+                      width={{ base: "full", sm: "auto" }}
+                    >
+                      Add half Payment
+                    </Button>
+                  }
+
                   {task?.customer_pyement_ss ? (
                     <Button
                       bgColor="white"
@@ -680,28 +888,7 @@ const Task = () => {
                   ) : null}
 
 
-                    {task?.token_amt &&
-                      task?.token_status ? (
-                      <Button
-                        bgColor="white"
-                        leftIcon={<IoEyeSharp />}
-                        _hover={{ bgColor: "green.500" }}
-                        className="border border-green-500 hover:text-white"
-                          onClick={() => {
-                            openAccountModal(
-                              task?.designFile,
-                              task,
-                              task?.customer_approve
-                            )
-                          }}
-                        width={{ base: "full", sm: "auto" }}
-                      >
-                        Preview
-                      </Button>
-                    ) : null}
 
-
-                    
 
                   <Text fontSize="sm">
                     <strong>Date:</strong> {task.date}
@@ -722,6 +909,7 @@ const Task = () => {
                         colorScheme="teal"
                         size="sm"
                         onClick={() => handleAccept(task?.id)}
+                            disabled={isSubmitting}
                       >
                         Accept Task
                       </Button>
@@ -770,7 +958,7 @@ const Task = () => {
                       </Text>
                     ) : null}
                   </VStack>
-              
+
                   {task?.sale_design_approve == "Approve" ? (
                     <Badge colorScheme="green" fontSize="sm">
                       Sales Design Approval: {task.sale_design_approve}
@@ -783,14 +971,14 @@ const Task = () => {
                       <Text color="red.500">
                         Feedback: {task.sale_design_comment}
                       </Text>
-                      
+
                     </VStack>
                   ) : null}
 
                   <Text fontSize="sm">
                     <strong>Date:</strong> {task.date}
                   </Text>
-                  
+
                 </HStack>
               )}
             </Box>
@@ -864,6 +1052,7 @@ const Task = () => {
               mr={3}
               onClick={handleFileUpload}
               isDisabled={!file}
+              disabled={isSubmitting}
             >
               Upload
             </Button>
@@ -904,6 +1093,32 @@ const Task = () => {
         </ModalContent>
       </Modal>
 
+      {/* sample image preview */}
+      <Modal
+        isOpen={sampleimageDisclosure.isOpen}
+        onClose={sampleimageDisclosure.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Sample Image Preview</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Click to view the <a href={sampleimagefile} target="_blank">Sample image</a>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500" }}
+              className="border border-red-500 hover:text-white w-full ml-2"
+              mr={3}
+              onClick={() => sampleimageDisclosure.onClose()}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
       {/* Modal for  payment */}
       <Modal
         isOpen={paymentDisclosure.isOpen}
@@ -919,7 +1134,7 @@ const Task = () => {
               payment={paymentfile}
               verify={verifystatus}
               assign={assignId}
-              payfor= {paymentFor}
+              payfor={paymentFor}
               onClose={paymentDisclosure.onClose}
             />
           </ModalBody>
@@ -964,6 +1179,40 @@ const Task = () => {
         </ModalContent>
       </Modal>
 
+      {/* half payment modal */}
+      <Modal isOpen={half_payment.isOpen} onClose={half_payment.onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Enter Half Amount</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              {/* <FormLabel>Number</FormLabel> */}
+              <Input
+                type="number"
+                id="number-input"
+                placeholder="Enter a number"
+                value={halfAmountId?.allsale?.half_payment ? halfAmountId?.allsale?.half_payment : halfAmount}
+                onChange={(e) => sethalfAmount(e.target.value)}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={handleHalfPayment}
+              isDisabled={!halfAmount}
+            >
+              Submit
+            </Button>
+            <Button variant="ghost" onClick={half_payment.onClose}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
       {/* account payment preview */}
       <Modal isOpen={isAccountpreviewOpen} onClose={onAccountpreviewClose}>
         <ModalOverlay />
@@ -973,6 +1222,46 @@ const Task = () => {
           <ModalBody>
             <Img src={selectedData?.token_ss} />
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* half payment */}
+
+      <Modal
+        isOpen={isViewHalfPaymentssOpen}
+        onClose={onViewHalfPaymentssClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Payment</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <div>
+              <div>
+                <h3>View half payment proof. &nbsp;
+                {halfAmountId?.allsale?.half_payment_image &&  
+                  <a href={halfAmountId?.allsale?.half_payment_image} target="_blank">
+                     Click to view
+                  </a>}
+                </h3>
+              </div>
+
+              {!halfAmountId?.allsale?.half_payment_approve && <div className="py-5 text-center " >
+                <button onClick={handleVerifyImage} className="py-2 px-3 bg-green-500 rounded-lg font-semibold text-white  " >Verify</button>
+              </div>}
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500" }}
+              className="border border-red-500 hover:text-white w-full ml-2"
+              mr={3}
+              onClick={onViewHalfPaymentssClose}
+            >
+              Cancel
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
 

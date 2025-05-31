@@ -7,11 +7,12 @@ const Settings = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
     const [cookies] = useCookies(["access_token"]);
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       // Make API call to change password
       const response = await axios.post(
@@ -27,6 +28,8 @@ const Settings = () => {
       toast.error(
         error.response?.data?.message || "Failed to change password. Please try again."
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -78,6 +81,7 @@ const Settings = () => {
           <button
             type="submit"
             className="bg-teal-800 text-white py-2 px-6 rounded-md hover:bg-teal-700"
+            disabled={isSubmitting}
           >
             Save Changes
           </button>

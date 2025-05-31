@@ -15,6 +15,8 @@ const InventoryApprovals: React.FC = () => {
   const [filteredData, setFilteredData] = useState<any>([]);
 
   const [isLoadingInventory, setIsLoadingInventory] = useState<boolean>(false);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
 
   const fetchInventoryHandler = async () => {
     try {
@@ -42,6 +44,8 @@ const InventoryApprovals: React.FC = () => {
   };
 
   const approveRmHandler = async (id: string)=>{
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try{
         const response = await fetch(process.env.REACT_APP_BACKEND_URL+'bom/approve/inventory/raw-materials', {
             method: "POST",
@@ -62,6 +66,8 @@ const InventoryApprovals: React.FC = () => {
     }
     catch(err: any){
         toast.error(err?.message || "Something went wrong")
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -104,19 +110,23 @@ const InventoryApprovals: React.FC = () => {
 
   return (
     <div>
-      <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-center mb-2">
-        <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
-          Inventory Approvals
-        </div>
+        
+      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+      Inventory Approvals
+      </div>
 
-        <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
+      {/* Employees Page */}
+      <div className="w-full  flex justify-between gap-4">
+        <div className="w-full">
           <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
+            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
             rows={1}
             placeholder="Search"
             value={searchKey}
             onChange={(e) => setSearchKey(e.target.value)}
           />
+        </div>
+        <div className="flex  justify-between gap-4">
           <Button
             fontSize={{ base: "14px", md: "14px" }}
             paddingX={{ base: "10px", md: "12px" }}
@@ -124,13 +134,14 @@ const InventoryApprovals: React.FC = () => {
             width={{ base: "-webkit-fill-available", md: 100 }}
             onClick={fetchInventoryHandler}
             leftIcon={<MdOutlineRefresh />}
-            color="#1640d6"
-            borderColor="#1640d6"
+            color="#319795"
+            borderColor="#319795"
             variant="outline"
           >
             Refresh
           </Button>
         </div>
+        
       </div>
 
       <div>

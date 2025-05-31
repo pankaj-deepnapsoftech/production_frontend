@@ -9,13 +9,14 @@ const TokenAmount = ({ sale, onClose, refresh, tokenAmount }) => {
   const toast = useToast();
   const [cookies] = useCookies();
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const token = cookies?.access_token;
 
   const handleAmountChange = (e) => {
     setAmount(e.target.value);
   };
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
       toast({
         title: 'Invalid amount',
@@ -26,27 +27,44 @@ const TokenAmount = ({ sale, onClose, refresh, tokenAmount }) => {
       });
       return;
     }
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      const response = await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}purchase/addToken/${sale}`,
+        { token_amt: amount },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      );
 
-   const response = await axios.patch(`${process.env.REACT_APP_BACKEND_URL}purchase/addToken/${sale}`, 
-    { token_amt: amount},
-    {
-      headers:{
-        Authorization: `Bearer ${token}`,
-      }
+      toast({
+        title: 'Amount submitted',
+        description: `${response.data?.message}`,
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      });
+
+      onClose();
+      refresh();
+    } catch (error) {
+      console.error('Error submitting amount:', error);
+
+      toast({
+        title: 'Submission failed',
+        description: error.response?.data?.message || 'Something went wrong. Please try again.',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-   );
-
-    toast({
-      title: 'Amount submitted',
-      description: `${response.data?.message}`,
-      status: 'success',
-      duration: 4000,
-      isClosable: true,
-    });
-
-    onClose();
-    refresh();    
   };
+
 
   return (
     <div className="max-w-lg mx-auto p-4 bg-white rounded-xl shadow-md">
@@ -72,13 +90,14 @@ const TokenAmount = ({ sale, onClose, refresh, tokenAmount }) => {
              </FormControl>
      
              <div className="flex justify-between space-x-2">    
-               <Button
-                 colorScheme="blue"
-                 onClick={handleSubmit}
-                 className="w-full"
-               >
+                <Button
+                  colorScheme="blue"
+                  onClick={handleSubmit}
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
                  Submit
-               </Button>
+                </Button>
              </div>
            </form>
       )}

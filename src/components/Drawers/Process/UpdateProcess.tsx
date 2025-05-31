@@ -54,6 +54,9 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
   const [productOptions, setProductOptions] = useState<
     { value: string; label: string }[] | []
   >([]);
+
+  const [all_process , set_allprocess ] = useState<any[]>([]);
+  
   const [selectedProducts, setSelectedProducts] = useState<any[]>([
     {
       item_name: "",
@@ -177,7 +180,7 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
       status: processStatus,
       _id: productionProcessId,
     };
-
+    if (isUpdating) return;
     try {
       setIsUpdating(true);
       const response = await updateProcess(data).unwrap();
@@ -241,7 +244,7 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
       if (!data.success) {
         throw new Error(data.message);
       }
-
+      set_allprocess(data?.production_process?.processes)
       setProductionProcessId(data.production_process._id);
       setBomId(data.production_process.bom._id);
       setBomName(data.production_process.bom.bom_name);
@@ -718,18 +721,19 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
                 type="submit"
                 className="mt-1"
                 color="white"
-                backgroundColor="#1640d6"
+                backgroundColor="#319795"
               >
                 {submitBtnText}
               </Button>
-              {submitBtnText === "Update" && (
+                            
+              {all_process.every(item => item.start && item.done) && submitBtnText === "Update" && (
                 <Button
                   disabled={isCompleted || rawMaterialApprovalPending}
                   isLoading={isUpdating}
                   type="button"
                   className="mt-1"
                   color="white"
-                  backgroundColor="#1640d6"
+                  backgroundColor="#319795"
                   onClick={markProcessDoneHandler}
                 >
                   Mark as Done

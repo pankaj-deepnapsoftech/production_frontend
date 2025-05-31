@@ -143,60 +143,66 @@ const Productions = () => {
 
   return (
     <div className="overflow-x-hidden">
-      <Box p={5}>
-        <Text className="text-lg font-bold">Track Productions</Text>
-        <HStack className="flex flex-col md:flex-row justify-between items-center mb-5 mt-5 space-y-2 md:space-y-0 md:space-x-2 w-full">
+      <Box>
+        
+      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+      Track Productions</div>
+
+      {/* Employees Page */}
+      <div className="w-full  flex justify-between gap-4 pb-2">
+        <div className="w-full">
           <Input
             type="text"
             placeholder="Search production..."
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="w-full md:w-auto"
+            _focus={{
+              borderColor: "#0d9488", // or any Chakra color like "teal.400"
+              boxShadow: "0 0 0 1px #14b8a6" // optional for a ring-like effect
+            }}
+            transition="all 0.2s"
           />
-          <Input
-            type="date"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
+        </div>
+        <div className="flex  justify-between gap-4">
+          <Select
+            placeholder="Payment Status"
+            value={paymentFilter}
+            onChange={(e) => setPaymentFilter(e.target.value)}
             className="w-full md:w-auto"
-          />
-
-          <HStack className="w-full md:w-auto space-x-2">
-            <Button
+            width="170px"
+          >
+            <option value="Pending">Pending</option>
+            <option value="Paied">Paid</option>
+          </Select>
+          <Select
+            placeholder="Product Status"
+            value={productFilter}
+            onChange={(e) => setProductFilter(e.target.value)}
+            className="w-full md:w-auto"
+            width="170px"
+          >
+            <option value="Dispatch">Dispatch</option>
+            <option value="Delivered">Delivered</option>
+          </Select>
+          <Button
               fontSize={{ base: "14px", md: "14px" }}
               paddingX={{ base: "10px", md: "12px" }}
               paddingY={{ base: "0", md: "3px" }}
               width="full md:w-auto"
               onClick={fetchPurchases}
               leftIcon={<MdOutlineRefresh />}
-              color="#1640d6"
-              borderColor="#1640d6"
+              color="#319795"
+              borderColor="#319795"
               variant="outline"
             >
               Refresh
             </Button>
-          </HStack>
-        </HStack>
-
-        <HStack className="flex flex-col md:flex-row justify-between items-center mb-5 mt-5 space-y-2 md:space-y-0 md:space-x-2 w-full">
-          <Select
-            placeholder="Filter by Payment Status"
-            value={paymentFilter}
-            onChange={(e) => setPaymentFilter(e.target.value)}
-            className="w-full md:w-auto"
-          >
-            <option value="Pending">Pending</option>
-            <option value="Paied">Paid</option>
-          </Select>
-          <Select
-            placeholder="Filter by Product Status"
-            value={productFilter}
-            onChange={(e) => setProductFilter(e.target.value)}
-            className="w-full md:w-auto"
-          >
-            <option value="Dispatch">Dispatch</option>
-            <option value="Delivered">Delivered</option>
-          </Select>
-        </HStack>
+        </div>
+      </div>
+        
+        
+        
 
         {isLoading ? (
           <Box

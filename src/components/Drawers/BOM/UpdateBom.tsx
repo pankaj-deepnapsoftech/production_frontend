@@ -58,7 +58,15 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
 
   const [processes, setProcesses] = useState<string[]>([""]);
   const [products, setProducts] = useState<any[]>([]);
-  const [productOptions, setProductOptions] = useState<any[]>([]);
+  const [FinishedOptions, setFinishedOptions] = useState<
+    { value: string; label: string }[] | []
+  >([]);
+  const [RowmaterialOptions, setRowmaterialOptions] = useState<
+    { value: string; label: string }[] | []
+  >([]);
+  const [ScrapOptions, setScrapOptions] = useState<
+    { value: string; label: string }[] | []
+  >([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(false);
   const [updateBom] = useUpdateBOMMutation();
   const [labourCharges, setLabourCharges] = useState<number | undefined>();
@@ -69,6 +77,10 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
     number | undefined
   >();
   const [otherCharges, setOtherCharges] = useState<number | undefined>();
+
+  const [rowgood, setrowgood] = useState<any[]>([]);
+  const [scrapgood, setscrapgood] = useState<any[]>([]);
+  const [finishgood, setfinishgood] = useState<any[]>([]);
 
   const [rawMaterials, setRawMaterials] = useState<any[]>([
     {
@@ -99,7 +111,7 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
     },
   ]);
   const [isTableVisible, setIsTableVisible] = useState(true);
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const categoryOptions = [
     { value: "finished goods", label: "Finished Goods" },
     { value: "raw materials", label: "Raw Materials" },
@@ -115,6 +127,8 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
 
     const fileInput = supportingDoc.current as HTMLInputElement;
     let pdfUrl;
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     if (fileInput && fileInput?.files && fileInput.files.length > 0) {
       try {
         const formData = new FormData();
@@ -136,6 +150,8 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
       } catch (err: any) {
         toast.error(err.message || "Something went wrong during file upload");
         return;
+      } finally {
+        setIsSubmitting(false);
       }
     }
 
@@ -286,20 +302,40 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
   const fetchProductsHandler = async () => {
     try {
       setIsLoadingProducts(true);
-      const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + "product/all",
-        {
+  
+      const headers = {
+        Authorization: `Bearer ${cookies?.access_token}`,
+      };
+  
+      const [response1, response2, response3] = await Promise.all([
+        fetch(`${process.env.REACT_APP_BACKEND_URL}product/get_categoryproduct?category=raw materials`, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${cookies?.access_token}`,
-          },
-        }
-      );
-      const results = await response.json();
-      if (!results.success) {
-        throw new Error(results?.message);
-      }
-      setProducts(results.products);
+          headers,
+        }),
+        fetch(`${process.env.REACT_APP_BACKEND_URL}product/get_categoryproduct?category=finished goods`, {
+          method: "GET",
+          headers,
+        }),
+        fetch(`${process.env.REACT_APP_BACKEND_URL}product/all`, {
+          method: "GET",
+          headers,
+        }),
+      ]);
+  
+      const [results1, results2, results3] = await Promise.all([
+        response1.json(),
+        response2.json(),
+        response3.json(),
+      ]);
+  
+      if (!results1.success) throw new Error(results1?.message || "Failed to fetch raw materials");
+      if (!results2.success) throw new Error(results2?.message || "Failed to fetch finished goods");
+      if (!results3.success) throw new Error(results3?.message || "Failed to fetch all products");
+  
+      setrowgood(results1.products);
+      setfinishgood(results2.products);
+      setscrapgood(results3.products);
+      
     } catch (error: any) {
       toast.error(error?.message || "Something went wrong");
     } finally {
@@ -331,7 +367,7 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
   }, []);
 
   useEffect(() => {
-    const modifiedProducts = products.map((prd) => ({
+    const modifiedProducts = finishgood.map((prd) => ({
       value: prd._id,
       label: `${
         prd?.color || prd?.code
@@ -339,8 +375,34 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
           : `${prd?.name}`
       } `,
     }));
-    setProductOptions(modifiedProducts);
-  }, [products]);
+    setFinishedOptions(modifiedProducts);
+  }, [finishgood]);
+
+  useEffect(() => {
+    const modifiedProducts = rowgood.map((prd) => ({
+      value: prd._id,
+      label: `${
+        prd?.color || prd?.code
+          ? `${prd?.name}/${prd?.color}/${prd?.code}`
+          : `${prd?.name}`
+      } `,
+    }));
+    setRowmaterialOptions(modifiedProducts);
+  }, [rowgood]);
+
+  useEffect(() => {
+    const modifiedProducts = scrapgood.map((prd) => ({
+      value: prd._id,
+      label: `${
+        prd?.color || prd?.code
+          ? `${prd?.name}/${prd?.color}/${prd?.code}`
+          : `${prd?.name}`
+      } `,
+    }));
+    setScrapOptions(modifiedProducts);
+  }, [scrapgood]);
+
+
 
   useEffect(() => {
     if (
@@ -385,8 +447,8 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
 
           <form onSubmit={updateBomHandler}>
             <RawMaterial
-              products={products}
-              productOptions={productOptions}
+              products={rowgood}
+              productOptions={RowmaterialOptions}
               inputs={rawMaterials}
               setInputs={setRawMaterials}
             />
@@ -521,7 +583,7 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
                       <FormControl isRequired>
                         <Select
                           className="rounded mt-2 border border-[#a9a9a9]"
-                          options={productOptions}
+                          options={FinishedOptions}
                           placeholder="Select"
                           value={finishedGood}
                           name="assembly_phase"
@@ -634,8 +696,8 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
 
             <div>
               <ScrapMaterial
-                products={products}
-                productOptions={productOptions}
+                products={scrapgood}
+                productOptions={ScrapOptions}
                 inputs={scrapMaterials}
                 setInputs={setScrapMaterials}
               />
@@ -717,7 +779,6 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
                   border="1px"
                   borderColor="gray.300"
                   borderRadius="lg"
-                  focusBorderColor="teal.500"
                   value={bomName}
                   onChange={(e) => setBomName(e.target.value)}
                   type="text"
@@ -770,10 +831,11 @@ const UpdateBom: React.FC<UpdateBomProps> = ({
             <Button
               type="submit"
               className="mt-1 border"
-              color="#1640d6"
-              borderColor="#1640d6"
+              color="#319795"
+              borderColor="#319795"
               backgroundColor="#ffffff"
               _hover={{ backgroundColor: "#1640d6", color: "#ffffff" }}
+              disabled={isSubmitting}
             >
               Submit
             </Button>

@@ -21,7 +21,8 @@ const UploadInvoice = ({ sale_id, invoicefile, onClose }) => {
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
   const [cookies] = useCookies();
   const Toast = useToast();
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
 
 
   const handleFileDrop = (event) => {
@@ -44,7 +45,8 @@ const UploadInvoice = ({ sale_id, invoicefile, onClose }) => {
 
     const formData = new FormData();
     formData.append("invoice", file);
-
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}purchase/upload-invoice/${sale_id}`,
@@ -78,6 +80,8 @@ const UploadInvoice = ({ sale_id, invoicefile, onClose }) => {
       });
 
       onClose(); // Close the modal or perform any other action
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -130,6 +134,7 @@ const UploadInvoice = ({ sale_id, invoicefile, onClose }) => {
               mr={3}
               onClick={handleFileUpload}
               isDisabled={!file}
+              disabled={isSubmitting}
             >
               Upload
             </Button>

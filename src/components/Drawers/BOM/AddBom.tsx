@@ -35,7 +35,7 @@ const AddBom: React.FC<AddBomProps> = ({
   fetchBomsHandler,
 }) => {
   const [cookies] = useCookies();
-  const [bomName, setBomName] = useState<string | undefined>();
+  const [bomName, setBomName] = useState<any | undefined>();
   const [partsCount, setPartsCount] = useState<number>(0);
   const [totalPartsCost, setTotalPartsCost] = useState<number>(0);
   const [finishedGood, setFinishedGood] = useState<
@@ -53,9 +53,20 @@ const AddBom: React.FC<AddBomProps> = ({
   const [processes, setProcesses] = useState<string[]>([""]);
   const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(false);
   const [products, setProducts] = useState<any[]>([]);
-  const [productOptions, setProductOptions] = useState<
+  const [FinishedOptions, setFinishedOptions] = useState<
     { value: string; label: string }[] | []
   >([]);
+  const [RowmaterialOptions, setRowmaterialOptions] = useState<
+    { value: string; label: string }[] | []
+  >([]);
+  const [ScrapOptions, setScrapOptions] = useState<
+    { value: string; label: string }[] | []
+  >([]);
+
+  const [rowgood, setrowgood] = useState<any[]>([]);
+  const [scrapgood, setscrapgood] = useState<any[]>([]);
+  const [finishgood, setfinishgood] = useState<any[]>([]);
+
   const [labourCharges, setLabourCharges] = useState<number | undefined>();
   const [machineryCharges, setMachineryCharges] = useState<
     number | undefined
@@ -64,6 +75,7 @@ const AddBom: React.FC<AddBomProps> = ({
     number | undefined
   >();
   const [otherCharges, setOtherCharges] = useState<number | undefined>();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [addBom] = useAddBomMutation();
   const location = useLocation();
@@ -103,7 +115,7 @@ const AddBom: React.FC<AddBomProps> = ({
     { value: "bought out parts", label: "Bought Out Parts" },
     { value: "trading goods", label: "Trading Goods" },
     { value: "service", label: "Service" },
-  ];
+  ];  
 
   const uomOptions = [
     { value: "pcs", label: "pcs" },
@@ -120,6 +132,8 @@ const AddBom: React.FC<AddBomProps> = ({
 
     const fileInput = supportingDoc.current as HTMLInputElement;
     let pdfUrl;
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     if (fileInput && fileInput?.files && fileInput.files.length > 0) {
       try {
         const formData = new FormData();
@@ -143,6 +157,8 @@ const AddBom: React.FC<AddBomProps> = ({
       } catch (err: any) {
         toast.error(err.message || "Something went wrong during file upload");
         return;
+      } finally {
+        setIsSubmitting(false);
       }
     }
 
@@ -209,30 +225,51 @@ const AddBom: React.FC<AddBomProps> = ({
   const fetchProductsHandler = async () => {
     try {
       setIsLoadingProducts(true);
-      const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + "product/all",
-        {
+  
+      const headers = {
+        Authorization: `Bearer ${cookies?.access_token}`,
+      };
+  
+      const [response1, response2, response3] = await Promise.all([
+        fetch(`${process.env.REACT_APP_BACKEND_URL}product/get_categoryproduct?category=raw materials`, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${cookies?.access_token}`,
-          },
-        }
-      );
-      const results = await response.json();
-      if (!results.success) {
-        throw new Error(results?.message);
-      }
-      setProducts(results.products);
+          headers,
+        }),
+        fetch(`${process.env.REACT_APP_BACKEND_URL}product/get_categoryproduct?category=finished goods`, {
+          method: "GET",
+          headers,
+        }),
+        fetch(`${process.env.REACT_APP_BACKEND_URL}product/all`, {
+          method: "GET",
+          headers,
+        }),
+      ]);
+  
+      const [results1, results2, results3] = await Promise.all([
+        response1.json(),
+        response2.json(),
+        response3.json(),
+      ]);
+  
+      if (!results1.success) throw new Error(results1?.message || "Failed to fetch raw materials");
+      if (!results2.success) throw new Error(results2?.message || "Failed to fetch finished goods");
+      if (!results3.success) throw new Error(results3?.message || "Failed to fetch all products");
+  
+      setrowgood(results1.products);
+      setfinishgood(results2.products);
+      setscrapgood(results3.products);
+      
     } catch (error: any) {
       toast.error(error?.message || "Something went wrong");
     } finally {
       setIsLoadingProducts(false);
     }
   };
+  
 
   const onFinishedGoodChangeHandler = async (d: any) => {
     setFinishedGood(d);
-    const product: any = products.filter((prd: any) => prd._id === d.value)[0];
+    const product: any = finishgood.filter((prd: any) => prd._id === d.value)[0];
     setCategory(product.category);
     setUom(product.uom);
     setUnitCost(product.price);
@@ -299,8 +336,16 @@ const AddBom: React.FC<AddBomProps> = ({
     fetchProductsHandler();
   }, []);
 
+  const handleBlur = () => {
+    if (bomName !== '') {
+      setBomName(generateBomName(bomName));
+    } else {
+      setBomName('');
+    }
+  }
+
   useEffect(() => {
-    const modifiedProducts = products.map((prd) => ({
+    const modifiedProducts = finishgood.map((prd) => ({
       value: prd._id,
       label: `${
         prd?.color || prd?.code
@@ -308,10 +353,41 @@ const AddBom: React.FC<AddBomProps> = ({
           : `${prd?.name}`
       } `,
     }));
-    setProductOptions(modifiedProducts);
-  }, [products]);
+    setFinishedOptions(modifiedProducts);
+  }, [finishgood]);
 
-  //console.log(products);
+  useEffect(() => {
+    const modifiedProducts = rowgood.map((prd) => ({
+      value: prd._id,
+      label: `${
+        prd?.color || prd?.code
+          ? `${prd?.name}/${prd?.color}/${prd?.code}`
+          : `${prd?.name}`
+      } `,
+    }));
+    setRowmaterialOptions(modifiedProducts);
+  }, [rowgood]);
+
+  useEffect(() => {
+    const modifiedProducts = scrapgood.map((prd) => ({
+      value: prd._id,
+      label: `${
+        prd?.color || prd?.code
+          ? `${prd?.name}/${prd?.color}/${prd?.code}`
+          : `${prd?.name}`
+      } `,
+    }));
+    setScrapOptions(modifiedProducts);
+  }, [scrapgood]);
+  
+
+  
+
+
+  const generateBomName = (input: any): any => {
+    const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, '');
+    return `${input}-${timestamp}`;
+  };
 
   return (
     <Drawer closeDrawerHandler={closeDrawerHandler}>
@@ -332,7 +408,7 @@ const AddBom: React.FC<AddBomProps> = ({
             <h2 className="text-2xl font-bold text-white py-5 text-center mb-6 border-y bg-teal-500">
               Add New BOM
             </h2>
-
+            <form onSubmit={addBomHandler}>
             <div className="py-3">
               <FormControl isRequired>
                 <FormLabel fontWeight="bold">Finished Good</FormLabel>
@@ -424,7 +500,7 @@ const AddBom: React.FC<AddBomProps> = ({
                       <FormControl isRequired>
                         <Select
                           className="rounded mt-2 border border-[#a9a9a9]"
-                          options={productOptions}
+                          options={FinishedOptions}
                           placeholder="Select"
                           value={finishedGood}
                           name="assembly_phase"
@@ -511,10 +587,10 @@ const AddBom: React.FC<AddBomProps> = ({
               </FormControl>
             </div>
 
-            <form onSubmit={addBomHandler}>
+            
               <RawMaterial
-                products={products}
-                productOptions={productOptions}
+                products={rowgood}
+                productOptions={RowmaterialOptions}
                 inputs={rawMaterials}
                 setInputs={setRawMaterials}
               />
@@ -529,8 +605,8 @@ const AddBom: React.FC<AddBomProps> = ({
 
               <div>
                 <ScrapMaterial
-                  products={products}
-                  productOptions={productOptions}
+                  products={scrapgood}
+                  productOptions={ScrapOptions}
                   inputs={scrapMaterials}
                   setInputs={setScrapMaterials}
                 />
@@ -611,8 +687,8 @@ const AddBom: React.FC<AddBomProps> = ({
                     border="1px"
                     borderColor="gray.300"
                     borderRadius="lg"
-                    focusBorderColor="teal.500"
                     value={bomName}
+                    onBlur={handleBlur}
                     onChange={(e) => setBomName(e.target.value)}
                     type="text"
                     placeholder="Enter BOM Name"
@@ -665,7 +741,8 @@ const AddBom: React.FC<AddBomProps> = ({
                 type="submit"
                 className="mt-1"
                 color="white"
-                backgroundColor="#1640d6"
+                backgroundColor="#319795"
+                disabled={isSubmitting}
               >
                 Submit
               </Button>

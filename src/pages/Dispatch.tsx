@@ -31,7 +31,8 @@ import PaymentModal from "./PaymentModal";
 import { TbTruckDelivery } from "react-icons/tb";
 import DispatchData from "./DispatchData";
 import { toast } from "react-toastify";
-
+import DeliveryProof from "../components/UserDashboard/DeliveryProof";
+import Pagination from "./Pagination";
 const Dispatch = () => {
   const [cookies] = useCookies();
   const role = cookies?.role;
@@ -40,14 +41,18 @@ const Dispatch = () => {
   const [trackId,setTrackId] = useState();
   const [trackLink,setTrackLink] = useState();
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [purchaseId, setPurchaseId] = useState("");
   const DispatchDisclosure = useDisclosure();
+  const [orderFile, setOrderFile] = useState("");
+  const [pages, setPages] = useState(1);
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState(""); 
   const [selectedProductStatus, setSelectedProductStatus] = useState(""); 
+  const [deliveryproofuser, setdeliveryproofuser] = useState(""); 
+  
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}production-process/accountant-data`,
+        `${process.env.REACT_APP_BACKEND_URL}production-process/accountant-data?page=${pages}`,
         {
           headers: {
             Authorization: `Bearer ${cookies?.access_token}`,
@@ -56,6 +61,7 @@ const Dispatch = () => {
       );
       console.log(response.data?.data);    
       setData(response.data?.data);    
+      console.log('data.length ', data.length)
     } catch (error: any) {
       toast.error(error);
     }
@@ -63,7 +69,7 @@ const Dispatch = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [pages]);
 
   const calculateTotal = (price: number, qty: number, gst: number) => {
     const basePrice = price * qty;
@@ -91,11 +97,32 @@ const Dispatch = () => {
     );
   });
 
+  const {
+      isOpen: isProofOpen,
+      onOpen: onProofOpen,
+      onClose: onProofClose,
+    } = useDisclosure();
+
+  const handleProof = (id: any, customerproof: any, dispatcherproof: any,) => {
+    setPurchaseId(id);
+    if (customerproof) {
+      setOrderFile(customerproof);
+      setdeliveryproofuser("Customer");
+    } 
+    if (dispatcherproof) {
+      setOrderFile(dispatcherproof);
+      setdeliveryproofuser("Dispatcher");
+    }
+    onProofOpen();
+  };
+
   return (
     <div className="overflow-x-hidden">
-      <Box p={5}>
-        <Text className="text-lg font-bold">Completed Products</Text>
-        <HStack className="flex justify-between items-center mb-5 mt-5">
+      <Box>
+        <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+          Completed Products
+        </div>
+        <HStack className="flex justify-between items-center mb-2">
           {/* filters */}
           <FormControl>
             <FormLabel fontSize="sm">Payment Status</FormLabel>
@@ -131,8 +158,8 @@ const Dispatch = () => {
               width={{ base: "-webkit-fill-available", md: 100 }}
               leftIcon={<MdOutlineRefresh />}
               onClick={fetchData}
-              color="#1640d6"
-              borderColor="#1640d6"
+              color="#319795"
+              borderColor="#319795"
               variant="outline"
               className="mt-6"
             >
@@ -263,6 +290,16 @@ const Dispatch = () => {
                 <Text fontSize="sm">
                   <strong>GST :</strong> {acc?.bom?.sale_id[0]?.GST}%
                 </Text>
+                {(acc?.bom?.sale_id[0]?.delivery_status_by_customer) ? (
+                <Text fontSize="sm">
+                  <strong>Delivery Status :</strong> {acc?.bom?.sale_id[0]?.delivery_status_by_customer}
+                  <br />
+                    {acc?.bom?.sale_id[0]?.delivery_status_comment_by_customer && (
+                      <strong>Delivery Feedback :</strong>
+                    )}
+                    {acc?.bom?.sale_id[0]?.delivery_status_comment_by_customer}
+                </Text>
+                ) : null}
 
                 {(role == "Accountant" || role == "Sales" || role == "admin") ? (
                   <Text fontSize="sm">
@@ -298,8 +335,7 @@ const Dispatch = () => {
                   Dispatch
                 </Button>
               )}
-
-              {acc?.bom?.sale_id[0]?.customer_order_ss && (
+              {(acc?.bom?.sale_id[0]?.customer_order_ss || acc?.bom?.sale_id[0]?.dispatcher_order_ss) && (
                 <Button
                   bgColor="white"
                   leftIcon={<IoEyeSharp />}
@@ -308,7 +344,7 @@ const Dispatch = () => {
                   width={{ base: "full", sm: "auto" }}
                 >
                   <a
-                    href={acc?.bom?.sale_id[0]?.customer_order_ss}
+                    href={acc?.bom?.sale_id[0]?.customer_order_ss || acc?.bom?.sale_id[0]?.dispatcher_order_ss}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -316,6 +352,21 @@ const Dispatch = () => {
                   </a>
                 </Button>
               )}
+
+              {acc?.bom?.sale_id[0]?.tracking_id && acc?.bom?.sale_id[0]?.tracking_web && (
+                  <Button
+                    size={{ base: "xs", sm: "sm" }}
+                    leftIcon={<FaCloudUploadAlt />}
+                    bgColor="white"
+                    _hover={{ bgColor: "blue.500" }}
+                    className="border border-blue-500 hover:text-white w-full sm:w-auto"
+                    onClick={() =>
+                      handleProof(acc?.bom?.sale_id[0]?._id, acc?.bom?.sale_id[0]?.customer_order_ss, acc?.bom?.sale_id[0]?.dispatcher_order_ss)
+                    }
+                  >
+                    Attach Delivery Proof
+                  </Button>
+                )}
             </HStack>
           </Box>
         </Box>
@@ -352,6 +403,29 @@ const Dispatch = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+
+      {/* delivery proof modal */}
+      <Modal isOpen={isProofOpen} onClose={onProofClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>View Delivery</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {purchaseId && (
+              <DeliveryProof
+                id={purchaseId}
+                orderfile={orderFile}
+                userRole={role}
+                deliveryproofupload={deliveryproofuser}
+                onClose={onProofClose}
+              />
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Pagination page={pages} setPage={setPages} length={data.length} />
     </div>
   );
 };

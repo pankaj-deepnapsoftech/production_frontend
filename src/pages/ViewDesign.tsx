@@ -32,7 +32,8 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
   const [comment, setComment] = useState<string>("");
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -43,6 +44,8 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
         process.assined_process.includes("design")
       )?._id,
     };
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const response = await axios.patch(
           `${process.env.REACT_APP_BACKEND_URL}purchase/sales_design_status/${purchaseData?._id}`,
@@ -69,6 +72,8 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -99,9 +104,11 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
         Download
       </Button>
 
-
-      {approve === "Approve" ? (
-        <p className="text-orange-500 font-normal text-sm">You have already approved the design :)</p>
+      {approve ? (
+        <>
+          <p className="text-orange-500 font-normal text-sm">You have already {approve} the design :)</p>
+          <p>Feedback : {purchaseData?.sale_design_comment}</p>
+        </>
       ) : (
         <form onSubmit={handleSubmit}>
         <HStack align="center" justify="space-between" mb={4}>
@@ -109,7 +116,7 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
             <HStack spacing="24px">
               {/* Happy Option */}
               <Radio
-                value="Approve"
+                value="Approved"
                 colorScheme="green"
                 size="lg"
                 _focus={{ boxShadow: "outline" }}
@@ -163,7 +170,6 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
             resize="vertical"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            focusBorderColor="red.500"
           />
         )}
 
@@ -173,6 +179,7 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
           bgColor="white"
           _hover={{ bgColor: "blue.500" }}
           className="border border-blue-500 hover:text-white mt-2 w-full"
+          disabled={isSubmitting}
         >
           Submit
         </Button>

@@ -131,7 +131,11 @@ const BOMTable: React.FC<BOMCardProps> = ({
                   <IconButton
                     icon={<MdDeleteOutline />}
                     aria-label="Delete"
-                    onClick={() => deleteBomHandler(bom?._id)}
+                    onClick={() => {
+                      if (window.confirm("Are you sure you want to delete this bom?")) {
+                        deleteBomHandler(bom?._id);
+                      }
+                    }}
                     colorScheme="red"
                   />
                 )}

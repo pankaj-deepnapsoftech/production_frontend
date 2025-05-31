@@ -35,7 +35,7 @@ const Products: React.FC = () => {
   const [productId, setProductId] = useState<string | undefined>(); // Product Id to be updated or deleted
   const [searchKey, setSearchKey] = useState<string | undefined>();
   const [filteredData, setFilteredData] = useState<any>([]);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // Bulk upload menu
   const [showBulkUploadMenu, setShowBulkUploadMenu] = useState<boolean>(false);
 
@@ -168,6 +168,7 @@ const Products: React.FC = () => {
 
       const response = await bulkUpload(formData).unwrap();
       toast.success(response.message);
+      fetchProductsHandler();
     } catch (err: any) {
       toast.error(err?.data?.message || err?.message || "Something went wrong");
     } finally {
@@ -226,6 +227,72 @@ const Products: React.FC = () => {
     return <div className="text-center text-red-500">You are not allowed to access this route.</div>
   }
 
+
+  const handleExport = async () => {
+    try {
+      if (isSubmitting) return;
+      setIsSubmitting(true);
+  
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}product/exportdirectcsv`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${cookies?.access_token}`,
+          },
+        }
+      );
+  
+      if (!response.ok) {
+        // Throw a custom error to be caught in catch block
+        throw new Error(`Failed to export: ${response.statusText}`);
+      }
+  
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+  
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "export.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+  
+      // Optionally release the memory
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      toast.error(error?.message || "Something went wrong during export.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const deletebulkProductHandler = async (ids: string[]) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}product/bulkdelete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookies?.access_token}`,
+        },
+        body: JSON.stringify({ ids }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete products");
+      }
+  
+      const result = await response.json();
+      console.log(result.message);
+      toast.success(result.message);
+      fetchProductsHandler()
+      // Optional: refetch or update table state here
+    } catch (error:any) {
+      toast.error(error || "Something went wrong");
+      console.error("Bulk delete failed", error);
+    }
+  };
+
   return (
     <div>
       {/* Add Product Drawer */}
@@ -250,45 +317,105 @@ const Products: React.FC = () => {
           productId={productId}
         />
       )}
+        
+      
+      {/* Products Page */}
+      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+        Inventory
+      </div>
 
       {/* Products Page */}
-      <div className="flex flex-col items-start justify-start md:flex-row gap-y-1 md:justify-between md:items-start mb-2">
-        <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1">
-          Inventory
-        </div>
-
-        <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 items-start gap-x-2 w-full md:w-fit">
-          <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#1640d6] hover:outline:[#1640d6] border resize-none border-[#bbbbbb] bg-[#f9f9f9]"
+      <div className="w-full  flex justify-between gap-4 pb-2">
+        <div className="w-full">
+           <textarea
+            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
             rows={1}
             placeholder="Search"
             value={searchKey}
             onChange={(e) => setSearchKey(e.target.value)}
           />
+        </div>
+        <div className="flex  justify-between gap-4">
+          <FormControl width={"-webkit-max-content"}>
+          <select
+            // placeholder={"Products/Services"}
+            style={{ width: '160px' }}
+            value={productServiceFilter}
+            onChange={(e: any) => setProductServiceFilter(e.target.value)}
+            className="w-[200px] rounded border border-[#a9a9a9] py-2 px-2"
+
+          >
+            <option value="">All Products/Services</option>
+            <option value="product">Products</option>
+            <option value="service">Services</option>
+          </select>
+        </FormControl>
+        <FormControl width={"-webkit-max-content"}>
+          <Select
+            // placeholder={"Store"}
+            styles={{
+              container: (base) => ({
+                ...base,
+                width: 140,
+              })}}
+            className="w-[200px] rounded border border-[#a9a9a9]"
+            options={storeOptions}
+            value={storeFilter}
+            onChange={(d: any) => setStoreFilter(d)}
+          />
+        </FormControl>
           <Button
             fontSize={{ base: "14px", md: "14px" }}
             paddingX={{ base: "10px", md: "12px" }}
             paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 100 }}
+            onClick={openAddProductDrawerHandler}
+            color="#ffffff"
+            backgroundColor={MainColor}
+            _hover={{backgroundColor:"#14b8a6"}}
+            className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+          >
+            Add New Product
+          </Button>
+
+          <Button
+            fontSize={{ base: "14px", md: "14px" }}
+            paddingX={{ base: "10px", md: "12px" }}
+            paddingY={{ base: "0", md: "3px" }}
             onClick={fetchProductsHandler}
             leftIcon={<MdOutlineRefresh />}
-            color="#1640d6"
-            borderColor="#1640d6"
+            color="#319795"
+            borderColor="#319795"
             variant="outline"
           >
             Refresh
           </Button>
+            <select
+              className="border"
+              // onChange={(e) => setPageSize(e.target.value)}
+              style={{ width: '80px' }}
+            >
+
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option> 
+              <option value="100000">All</option>
+            </select>
+        </div>     
+      </div>
+      <div className="w-full  flex gap-4 mb-2">
           <Button
             fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
             paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 200 }}
-            onClick={openAddProductDrawerHandler}
-            color="white"
+            color="#ffffff"
             backgroundColor={MainColor}
+            _hover={{backgroundColor:"#14b8a6"}}
+            className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+            onClick={handleExport} disabled={isSubmitting}
           >
-            Add New Product
+            Export CSV
           </Button>
+
           <div className="w-[200px]">
             <Button
               fontSize={{ base: "14px", md: "14px" }}
@@ -296,8 +423,10 @@ const Products: React.FC = () => {
               paddingY={{ base: "0", md: "3px" }}
               width={{ base: "-webkit-fill-available", md: 200 }}
               onClick={() => setShowBulkUploadMenu(true)}
-              color="white"
+              color="#ffffff"
               backgroundColor={MainColor}
+              _hover={{backgroundColor:"#14b8a6"}}
+              className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
               rightIcon={<AiFillFileExcel size={22} />}
             >
               Bulk Upload
@@ -358,33 +487,8 @@ const Products: React.FC = () => {
               </div>
             )}
           </div>
-        </div>
-      </div>
-      <div className="flex justify-start items-center gap-2 mb-2">
-        <FormControl width={"-webkit-max-content"}>
-          <FormLabel fontWeight="bold" marginBottom={0}>
-            Products/Services
-          </FormLabel>
-          <select
-            value={productServiceFilter}
-            onChange={(e: any) => setProductServiceFilter(e.target.value)}
-            className="w-[200px] mt-2 rounded border border-[#a9a9a9] py-2 px-2"
-          >
-            <option value="">All</option>
-            <option value="product">Products</option>
-            <option value="service">Services</option>
-          </select>
-        </FormControl>
-        <FormControl width={"-webkit-max-content"}>
-          <FormLabel fontWeight="bold">Store</FormLabel>
-          <Select
-            className="w-[200px] rounded mt-2 border border-[#a9a9a9]"
-            options={storeOptions}
-            value={storeFilter}
-            onChange={(d: any) => setStoreFilter(d)}
-          />
-        </FormControl>
-      </div>
+      </div>  
+    
 
       <div>
         <ProductTable
@@ -393,6 +497,7 @@ const Products: React.FC = () => {
           openUpdateProductDrawerHandler={openUpdateProductDrawerHandler}
           openProductDetailsDrawerHandler={openProductDetailsDrawerHandler}
           deleteProductHandler={deleteProductHandler}
+          deletebulkProductHandler={deletebulkProductHandler}
         />
       </div>
     </div>

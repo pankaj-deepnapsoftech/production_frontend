@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import {
-  Select,
+  
   Table,
   TableContainer,
   Tbody,
@@ -30,6 +30,7 @@ import Loading from "../../ui/Loading";
 import { MainColor } from "../../constants/constants";
 
 interface UserRoleTableProps {
+  pageSize: number;
   roles: Array<{
     role: string,
     description: string,
@@ -42,7 +43,17 @@ interface UserRoleTableProps {
   deleteRoleHandler?: (id: string) => void;
 }
 
+const roleColors: { [key: string]: string } = {
+  Sales: "#1E90FF",      // Dodger Blue
+  Dispatcher: "#32CD32",       // Lime Green
+  Production: "#FF8C00",    // Dark Orange
+  Designer: "#A9A9A9",      // Dark Gray
+  Accountant: "#A9c9A9",
+  default: "#6B7280",    // Tailwind's gray-600
+};
+
 const UserRoleTable: React.FC<UserRoleTableProps> = ({
+  pageSize,
   roles,
   isLoadingRoles,
   openUpdateRoleDrawerHandler,
@@ -87,9 +98,8 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
     previousPage,
     canNextPage,
     canPreviousPage,
-    state: { pageIndex, pageSize },
+    state: { pageIndex },
     pageCount,
-    setPageSize,
   }: TableInstance<{
     role: string,
     description: string,
@@ -99,7 +109,8 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
     {
       columns,
       data: roles,
-      initialState: { pageIndex: 0 },
+      initialState: { pageIndex: 0, pageSize: pageSize, },
+      manualPagination: false,
     },
     useSortBy,
     usePagination
@@ -116,18 +127,7 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
       )}
       {!isLoadingRoles && roles.length > 0 && (
         <div>
-          <div className="flex justify-end mb-2">
-            <Select
-              onChange={(e) => setPageSize(e.target.value)}
-              width="80px"
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-              <option value={100000}>All</option>
-            </Select>
-          </div>
+         
           <TableContainer maxHeight="600px" overflowY="auto">
             <Table variant="simple" {...getTableProps()}>
               <Thead className="text-sm font-semibold">
@@ -222,7 +222,12 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
                                   )}
                                 </span>
                               )}
-                            {cell.column.id === "role" && <span className="px-2 py-1 rounded-md bg-[#918d8d] text-white">
+                            {cell.column.id === "role" && <span className="px-2 py-1 rounded-md bg-[#918d8d] text-white"
+                              style={{
+                                backgroundColor:
+                                  roleColors[row.original?.role] || roleColors.default,
+                              }}
+                            >
                               {row.original?.role}
                             </span>}
                           </Td>
@@ -251,9 +256,11 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
                           <MdDeleteOutline
                             className="hover:scale-110"
                             size={16}
-                            onClick={() =>
-                              deleteRoleHandler(row.original?._id)
-                            }
+                            onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this role?")) {
+                                deleteRoleHandler(row.original?._id);
+                              }
+                            }}
                           />
                         )}
                       </Td>

@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import logo from "../../assets/images/logo/logo.png";
 import {
   Avatar,
@@ -21,11 +21,17 @@ import UserDetailsMenu from "../../ui/UserDetailsMenu";
 import { IoReorderThreeOutline, IoNotificationsOutline } from "react-icons/io5";
 import axios from "axios";
 import { AiOutlineBell } from "react-icons/ai";
+import { RxHamburgerMenu } from "react-icons/rx";
+import { IoArrowForward } from "react-icons/io5";
+import { MdFullscreen, MdFullscreenExit } from "react-icons/md";
+
+import { setShowIcons } from "../../redux/reducers/sidebarSlice";
 
 const Header: React.FC<{ setShowSideBar: () => void }> = ({
   setShowSideBar,
 }) => {
   const navigate = useNavigate();
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [cookie, _, removeCookie] = useCookies();
   const [showUserDetails, setShowUserDetails] = useState<boolean>(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
@@ -34,6 +40,8 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
   const { firstname, lastname, email } = useSelector(
     (state: any) => state.auth
   );
+  const {showIcons, changewidth} = useSelector((state: any) => state.sidebar);
+  const dispatch = useDispatch();
 
   const token = cookie?.access_token;
   
@@ -56,6 +64,20 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
   useEffect(() => {
     fetchNotification();
   }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      // Enter fullscreen
+      document.documentElement.requestFullscreen()
+        .then(() => setIsFullscreen(true))
+        .catch((err) => console.error("Failed to enter fullscreen", err));
+    } else {
+      // Exit fullscreen
+      document.exitFullscreen()
+        .then(() => setIsFullscreen(false))
+        .catch((err) => console.error("Failed to exit fullscreen", err));
+    }
+  };
 
   const unreadCount = notifications?.filter((notif: any) => notif?.view === false).length || 0;
 
@@ -111,19 +133,44 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
   };
 
   return (
-    <div className="relative flex justify-between items-center py-2 px-3">
-      <div className="flex items-center justify-center gap-2">
+    <div className="relative flex justify-between items-center py-2 px-3 border">
+      <div
+        className={`flex items-center justify-center gap-2 
+          ${changewidth ? "w-1/5" : showIcons ? "w-1/5" : "w-[90px]"} 
+          transition-all duration-300`}
+      >
         <span
           onClick={setShowSideBar}
           className="flex rounded-full px-1 hover:bg-gray-200 cursor-pointer md:hidden"
         >
           <IoReorderThreeOutline className="h-10 w-8" />
         </span>
-        <img src={logo} className="w-36 h-24" alt="Logo" />
+
+        {showIcons || changewidth ? (
+          <img src={logo} className="w-24 h-10" alt="Logo" />
+        ) : (
+          <img src={logo} className="w-36 h-10" alt="Logo" />
+        )}
       </div>
 
-      <div className="flex gap-x-5 items-center">
+
+      <div className={`flex gap-x-5 items-center border-l border-gray-300 
+      ${changewidth ? "w-4/5" : showIcons ? "w-4/5" : "w-full"} transition-all duration-300`}>
         {/* Notification Icon with Badge */}
+        <div className="pl-4" onClick={() => dispatch(setShowIcons({ showIcons: !showIcons }))}>
+          
+          {showIcons ? (
+            <RxHamburgerMenu className={`text-2xl cursor-pointer ${changewidth ? 'hidden' : 'block'}`} />
+          ) : (
+            <IoArrowForward className={`text-2xl cursor-pointer ${changewidth ? 'hidden' : 'block'}`} />
+          )}
+        </div>
+            
+
+        <button onClick={toggleFullscreen} className="cursor-pointer ml-auto">
+          {isFullscreen ? <MdFullscreenExit className="text-2xl" /> : <MdFullscreen className="text-2xl" />}
+        </button>     
+        
         <div
           className="relative cursor-pointer"
           onClick={() => setIsNotificationOpen(true)}
@@ -143,7 +190,7 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
             </Badge>
           )}
         </div>
-
+           
         <Avatar
           cursor="pointer"
           size="md"

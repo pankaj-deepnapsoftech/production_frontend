@@ -16,12 +16,12 @@ import axios from "axios";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
 
-const UploadPayment = ({ id, orderfile, onClose }) => {
+const UploadPayment = ({ id, orderfile, onClose, userRole, deliveryproofupload }) => {
   const [file, setFile] = useState(null);
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
   const [cookies] = useCookies(['access_token']);
   const Toast = useToast();
-
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
   const handleFileDrop = (event) => {
     event.preventDefault();
@@ -43,7 +43,9 @@ const UploadPayment = ({ id, orderfile, onClose }) => {
 
     const formData = new FormData();
     formData.append("delivery", file);
-
+    formData.append("role", userRole);
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const token = cookies?.access_token
       const response = await axios.patch(
@@ -79,6 +81,8 @@ const UploadPayment = ({ id, orderfile, onClose }) => {
       });
 
       onClose(); // Close the modal or perform any other action
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -87,7 +91,7 @@ const UploadPayment = ({ id, orderfile, onClose }) => {
       <VStack spacing={4} align="stretch">
         {orderfile ? (
           <Text fontSize="sm" color="teal.500">
-            <strong className="text-black">You have already sended the proof : </strong>
+            <strong className="text-black">{deliveryproofupload} have already sended the proof : </strong>
             <a href={orderfile} target="_blank">
               Uploaded File
             </a>
@@ -131,6 +135,7 @@ const UploadPayment = ({ id, orderfile, onClose }) => {
               mr={3}
               onClick={handleFileUpload}
               isDisabled={!file}
+              disabled={isSubmitting}
             >
               Upload
             </Button>

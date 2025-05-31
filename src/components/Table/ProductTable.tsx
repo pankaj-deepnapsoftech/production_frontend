@@ -11,7 +11,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import moment from "moment";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import { MdDeleteOutline, MdEdit, MdOutlineVisibility } from "react-icons/md";
 import { FcApproval, FcDatabase } from "react-icons/fc";
@@ -21,7 +21,6 @@ import {
   useSortBy,
   useTable,
   Column,
-  TableState,
   TableInstance,
   HeaderGroup,
   Row,
@@ -53,6 +52,7 @@ interface ProductTableProps {
   openProductDetailsDrawerHandler?: (id: string) => void;
   deleteProductHandler?: (id: string) => void;
   approveProductHandler?: (id: string) => void;
+  deletebulkProductHandler?: (id: any) => void;
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({
@@ -62,9 +62,8 @@ const ProductTable: React.FC<ProductTableProps> = ({
   openProductDetailsDrawerHandler,
   deleteProductHandler,
   approveProductHandler,
+  deletebulkProductHandler
 }) => {
-
-  console.log(products);
 
   const columns: Column<{
     name: string;
@@ -211,6 +210,25 @@ const ProductTable: React.FC<ProductTableProps> = ({
   const [cookies] = useCookies();
   const role = cookies?.role;
 
+
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+  
+
+  const toggleRow = (id: string) => {
+    setSelectedRows(prev =>
+      prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]
+    );
+  };
+
+  const toggleAllRows = () => {
+    if (selectedRows.length === page.length) {
+      setSelectedRows([]);
+    } else {
+      setSelectedRows(page.map(row => row.original._id));
+    }
+  };
+
   return (
     <div>
       {isLoadingProducts && <Loading />}
@@ -222,18 +240,6 @@ const ProductTable: React.FC<ProductTableProps> = ({
       )}
       {!isLoadingProducts && products.length > 0 && (
         <div>
-          <div className="flex justify-end mb-2">
-            <Select
-              onChange={(e) => setPageSize(e.target.value)}
-              width="80px"
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option> 
-              <option value={100000}>All</option>
-            </Select>
-          </div>
           <TableContainer maxHeight="600px" overflowY="auto">
             <Table variant="simple" {...getTableProps()}>
               <Thead className="text-sm font-semibold">
@@ -257,47 +263,85 @@ const ProductTable: React.FC<ProductTableProps> = ({
                   ) => {
                     return (
                       <Tr {...hg.getHeaderGroupProps()}>
+                        <Th
+                                className="bg-table-color"
+                                color="white"
+                                borderLeft="1px solid #d7d7d7"
+                                borderRight="1px solid #d7d7d7"
+                              >
+                                <div className="flex justify-end mb-2">
+                                {selectedRows.length > 0 && (
+                                    <>
+                                      <MdDeleteOutline
+                                        size={20}
+                                        color="#fff"
+                                        className="cursor-pointer hover:scale-10 mr-1"
+                                        title={`Delete ${selectedRows.length} selected`}
+                                        onClick={() => {
+                                          if (window.confirm(`Are you sure you want to delete ${selectedRows.length} selected items?`)) {
+                                            deletebulkProductHandler(selectedRows);
+                                            setSelectedRows([]); // Reset selection
+                                          }
+                                        }}
+                                      />
+                                    </>
+                                      
+                                  )}
+                                  
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedRows.length === page.length}
+                                    onChange={toggleAllRows}
+                                  />
+
+                                 
+                                </div>
+                                
+                              </Th>
                         {hg.headers.map((column: any) => {
                           return (
-                            <Th
-                          
-                            className={
-                              column.Header === "Name"
-                                ? "sticky top-0 left-[-2px] bg-table-color"
-                                : "bg-table-color"
-                            }
-                              textTransform="capitalize"
-                              fontSize="12px"
-                              fontWeight="700"
-                              color="white"
-                              borderLeft="1px solid #d7d7d7"
-                              borderRight="1px solid #d7d7d7"
-                              {...column.getHeaderProps(
-                                column.getSortByToggleProps()
-                              )}
-                            >
-                             
-                              <p className="flex">
-                                {
-                                  (role === "Accountant" || role === "Sales" || role === "admin")
-                                    ? column.render("Header")
-                                    : (column.Header !== 'Price')
-                                      ? column.render("Header")
-                                      : null
-                                }
-
-
-                                {column.isSorted && (
-                                  <span> 
-                                    {column.isSortedDesc ? (
-                                      <FaCaretDown />
-                                    ) : (
-                                      <FaCaretUp />
-                                    )}
-                                  </span>
+                            <>
+                              
+                              <Th
+                            
+                              className={
+                                column.Header === "Name"
+                                  ? "sticky top-0 left-[-2px] bg-table-color"
+                                  : "bg-table-color"
+                              }
+                                textTransform="capitalize"
+                                fontSize="12px"
+                                fontWeight="700"
+                                color="white"
+                                borderLeft="1px solid #d7d7d7"
+                                borderRight="1px solid #d7d7d7"
+                                {...column.getHeaderProps(
+                                  column.getSortByToggleProps()
                                 )}
-                              </p>
-                            </Th>
+                              >
+                              
+                                <p className="flex">
+                                  {
+                                    (role === "Accountant" || role === "Sales" || role === "admin")
+                                      ? column.render("Header")
+                                      : (column.Header !== 'Price')
+                                        ? column.render("Header")
+                                        : null
+                                  }
+
+
+                                  {column.isSorted && (
+                                    <span> 
+                                      {column.isSortedDesc ? (
+                                        <FaCaretDown />
+                                      ) : (
+                                        <FaCaretUp />
+                                      )}
+                                    </span>
+                                  )}
+                                </p>
+                              </Th>
+                            </>
                           );
                         })}
                         <Th
@@ -326,6 +370,13 @@ const ProductTable: React.FC<ProductTableProps> = ({
                       className="relative hover:bg-[#e4e4e4] hover:cursor-pointer text-base lg:text-sm"
                       {...row.getRowProps()}
                     >
+                      <Td>
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(row.original._id)}
+                          onChange={() => toggleRow(row.original._id)}
+                        />
+                      </Td>
                       {row.cells.map((cell: Cell) => {
                         return (
                           <Td  className={
@@ -407,11 +458,13 @@ const ProductTable: React.FC<ProductTableProps> = ({
                         )}
                         {deleteProductHandler && (
                           <MdDeleteOutline
-                            className="hover:scale-110"
+                            className="hover:scale-110 cursor-pointer"
                             size={16}
-                            onClick={() =>
-                              deleteProductHandler(row.original?._id)
-                            }
+                            onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this product?")) {
+                                deleteProductHandler(row.original?._id);
+                              }
+                            }}
                           />
                         )}
                         {approveProductHandler && (
