@@ -295,15 +295,14 @@ const IndirectProducts: React.FC = () => {
   }
 
   return (
-    <div>
-      {/* Add Product Drawer */}
+    <div className="p-4 max-w-full mx-auto">
+      {/* Drawers */}
       {isAddProductDrawerOpened && (
         <AddProduct
           closeDrawerHandler={closeProductDrawerHandler}
           fetchProductsHandler={fetchProductsHandler}
         />
       )}
-      {/* Update Product Drawer */}
       {isUpdateProductDrawerOpened && (
         <UpdateProduct
           closeDrawerHandler={closeUpdateProductDrawerHandler}
@@ -311,7 +310,6 @@ const IndirectProducts: React.FC = () => {
           fetchProductsHandler={fetchProductsHandler}
         />
       )}
-      {/* Product Details Drawer */}
       {isProductDetailsDrawerOpened && (
         <ProductDetails
           closeDrawerHandler={closeProductDetailsDrawerHandler}
@@ -319,148 +317,146 @@ const IndirectProducts: React.FC = () => {
         />
       )}
 
-      {/* Products Page */}
-      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
-        Inventory
-      </div>
+      {/* Title */}
+      <h1 className="text-2xl md:text-3xl font-semibold mb-6">Inventory</h1>
 
-      {/* Products Page */}
-      <div className="w-full  flex justify-between gap-4 pb-2">
-        <div className="w-full">
-          <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
-            rows={1}
-            placeholder="Search"
-            value={searchKey}
-            onChange={(e) => setSearchKey(e.target.value)}
+      {/* Search + Filters + Actions */}
+      <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-6">
+        {/* Search textarea */}
+        <textarea
+          rows={1}
+          placeholder="Search"
+          value={searchKey}
+          onChange={(e) => setSearchKey(e.target.value)}
+          className="w-full  rounded-lg border border-teal-700 px-3 py-2 text-sm resize-none focus:outline-teal-500 hover:outline-teal-500 transition max-h-12"
+        />
+
+        {/* Product/Service Filter */}
+        <FormControl className="w-full md:w-[200px]">
+          <select
+            value={productServiceFilter}
+            onChange={(e) => setProductServiceFilter(e.target.value)}
+            className="w-full rounded border border-gray-400 py-2 px-3"
+          >
+            <option value="">All Products/Services</option>
+            <option value="product">Products</option>
+            <option value="service">Services</option>
+          </select>
+        </FormControl>
+
+        {/* Store Filter */}
+        <FormControl className="w-full md:w-[200px]">
+          <Select
+            options={storeOptions}
+            value={storeFilter}
+            onChange={(d:any) => setStoreFilter(d)}
+            classNamePrefix="react-select"
+            styles={{
+              container: (base) => ({
+                ...base,
+                width: '100%',
+                minWidth: '160px',
+                maxWidth: '200px',
+              }),
+            }}
           />
-        </div>
-        <div className="flex  justify-between gap-4">
-          <FormControl width={"-webkit-max-content"}>
-            <select
-              value={productServiceFilter}
-              onChange={(e: any) => setProductServiceFilter(e.target.value)}
-              className="w-[200px] rounded border border-[#a9a9a9] py-2 px-2"
-            >
-              <option value="">All Products/Services</option>
-              <option value="product">Products</option>
-              <option value="service">Services</option>
-            </select>
-          </FormControl>
-          <FormControl width={"-webkit-max-content"}>
-            <Select
-              className="w-[200px] rounded border border-[#a9a9a9]"
-              options={storeOptions}
-              value={storeFilter}
-              onChange={(d: any) => setStoreFilter(d)}
-            />
-          </FormControl>
+        </FormControl>
 
-
-          <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            onClick={openAddProductDrawerHandler}
-            color="#ffffff"
-            backgroundColor={MainColor}
-            _hover={{backgroundColor:"#14b8a6"}}
-            className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
-          >
-            Add New Product
-          </Button>
-          <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            width={{ base: "-webkit-fill-available", md: 100 }}
-            onClick={fetchProductsHandler}
-            leftIcon={<MdOutlineRefresh />}
-            color="#319795"
-            borderColor="#319795"
-            variant="outline"
-          >
-            Refresh
-          </Button>
-        </div>
-        
-        
-        
-             
-      </div>
-      <div className="w-full  flex gap-4">
+        {/* Add New Product Button */}
         <Button
-          fontSize={{ base: "14px", md: "14px" }}
-          paddingY={{ base: "0", md: "3px" }}
-          color="#ffffff"
-          backgroundColor={MainColor}
-          _hover={{backgroundColor:"#14b8a6"}}
-          className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
-          onClick={handleExport} disabled={isSubmitting}
+          onClick={openAddProductDrawerHandler}
+          colorScheme="teal"
+          className="py-3 rounded-lg text-white w-full  whitespace-nowrap"
+          fontSize="sm"
+          _hover={{ bg: "#14b8a6" }}
+        >
+          Add New Product
+        </Button>
+
+        {/* Refresh Button */}
+        <Button
+          onClick={fetchProductsHandler}
+          leftIcon={<MdOutlineRefresh />}
+          colorScheme="teal"
+          variant="outline"
+          className="w-full  whitespace-nowrap"
+          fontSize="sm"
+        >
+          Refresh
+        </Button>
+      </div>
+
+
+      {/* Export + Bulk Upload */}
+      <div className="flex flex-col md:flex-row items-center gap-4 mb-6">
+        <Button
+          onClick={handleExport}
+          isLoading={isSubmitting}
+          colorScheme="teal"
+          className="py-3 rounded-lg text-white w-full md:w-auto"
+          fontSize="sm"
         >
           Export CSV
         </Button>
-        <div className="w-[200px]">
+
+        <div className="w-full md:w-[200px] relative">
           <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 200 }}
             onClick={() => setShowBulkUploadMenu(true)}
-            color="#ffffff"
-          backgroundColor={MainColor}
-          _hover={{backgroundColor:"#14b8a6"}}
-          className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+            colorScheme="teal"
             rightIcon={<AiFillFileExcel size={22} />}
+            className="py-3 rounded-lg text-white w-full"
+            fontSize="sm"
           >
             Bulk Upload
           </Button>
+
           {showBulkUploadMenu && (
-            <div className="mt-1 border border-[#a9a9a9] rounded p-1">
+            <div className="absolute z-10 mt-1 w-full max-w-xs md:max-w-md border border-gray-300 rounded bg-white p-3 shadow-lg">
               <form>
                 <FormControl>
-                  <FormLabel fontWeight="bold">Choose File (.csv)</FormLabel>
+                  <FormLabel fontWeight="bold" htmlFor="bulk-file">
+                    Choose File (.csv)
+                  </FormLabel>
                   <Input
+                    id="bulk-file"
                     ref={fileRef}
-                    borderWidth={1}
-                    borderColor={"#a9a9a9"}
-                    paddingTop={1}
                     type="file"
                     accept=".csv, .xlsx"
+                    borderColor="gray.300"
+                    py={1}
                   />
                 </FormControl>
-                <div className="flex gap-1">
+
+                <div className="flex gap-2 mt-3">
                   <Button
                     type="submit"
-                    fontSize={{ base: "14px", md: "14px" }}
                     onClick={bulkUploadHandler}
-                    color="white"
-                    backgroundColor={MainColor}
-                    className="mt-1"
+                    colorScheme="teal"
                     rightIcon={<AiFillFileExcel size={22} />}
                     isLoading={bulkUploading}
+                    fontSize="sm"
                   >
                     Upload
                   </Button>
+
                   <Button
                     type="button"
-                    fontSize={{ base: "14px", md: "14px" }}
                     onClick={() => setShowBulkUploadMenu(false)}
-                    color="white"
-                    backgroundColor={MainColor}
-                    className="mt-1"
+                    colorScheme="red"
                     rightIcon={<RxCross2 size={22} />}
+                    fontSize="sm"
                   >
                     Close
                   </Button>
                 </div>
-                <a href={SampleCSV}>
+
+                <a href={SampleCSV} className="block mt-3">
                   <Button
                     type="button"
-                    fontSize={{ base: "14px", md: "14px" }}
-                    width={{ base: "-webkit-fill-available", md: 190 }}
-                    color="white"
-                    backgroundColor={MainColor}
-                    className="mt-1"
+                    colorScheme="teal"
                     rightIcon={<AiFillFileExcel size={22} />}
+                    fontSize="sm"
+                    w="full"
                   >
                     Sample CSV
                   </Button>
@@ -469,19 +465,20 @@ const IndirectProducts: React.FC = () => {
             </div>
           )}
         </div>
-      </div>  
-
-      <div>
-        <ProductTable
-          isLoadingProducts={isLoadingProducts}
-          products={filteredData}
-          openUpdateProductDrawerHandler={openUpdateProductDrawerHandler}
-          openProductDetailsDrawerHandler={openProductDetailsDrawerHandler}
-          deleteProductHandler={deleteProductHandler}
-          deletebulkProductHandler={deletebulkProductHandler}
-        />
       </div>
+
+      {/* Products Table */}
+      <ProductTable
+        isLoadingProducts={isLoadingProducts}
+        products={filteredData}
+        openUpdateProductDrawerHandler={openUpdateProductDrawerHandler}
+        openProductDetailsDrawerHandler={openProductDetailsDrawerHandler}
+        deleteProductHandler={deleteProductHandler}
+        deletebulkProductHandler={deletebulkProductHandler}
+      />
     </div>
+  
+  
   );
 };
 

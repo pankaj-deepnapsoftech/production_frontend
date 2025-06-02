@@ -355,7 +355,7 @@ const Dispatch = () => {
 
               {acc?.bom?.sale_id[0]?.tracking_id && acc?.bom?.sale_id[0]?.tracking_web && (
                   <Button
-                    size={{ base: "xs", sm: "sm" }}
+                   
                     leftIcon={<FaCloudUploadAlt />}
                     bgColor="white"
                     _hover={{ bgColor: "blue.500" }}
@@ -377,26 +377,28 @@ const Dispatch = () => {
       <Modal
         isOpen={DispatchDisclosure.isOpen}
         onClose={DispatchDisclosure.onClose}
+        isCentered
+        size={{ base: "xs", md: "md", lg: "lg" }} // Optional: controls modal size per screen
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent maxW="95vw">
           <ModalHeader>Dispatch</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody overflowY="auto" maxH="70vh" px={{ base: 2, md: 4 }}>
             <DispatchData
               sale_id={saleId}
-              trackId = {trackId}
-              trackLink = {trackLink}
+              trackId={trackId}
+              trackLink={trackLink}
               onClose={DispatchDisclosure.onClose}
             />
           </ModalBody>
           <ModalFooter>
             <Button
               bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
+              _hover={{ bgColor: "red.500", color: "white" }}
+              className="border border-red-500 w-full md:w-auto"
               mr={3}
-              onClick={() => DispatchDisclosure.onClose()}
+              onClick={DispatchDisclosure.onClose}
             >
               Cancel
             </Button>
@@ -405,13 +407,14 @@ const Dispatch = () => {
       </Modal>
 
 
+
       {/* delivery proof modal */}
-      <Modal isOpen={isProofOpen} onClose={onProofClose}>
+      <Modal isOpen={isProofOpen} onClose={onProofClose} isCentered size={{ base: "xs", md: "md", lg: "lg" }}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent maxW="95vw">
           <ModalHeader>View Delivery</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody overflowY="auto" maxH="70vh" px={{ base: 2, md: 4 }}>
             {purchaseId && (
               <DeliveryProof
                 id={purchaseId}
@@ -424,6 +427,7 @@ const Dispatch = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+
 
       <Pagination page={pages} setPage={setPages} length={data.length} />
     </div>

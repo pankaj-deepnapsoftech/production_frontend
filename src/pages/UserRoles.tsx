@@ -139,22 +139,20 @@ const UserRole: React.FC = () => {
   }
 
   return (
-    <div>
-      {/* Add User Role */}
+    <div className="p-4">
+      {/* Drawers */}
       {isAddRoleDrawerOpened && (
         <AddUserRole
           fetchUserRolesHandler={fetchRolesHandler}
           closeDrawerHandler={closeAddRoleDrawerHandler}
         />
       )}
-      {/* User Role Details */}
       {isRoleDetailsDrawerOpened && (
         <UserRoleDetails
           roleId={roleId}
           closeDrawerHandler={closeRoleDetailsDrawerHandler}
         />
       )}
-      {/* Update User Role */}
       {isUpdateRoleDrawerOpened && (
         <UpdateUserRole
           roleId={roleId}
@@ -162,51 +160,56 @@ const UserRole: React.FC = () => {
           fetchUserRolesHandler={fetchRolesHandler}
         />
       )}
-      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+
+      {/* Header */}
+      <div className="text-lg md:text-xl font-semibold pb-4">
         User Roles
       </div>
 
-      <div className="  w-full  flex justify-between gap-4">
-        <div className="w-full">
-          <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
-            rows={1}
-            placeholder="Search"
-            value={searchKey}
-            onChange={(e) => setSearchKey(e.target.value)}
-          />
-        </div>
-        <div className="flex  justify-between gap-4">
-        <Button
-          fontSize={{ base: "14px", md: "14px" }}
-          paddingX={{ base: "10px", md: "12px" }}
-          paddingY={{ base: "0", md: "3px" }}
-          onClick={openAddRoleDrawerHandler}
-          color="#ffffff"
-          backgroundColor={MainColor}
-          _hover={{backgroundColor:"#14b8a6"}}
-          className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
-        >
-          Add New Role
-        </Button>
+      {/* Top Controls */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+        {/* Search Bar */}
+        <textarea
+          className="w-full md:w-1/2 rounded-lg px-3 py-2 text-sm border border-[#0d9488] focus:outline-[#14b8a6] resize-none"
+          rows={1}
+          placeholder="Search"
+          value={searchKey}
+          onChange={(e) => setSearchKey(e.target.value)}
+        />
+
+        {/* Buttons and Select */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-4 w-full md:w-auto">
+          <Button
+            fontSize="14px"
+            paddingX="12px"
+            paddingY="6px"
+            onClick={openAddRoleDrawerHandler}
+            backgroundColor={MainColor}
+            color="#ffffff"
+            _hover={{ backgroundColor: "#14b8a6" }}
+            className="rounded-lg text-sm"
+          >
+            Add New Role
+          </Button>
 
           <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 100 }}
+            fontSize="14px"
+            paddingX="12px"
+            paddingY="6px"
             onClick={fetchRolesHandler}
             leftIcon={<MdOutlineRefresh />}
             color="#319795"
             borderColor="#319795"
             variant="outline"
+            className="text-sm"
           >
             Refresh
           </Button>
+
           <Select
             onChange={(e) => setPageSize(Number(e.target.value))}
+            className="text-sm border-[#319795] focus:outline-[#319795]"
             width="80px"
-            
           >
             <option value={10}>10</option>
             <option value={20}>20</option>
@@ -215,12 +218,10 @@ const UserRole: React.FC = () => {
             <option value={100000}>All</option>
           </Select>
         </div>
-
-
-
       </div>
 
-      <div>
+      {/* Table */}
+      <div className="overflow-x-auto">
         <UserRoleTable
           pageSize={PageSize}
           roles={filteredRoles}
@@ -231,6 +232,7 @@ const UserRole: React.FC = () => {
         />
       </div>
     </div>
+  
   );
 };
 

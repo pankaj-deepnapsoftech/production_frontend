@@ -58,14 +58,14 @@ const Layout: React.FC = () => {
 
       <div className="h-[90vh] overflow-hidden flex gap-x-5">
         <div
-          className={`h-[inherit] border overflow-x-hidden absolute  ${showSideBar ? "left-0" :"-left-72" }  md:static z-10  bg-white transition-all duration-500   
-          ${changewidth ? "w-[260px]" : showIcons ? "w-[260px]" : "w-[90px]"} 
+          className={`h-[inherit] border overflow-x-hidden absolute  ${showSideBar ? "left-0" :"-left-72" }   md:static z-10  bg-white transition-all duration-500   
+          ${changewidth ? "w-[260px]" : showIcons ? "w-[260px]" : "w-[90px] max-[800px]:w-[60vw]"} 
           `}
           style={{ boxShadow: "0 0 20px 3px #96beee26" }}
         >
           <Navigation setShowSideBar={()=>setShowSideBar(!showSideBar)} />
         </div>
-        <div className="flex-1 pr-5 w-[80%] overflow-auto">
+        <div className="flex-1  w-[100%] px-3 overflow-auto">
           <Breadcrumb />
           <Container>
             <Outlet />

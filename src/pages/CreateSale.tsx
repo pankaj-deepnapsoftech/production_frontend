@@ -160,83 +160,128 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
   };
 
   return (
-    <Box w="full" maxW="md" mx="auto">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <FormControl id="customer_id" isRequired>
-          <FormLabel>Customer</FormLabel>
-          <Select
-            name="customer_id"
-            value={formData.customer_id}
-            onChange={handleInputChange}
+    <Box w="full" maxW={{ base: "100%", md: "600px" }} mx="auto" px={{ base: 4, md: 0 }}>
+      <form onSubmit={handleSubmit}>
+        <Stack spacing={5}>
+          {/* Customer */}
+          <FormControl id="customer_id" isRequired>
+            <FormLabel fontSize="md">Customer</FormLabel>
+            <Select
+              name="customer_id"
+              value={formData.customer_id}
+              onChange={handleInputChange}
+              placeholder="Select a customer"
+            >
+              {customers.map((customer: any) => (
+                <option key={customer?._id} value={customer?._id}>
+                  {customer?.full_name} {customer?.company_name ? ` - ${customer?.company_name}` : ""}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Product */}
+          <FormControl id="product_name" isRequired>
+            <FormLabel fontSize="md">Product</FormLabel>
+            <Select
+              name="product_id"
+              value={formData?.product_id}
+              onChange={handleInputChange}
+              placeholder="Select a product"
+            >
+              {products.map((product: any) => (
+                <option key={product?._id} value={product?._id}>
+                  {product?.name}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Price */}
+          <FormControl id="price" isRequired>
+            <FormLabel fontSize="md">Price</FormLabel>
+            <Input
+              type="number"
+              name="price"
+              value={formData?.price}
+              onChange={handleInputChange}
+            />
+          </FormControl>
+
+          {/* Product Quantity */}
+          <FormControl id="product_qty" isRequired>
+            <FormLabel fontSize="md">Product Quantity</FormLabel>
+            <Input
+              type="number"
+              name="product_qty"
+              value={formData?.product_qty}
+              onChange={handleInputChange}
+            />
+          </FormControl>
+
+          {/* Pro Forma Invoice */}
+          <FormControl>
+            <FormLabel fontSize="md">Pro Forma Invoice</FormLabel>
+            <Input
+              type="file"
+              accept="application/pdf,image/*"
+              name="performaInvoice"
+              onChange={handleInputChange}
+            />
+          </FormControl>
+
+          {/* GST Radio Group */}
+          <FormControl id="GST">
+            <FormLabel fontSize="md">GST Type</FormLabel>
+            <RadioGroup
+              onChange={handleGSTChange}
+              value={formData?.GST?.toString()}
+            >
+              <Stack direction={{ base: "column", sm: "row" }}>
+                <Radio value="18">18%</Radio>
+                <Radio value="12">12%</Radio>
+                <Radio value="5">5%</Radio>
+              </Stack>
+            </RadioGroup>
+          </FormControl>
+
+          {/* Product File Upload */}
+          <FormControl id="productFile">
+            <FormLabel fontSize="md">Product Image</FormLabel>
+            <Input
+              type="file"
+              accept="image/*"
+              name="productFile"
+              onChange={handleInputChange}
+            />
+          </FormControl>
+
+          {/* Remarks */}
+          <FormControl id="comment">
+            <FormLabel fontSize="md">Remarks</FormLabel>
+            <Input
+              type="text"
+              name="comment"
+              value={formData?.comment}
+              onChange={handleInputChange}
+              placeholder="Further Details (if any)"
+            />
+          </FormControl>
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            colorScheme="teal"
+            size="lg"
+            width="full"
+            isDisabled={isSubmitting}
           >
-            <option value="" disabled>Select a customer</option>
-            {customers.map((customer: any) => (
-              <option key={customer?._id} value={customer?._id}>
-                {customer?.full_name} {customer?.company_name ? ` - ${customer?.company_name}` : null}
-              </option>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl id="product_name" isRequired>
-          <FormLabel>Product</FormLabel>
-          <Select
-            name="product_id"
-            value={formData?.product_id}
-            onChange={handleInputChange}
-          >
-            <option value="">Select a product</option>
-            {products.map((product: any) => (
-              <option key={product?._id} value={product?._id}>
-                {product?.name}
-              </option>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl id="price" isRequired>
-          <FormLabel>Price</FormLabel>
-          <Input type="number" name="price" value={formData?.price} onChange={handleInputChange} />
-        </FormControl>
-
-        <FormControl id="product_qty" isRequired>
-          <FormLabel>Product Quantity</FormLabel>
-          <Input type="number" name="product_qty" value={formData?.product_qty} onChange={handleInputChange} />
-        </FormControl>
-          
-        <FormControl>
-          <FormLabel>Pro Forma Invoice</FormLabel>
-          <Input type="file" accept="application/pdf,image/*" name="performaInvoice" onChange={handleInputChange} />
-        </FormControl>
-
-
-        <FormControl id="GST" >
-          <FormLabel>GST Type</FormLabel>
-          <RadioGroup onChange={handleGSTChange} value={formData?.GST?.toString()}>
-            <Stack direction="row">
-              <Radio value="18">GST (18%)</Radio>
-              <Radio value="12">GST (12%)</Radio>
-              <Radio value="5">GST (5%)</Radio>
-            </Stack>
-          </RadioGroup>
-        </FormControl>
-
-        <FormControl id="productFile">
-          <FormLabel>Product Image</FormLabel>
-          <Input type="file" accept="image/*" name="productFile" onChange={handleInputChange} />
-        </FormControl>
-
-        <FormControl id="comment">
-          <FormLabel>Remarks</FormLabel>
-          <Input type="text" name="comment" value={formData?.comment} onChange={handleInputChange} placeholder="Further Details (if any)" />
-        </FormControl>
-
-        <Button type="submit" colorScheme="teal" size="lg" width="full"
-          disabled={isSubmitting}>
-          Add Sale
-        </Button>
+            Add Sale
+          </Button>
+        </Stack>
       </form>
     </Box>
+  
   );
 
 };

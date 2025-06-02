@@ -133,149 +133,146 @@ const Header: React.FC<{ setShowSideBar: () => void }> = ({
   };
 
   return (
-    <div className="relative flex justify-between items-center py-2 px-3 border">
-      <div
-        className={`flex items-center justify-center gap-2 
-          ${changewidth ? "w-1/5" : showIcons ? "w-1/5" : "w-[90px]"} 
-          transition-all duration-300`}
+    <div className="relative flex items-center justify-between border px-3 py-2 w-full">
+    {/* Sidebar/Logo Section */}
+    <div
+      className={`flex items-center gap-2 justify-center transition-all duration-300
+        ${changewidth || showIcons ? "w-1/5" : "w-[65px]"}
+      `}
+    >
+      {/* Hamburger Toggle for Sidebar */}
+      <span
+        onClick={setShowSideBar}
+        className="flex absolute  md:hidden rounded-full px-1 hover:bg-gray-200 cursor-pointer"
       >
-        <span
-          onClick={setShowSideBar}
-          className="flex rounded-full px-1 hover:bg-gray-200 cursor-pointer md:hidden"
-        >
-          <IoReorderThreeOutline className="h-10 w-8" />
-        </span>
-
-        {showIcons || changewidth ? (
-          <img src={logo} className="w-24 h-10" alt="Logo" />
-        ) : (
-          <img src={logo} className="w-36 h-10" alt="Logo" />
-        )}
-      </div>
-
-
-      <div className={`flex gap-x-5 items-center border-l border-gray-300 
-      ${changewidth ? "w-4/5" : showIcons ? "w-4/5" : "w-full"} transition-all duration-300`}>
-        {/* Notification Icon with Badge */}
-        <div className="pl-4" onClick={() => dispatch(setShowIcons({ showIcons: !showIcons }))}>
-          
-          {showIcons ? (
-            <RxHamburgerMenu className={`text-2xl cursor-pointer ${changewidth ? 'hidden' : 'block'}`} />
-          ) : (
-            <IoArrowForward className={`text-2xl cursor-pointer ${changewidth ? 'hidden' : 'block'}`} />
-          )}
-        </div>
-            
-
-        <button onClick={toggleFullscreen} className="cursor-pointer ml-auto">
-          {isFullscreen ? <MdFullscreenExit className="text-2xl" /> : <MdFullscreen className="text-2xl" />}
-        </button>     
-        
-        <div
-          className="relative cursor-pointer"
-          onClick={() => setIsNotificationOpen(true)}
-        >
-          <IoNotificationsOutline className="text-2xl" />
-          {unreadCount > 0 && (
-            <Badge
-              colorScheme="red"
-              position="absolute"
-              top="-5px"
-              right="-5px"
-              fontSize="0.7rem"
-              borderRadius="full"
-              px={2}
-            >
-              {unreadCount}
-            </Badge>
-          )}
-        </div>
-           
-        <Avatar
-          cursor="pointer"
-          size="md"
-          name={firstname && lastname ? firstname + " " + lastname : firstname}
-          onClick={() => setShowUserDetails((prev) => !prev)}
-        />
-
-        {showUserDetails && (
-          <ClickMenu
-            top={70}
-            right={30}
-            closeContextMenuHandler={() => setShowUserDetails(false)}
-          >
-            <UserDetailsMenu
-              email={email}
-              firstname={firstname}
-              lastname={lastname}
-              logoutHandler={logoutHandler}
-              closeUserDetailsMenu={() => setShowUserDetails(false)}
-            />
-          </ClickMenu>
-        )}
-      </div>
-
-      {/* Notification Modal */}
-      <Modal
-        isOpen={isNotificationOpen}
-        onClose={() => {
-          setIsNotificationOpen(false);
-          markAllAsRead(); 
-        }}
-        size="lg"
-        closeOnOverlayClick={false} 
-        motionPreset="scale" 
-      >
-        <ModalOverlay />
-        <ModalContent
-          borderRadius="xl"
-          boxShadow="0 4px 10px rgba(0, 0, 0, 0.15)" 
-          bg="white"
-        >
-          <ModalHeader
-            fontSize="2xl"
-            fontWeight="bold"
-            display="flex"
-            alignItems="center"
-          >
-            <AiOutlineBell size={24} className="mr-2" /> 
-            Notifications
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {unreadCount === 0 ? (
-              <div className="flex justify-center items-center py-6">
-                <p className="text-gray-500 text-lg">No new notifications.</p>
-              </div>
-            ) : (
-              notifications.map((notif: any) => (
-                <div
-                  key={notif?._id}
-                  className="flex items-center border-b py-4"
-                >
-                  <div className="flex-1">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-xs text-gray-500">
-                        {new Date(notif?.createdAt).toLocaleString()}
-                      </span>
-                    </div>
-                    <p
-                      className={`text-md ${
-                        notif?.view
-                          ? "text-gray-400 line-through"
-                          : "text-gray-700"
-                      }`}
-                    >
-                      {notif?.message}
-                    </p>
-                  </div>
-                </div>
-              ))
-            )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+        <IoReorderThreeOutline className="w-8 h-10" />
+      </span>
+  
+      {/* Logo */}
+      <img
+        src={logo}
+        alt="Logo"
+        className={`absolute h-28  max-[800px]:hidden transition-all
+          ${changewidth || showIcons
+          ? "w-48 md:h-48 -top-16 max-[800px]:-top-20"
+          : "w-20 md:h-28 -top-6 left-12 md:left-auto "}
+        `}
+      />
     </div>
+  
+    {/* Right Section (Icons, Avatar, etc.) */}
+    <div
+      className={`flex items-center gap-4 transition-all duration-300
+        ${changewidth || showIcons ? "w-4/5" : "w-full"}
+      `}
+    >
+      {/* Toggle Sidebar (Desktop only) */}
+      <div
+        className="hidden md:block pl-4"
+        onClick={() => dispatch(setShowIcons({ showIcons: !showIcons }))}
+      >
+        {showIcons ? (
+          <RxHamburgerMenu className={`text-2xl cursor-pointer ${changewidth ? "hidden" : "block"}`} />
+        ) : (
+          <IoArrowForward className={`text-2xl cursor-pointer ${changewidth ? "hidden" : "block"}`} />
+        )}
+      </div>
+  
+      {/* Fullscreen Toggle */}
+      <button onClick={toggleFullscreen} className="ml-auto cursor-pointer">
+        {isFullscreen ? (
+          <MdFullscreenExit className="text-2xl" />
+        ) : (
+          <MdFullscreen className="text-2xl" />
+        )}
+      </button>
+  
+      {/* Notification Bell */}
+      <div className="relative cursor-pointer" onClick={() => setIsNotificationOpen(true)}>
+        <IoNotificationsOutline className="text-2xl" />
+        {unreadCount > 0 && (
+          <Badge
+            colorScheme="red"
+            className="absolute -top-1 -right-1 text-xs rounded-full px-2"
+          >
+            {unreadCount}
+          </Badge>
+        )}
+      </div>
+  
+      {/* Avatar & Dropdown */}
+      <Avatar
+        cursor="pointer"
+        size="md"
+        name={firstname && lastname ? `${firstname} ${lastname}` : firstname}
+        onClick={() => setShowUserDetails((prev) => !prev)}
+      />
+  
+      {showUserDetails && (
+        <ClickMenu
+          top={70}
+          right={30}
+          closeContextMenuHandler={() => setShowUserDetails(false)}
+        >
+          <UserDetailsMenu
+            email={email}
+            firstname={firstname}
+            lastname={lastname}
+            logoutHandler={logoutHandler}
+            closeUserDetailsMenu={() => setShowUserDetails(false)}
+          />
+        </ClickMenu>
+      )}
+    </div>
+  
+    {/* Notification Modal */}
+    <Modal
+      isOpen={isNotificationOpen}
+      onClose={() => {
+        setIsNotificationOpen(false);
+        markAllAsRead();
+      }}
+      size="lg"
+      closeOnOverlayClick={false}
+      motionPreset="scale"
+    >
+      <ModalOverlay />
+      <ModalContent
+        borderRadius="xl"
+        boxShadow="0 4px 10px rgba(0, 0, 0, 0.15)"
+        bg="white"
+      >
+        <ModalHeader className="flex items-center text-2xl font-bold">
+          <AiOutlineBell size={24} className="mr-2" />
+          Notifications
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          {unreadCount === 0 ? (
+            <div className="flex justify-center items-center py-6">
+              <p className="text-gray-500 text-lg">No new notifications.</p>
+            </div>
+          ) : (
+            notifications.map((notif: any) => (
+              <div key={notif?._id} className="border-b py-4">
+                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                  {new Date(notif?.createdAt).toLocaleString()}
+                </div>
+                <p
+                  className={`text-md ${
+                    notif?.view ? "text-gray-400 line-through" : "text-gray-700"
+                  }`}
+                >
+                  {notif?.message}
+                </p>
+              </div>
+            ))
+          )}
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  </div>
+  
   );
 };
 

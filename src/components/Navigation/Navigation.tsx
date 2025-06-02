@@ -1,87 +1,94 @@
+
+
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 import routes from "../../routes/routes";
 import { NavLink } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { setWidth } from "../../redux/reducers/sidebarSlice";
+import useIsMobile from "../UseMobile";
 
-const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
+const Navigation: React.FC<{ setShowSideBar: () => void }> = ({ setShowSideBar }) => {
   const { allowedroutes, isSuper } = useSelector((state: any) => state.auth);
-  const {showIcons, changewidth} = useSelector((state: any) => state.sidebar);
+  const { showIcons, changewidth } = useSelector((state: any) => state.sidebar);
   const dispatch = useDispatch();
   const [openSubMenus, setOpenSubMenus] = useState<{ [key: string]: boolean }>(
     {}
   );
-
+  const isMobile = useIsMobile();
   const toggleSubMenusHandler = (path: string) => {
     setOpenSubMenus((prev: { [key: string]: boolean }) => ({
       ...prev,
       [path]: !prev[path],
     }));
   };
-
+  // useEffect(() => {
+  //   if (isMobile) {
+  //     setShowIcons(true);
+  //   }
+  // }, [isMobile]);
   return (
     <>
-      {showIcons ? ( 
-        <div className="h-[inherit] px-3 py-3  bg-[#fbfbfb]">
+      {showIcons || isMobile ? (
+        <div className="h-[inherit] px-3 py-3   bg-[#fbfbfb]">
           <ul>
             {routes.map((route, ind) => {
               const isAllowed =
                 isSuper || allowedroutes.includes(route.path.replaceAll("/", ""));
 
-                if (route.name === "Task" && isSuper) {
-                  return null; 
-                }
-                
+              if (route.name === "Task" && isSuper) {
+                return null;
+              }
+
               if (route.isSublink) {
                 return (
                   <Fragment key={ind} >
-                  <div>
-                    <li
-                      className="flex border-b  gap-x-2 pl-3 pr-9 py-5 rounded-lg hover:bg-[#e6efff] hover:text-[#319795] hover:cursor-pointer text-[15px] font-semibold"
-                      onClick={() => toggleSubMenusHandler(route.path)}
-                      style={{
-                        cursor: isAllowed  ? "pointer" : "not-allowed",
-                        opacity: isAllowed ? 1 : 0.5,
-                        pointerEvents: isAllowed ? "auto" : "none", 
-                      }}
-                    >
-                      <span>{route.icon}</span>
-                      <span>{route.name}</span>
-                      <span className="pt-1" >
-                        {openSubMenus[route.path] ? <FaAngleUp /> : <FaAngleDown />}
-                      </span>
-                    </li>
-                    {openSubMenus[route.path] &&
-                      route.sublink &&
-                      route.sublink.map((sublink, index) => (
-                        <NavLink
-                          onClick={setShowSideBar}
-                          key={index}
-                          to={route.path + "/" + sublink.path}
-                          className={({ isActive }) =>
-                            `flex gap-x-2 pl-5 pr-9 py-3 rounded-lg text-[15px] font-semibold 
+                    <div>
+                      <li
+                        className="flex border-b  gap-x-2 pl-3 pr-9 py-5 rounded-lg hover:bg-[#e6efff] hover:text-[#319795] hover:cursor-pointer text-[15px] font-semibold"
+                        onClick={() => toggleSubMenusHandler(route.path)}
+                        style={{
+                          cursor: isAllowed ? "pointer" : "not-allowed",
+                          opacity: isAllowed ? 1 : 0.5,
+                          pointerEvents: isAllowed ? "auto" : "none",
+                        }}
+                      >
+                        <span>{route.icon}</span>
+                        <span>{route.name}</span>
+                        <span className="pt-1" >
+                          {openSubMenus[route.path] ? <FaAngleUp /> : <FaAngleDown />}
+                        </span>
+                      </li>
+                      {openSubMenus[route.path] &&
+                        route.sublink &&
+                        route.sublink.map((sublink, index) => (
+                          <NavLink
+                            onClick={setShowSideBar}
+                            key={index}
+                            to={route.path + "/" + sublink.path}
+                            className={({ isActive }) =>
+                              `flex gap-x-2 pl-5 pr-9 py-3 rounded-lg text-[15px] font-semibold 
                             hover:bg-[#e6efff] hover:text-[#319795] hover:cursor-pointer 
                             ${isActive ? "bg-[#e6efff] text-[#319795]" : ""}`
-                          }
-                          style={{
-                            cursor: isAllowed ? "pointer" : "not-allowed",
-                            opacity: isAllowed ? 1 : 0.5,
-                            pointerEvents: isAllowed ? "auto" : "none",
-                          }}
-                        >
-                          <li className="flex gap-x-2">
-                            <span>{sublink.icon}</span>
-                            <span>{sublink.name}</span>
-                          </li>
-                        </NavLink>
+                            }
+                            style={{
+                              cursor: isAllowed ? "pointer" : "not-allowed",
+                              opacity: isAllowed ? 1 : 0.5,
+                              pointerEvents: isAllowed ? "auto" : "none",
+                            }}
+                          >
+                            <li className="flex gap-x-2">
+                              <span>{sublink.icon}</span>
+                              <span>{sublink.name}</span>
+                            </li>
+                          </NavLink>
 
-                      ))}
-                  </div>
+                        ))}
+                    </div>
                   </Fragment>
                 );
               }
-              else if(route.name === "Approval" && isSuper){
+              else if (route.name === "Approval" && isSuper) {
                 return (
                   <NavLink
                     key={ind}
@@ -105,7 +112,7 @@ const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
                   </NavLink>
                 );
               }
-              else if(route.name !== "Approval") {
+              else if (route.name !== "Approval") {
                 return (
                   <NavLink
                     key={ind}
@@ -132,9 +139,9 @@ const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
               }
             })}
           </ul>
-        </div> 
+        </div>
       ) : (
-        <div className="h-[inherit] px-3 py-3 bg-[#fbfbfb]">
+        <div className="h-[inherit] px-3 py-3 bg-[#fbfbfb]    ">
           <ul>
             {routes.map((route, ind) => {
               const isAllowed =
@@ -194,9 +201,8 @@ const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
                             >
                               <span className="text-xl">{sublink.icon}</span>
                               <span
-                                className={`absolute left-12 ${
-                                  changewidth ? "opacity-100" : "opacity-0"
-                                } whitespace-nowrap transition-opacity duration-300 pointer-events-none`}
+                                className={`absolute left-12 ${changewidth ? "opacity-100" : "opacity-0"
+                                  } whitespace-nowrap transition-opacity duration-300 pointer-events-none`}
                                 style={{ top: "50%", transform: "translateY(-50%)" }}
                               >
                                 {sublink.name}
@@ -233,9 +239,8 @@ const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
                     >
                       <span className="text-xl">{route.icon}</span>
                       <span
-                        className={`absolute left-12 ${
-                          changewidth ? "opacity-100" : "opacity-0"
-                        } whitespace-nowrap transition-opacity duration-300 pointer-events-none`}
+                        className={`absolute left-12 ${changewidth ? "opacity-100" : "opacity-0"
+                          } whitespace-nowrap transition-opacity duration-300 pointer-events-none`}
                         style={{ top: "50%", transform: "translateY(-50%)" }}
                       >
                         {route.name}
@@ -269,9 +274,8 @@ const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
                     >
                       <span className="text-xl">{route.icon}</span>
                       <span
-                        className={`absolute left-12 ${
-                          changewidth ? "opacity-100" : "opacity-0"
-                        } whitespace-nowrap transition-opacity duration-300 pointer-events-none`}
+                        className={`absolute left-12 ${changewidth ? "opacity-100" : "opacity-0"
+                          } whitespace-nowrap transition-opacity duration-300 pointer-events-none`}
                         style={{ top: "50%", transform: "translateY(-50%)" }}
                       >
                         {route.name}
@@ -286,11 +290,12 @@ const Navigation: React.FC<{setShowSideBar:()=>void}> = ({setShowSideBar}) => {
             })}
           </ul>
         </div>
-      )}
+      )
+      }
 
     </>
 
-    
+
   );
 };
 

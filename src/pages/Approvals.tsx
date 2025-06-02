@@ -548,41 +548,49 @@ const Approvals: React.FC = () => {
   return (
     <div>
       <Tabs variant="unstyled" isFitted>
-      <TabList
-        justifyContent="center"
-        borderBottom="2px solid"
-        borderColor="gray.200"
-        flexWrap="wrap"
-        gap={3}
-        px={4}
-      >
-        {tabsData.map((tab) => (
-          <Tab
-            key={tab.id}
-            fontWeight="semibold"
-            fontSize="md"
-            px={6}
-            py={2}
-            bg="gray.100"
-            color="gray.600"
-            boxShadow="sm"
-            transition="all 0.1s ease"
-            _selected={{
-              bgGradient: "linear(to-r, #14b8a6, #319795)",
-              color: "white",
-              boxShadow: "lg",
-              transform: "scale(1.05)",
-            }}
-            _hover={{
-              bg: "gray.200",
-              transform: "translateY(-2px)",
-              boxShadow: "md",
-            }}
-          >
-            {tab.label}
-          </Tab>
-        ))}
-      </TabList>
+        <TabList
+          justifyContent="flex-start"   // changed from center to left align for better scroll UX
+          borderBottom="2px solid"
+          borderColor="gray.200"
+          overflowX="auto"             // enable horizontal scrolling
+          whiteSpace="nowrap"          // prevent tabs from wrapping to new line
+          gap={3}
+          px={4}
+          py={5}
+          // optional: for smooth scrolling on iOS
+          sx={{
+            WebkitOverflowScrolling: "touch",
+          }}
+        >
+          {tabsData.map((tab) => (
+            <Tab
+              key={tab.id}
+              fontWeight="semibold"
+              fontSize="md"
+              px={6}
+              py={2}
+              bg="gray.100"
+              color="gray.600"
+              boxShadow="sm"
+              transition="all 0.1s ease"
+              _selected={{
+                bgGradient: "linear(to-r, #14b8a6, #319795)",
+                color: "white",
+                boxShadow: "lg",
+                transform: "scale(1.05)",
+              }}
+              _hover={{
+                bg: "gray.200",
+                transform: "translateY(-2px)",
+                boxShadow: "md",
+              }}
+              display="inline-block" // ensure tabs respect nowrap behavior
+            >
+              {tab.label}
+            </Tab>
+          ))}
+        </TabList>
+
 
         <TabPanels>
 
@@ -595,9 +603,9 @@ const Approvals: React.FC = () => {
                 Products for Approval
               </div>
 
-              <div className="mt-2 md:mt-0 flex flex-wrap gap-y-1 gap-x-2 w-full md:w-fit">
+              <div className="mt-2 md:mt-0 flex flex-wrap gap-y-2 gap-x-2 w-full md:w-fit">
                 <textarea
-                  className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
+                  className="rounded-[5px] w-full md:flex-1 px-2 py-2.5 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
                   rows={1}
                   //   width="220px"
                   placeholder="Search"

@@ -98,10 +98,10 @@ const Sales = () => {
   } = useDisclosure();
 
   const {
-      isOpen: isProductionModalOpen,
-      onOpen: onProductionOpen,
-      onClose: onProductionClose,
-    } = useDisclosure();
+    isOpen: isProductionModalOpen,
+    onOpen: onProductionOpen,
+    onClose: onProductionClose,
+  } = useDisclosure();
 
   const [saleId, setSaleId] = useState("");
   const invoiceDisclosure = useDisclosure();
@@ -109,14 +109,14 @@ const Sales = () => {
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
   const paymentDisclosure = useDisclosure();
   const [paymentfile, setPaymentFile] = useState("");
-  
+
   const [customerApprove, setCustomerApprove] = useState("");
   const [selectedData, setSelectedData] = useState<any>([]);
   const [verifystatus, setVerifyStatus] = useState(false);
   const [selectedDesign, setSelectedDesign] = useState<string | null>(null);
   const [assignId, setAssignId] = useState();
   const [paymentFor, setPaymentFor] = useState("");
-  const[limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(10);
   const half_payment = useDisclosure()
   const openSalestatusModal = (
     designFile: string,
@@ -143,7 +143,7 @@ const Sales = () => {
     onOrderOpen();
   };
 
-  
+
 
   const openAccountModal = (
     designFile: string,
@@ -295,7 +295,7 @@ const Sales = () => {
       const matchesDate =
         !filterDate ||
         new Date(purchase?.createdAt).toISOString().split("T")[0] ===
-          filterDate;
+        filterDate;
 
       const matchesStatus =
         !filterStatus ||
@@ -357,7 +357,7 @@ const Sales = () => {
     setInvoiceFile(file);
     proformainvoiceDisclosure.onOpen();
   };
-  
+
   const handlePayment = (
     id: any,
     payment: string,
@@ -393,65 +393,74 @@ const Sales = () => {
     }
   }
 
-  
+
 
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-hidden ">
       <Box>
-      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
-        Sales
-      </div>
+        <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
+          Sales
+        </div>
 
-      {/* Sales Page */}
-      <div className="w-full  flex justify-between gap-4 pb-2">
-        <div className="w-full">
-          <Input
+        {/* Sales Page */}
+        <div className="w-full flex flex-col md:flex-row md:justify-between md:items-center gap-4 pb-2 flex-wrap">
+          {/* Search Input */}
+          <div className="w-full md:flex-1">
+            <Input
               type="text"
               placeholder="Search Sale..."
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              className="w-full md:w-auto"
+              className="w-full"
               _focus={{
-                borderColor: "#0d9488", // or any Chakra color like "teal.400"
-                boxShadow: "0 0 0 1px #14b8a6" // optional for a ring-like effect
+                borderColor: "#0d9488",
+                boxShadow: "0 0 0 1px #14b8a6"
               }}
               transition="all 0.2s"
             />
-        </div>
-        <div className="flex  justify-between gap-4">
-           <Input
+          </div>
+
+          {/* Filter Controls */}
+          <div className="w-full md:w-auto flex flex-wrap gap-4 justify-start md:justify-end">
+            {/* Date Filter */}
+            <Input
               type="date"
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
-              // className="w-[120px] md:w-[140px]"
-              width={{ base: "120px", md: "140px" }}
+              width={{ base: "100%", sm: "140px" }}
             />
+
+            {/* Status Filter */}
             <Select
               placeholder="Sale Status"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              width={{ base: "120px", md: "140px" }}
+              width={{ base: "100%", sm: "140px" }}
             >
               <option value="Pending">Pending</option>
               <option value="Approved">Approved</option>
             </Select>
 
-
+            {/* Add New Sale Button */}
             <Button
               onClick={createDisclosure.onOpen}
-
               color="#ffffff"
               backgroundColor="#0d9488"
-              _hover={{backgroundColor:"#14b8a6"}}
-              className="py-3  text-white rounded-lg focus:ring-2"
+              _hover={{ backgroundColor: "#14b8a6" }}
+              className="text-white rounded-lg focus:ring-2"
+              paddingX={{ base: "12px", md: "16px" }}
+              paddingY={{ base: "10px", md: "8px" }}
+              width={{ base: "100%", sm: "auto" }}
             >
               Add New Sale
             </Button>
+
+            {/* Refresh Button */}
             <Button
-              fontSize={{ base: "14px", md: "14px" }}
+              fontSize="14px"
               paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "full", md: 100 }}
+              paddingY={{ base: "10px", md: "8px" }}
+              width={{ base: "100%", sm: "auto" }}
               onClick={fetchPurchases}
               leftIcon={<MdOutlineRefresh />}
               color="#319795"
@@ -461,26 +470,21 @@ const Sales = () => {
               Refresh
             </Button>
 
-            <div className="flex justify-end mb-2">
-              <Select
-                value={limit}
-                onChange={(e) => {
-                  const newSize = Number(e.target.value);
-                  setLimit(newSize);
-                }}
-                width="80px"
-              >
-                {[10, 20, 50, 100, 100000].map((size) => (
-                  <option key={size} value={size}>
-                    {size === 100000 ? "All" : size}
-                  </option>
-                ))}
-              </Select>
-            </div>
-
+            {/* Page Size Selector */}
+            <Select
+              value={limit}
+              onChange={(e) => setLimit(Number(e.target.value))}
+              width={{ base: "100%", sm: "80px" }}
+            >
+              {[10, 20, 50, 100, 100000].map((size) => (
+                <option key={size} value={size}>
+                  {size === 100000 ? "All" : size}
+                </option>
+              ))}
+            </Select>
+          </div>
         </div>
-        
-      </div>
+
 
         {isLoading ? (
           <Box
@@ -598,7 +602,7 @@ const Sales = () => {
 
                     {purchase?.customer_invoice_approve == "Reject" ? (
                       <Badge colorScheme="red" fontSize="sm">
-                        Customer Invoice : Rejected <br/ >
+                        Customer Invoice : Rejected <br />
                         Customer Invoice Comment: {purchase?.customer_invoice_comment}
                       </Badge>
                     ) : null}
@@ -671,7 +675,7 @@ const Sales = () => {
                       <strong>Product Price:</strong>{" "}
                       {purchase?.price || "N/A"}
                     </Text>
-                    
+
                     <Text fontSize="sm">
                       <strong>Quantity:</strong> {purchase?.product_qty}
                     </Text>
@@ -719,14 +723,14 @@ const Sales = () => {
                     </Text>
 
                     {(purchase?.delivery_status_by_customer) ? (
-                    <Text fontSize="sm">
+                      <Text fontSize="sm">
                         <strong>Delivery Status :</strong> {purchase?.delivery_status_by_customer}
-                      <br />
+                        <br />
                         {purchase?.delivery_status_comment_by_customer && (
                           <strong>Delivery Feedback :</strong>
                         )}
                         {purchase?.delivery_status_comment_by_customer}
-                    </Text>
+                      </Text>
                     ) : null}
 
                     {purchase?.comment && (
@@ -737,7 +741,7 @@ const Sales = () => {
                         Remarks{" "}
                       </Text>
                     )}
-                    
+
                     {purchase?.invoice_image && (
                       <Text
                         className="text-blue-500 underline cursor-pointer"
@@ -772,7 +776,7 @@ const Sales = () => {
                         View Token Proof{" "}
                       </a>
                     ) : null}
-                    
+
 
                     {role === 'Sales' && purchase?.performaInvoice ? (
                       <a
@@ -801,12 +805,12 @@ const Sales = () => {
                   </Button>
 
                   {purchase?.token_ss &&
-                  purchase?.boms[0]?.production_processes?.every(
-                    (processGroup) =>
-                      processGroup?.processes?.every(
-                        (process) => process?.done === true
-                      )
-                  ) ? (
+                    purchase?.boms[0]?.production_processes?.every(
+                      (processGroup) =>
+                        processGroup?.processes?.every(
+                          (process) => process?.done === true
+                        )
+                    ) ? (
                     <Button
                       bgColor="white"
                       _hover={{ bgColor: "red.500" }}
@@ -820,11 +824,11 @@ const Sales = () => {
                     </Button>
                   ) : null}
 
-                  
-                  
+
+
                   {purchase?.designFile && (
                     <Button
-                      size={{ base: "xs", sm: "sm" }} // Smaller size for mobile
+
                       leftIcon={<IoEyeSharp />}
                       bgColor="white"
                       _hover={{ bgColor: "orange.500" }}
@@ -841,7 +845,7 @@ const Sales = () => {
                     </Button>
                   )}
 
-                  {role === 'Sales' && purchase?.token_amt && purchase?.token_status ? ( 
+                  {role === 'Sales' && purchase?.token_amt && purchase?.token_status ? (
                     <Button
                       bgColor="white"
                       _hover={{ bgColor: "orange.500" }}
@@ -855,7 +859,7 @@ const Sales = () => {
                     >
                       Sample Image
                     </Button>
-                  ): null}
+                  ) : null}
 
                   {/* {["sales", "admin"].includes(
                     role.toLowerCase()) && purchase?.allsale?.half_payment_image ? (
@@ -874,8 +878,8 @@ const Sales = () => {
                     </Button>
                   ) : null} */}
 
-                  
-                  
+
+
                   {role === 'Sales' && (
                     <Button
                       bgColor="white"
@@ -912,7 +916,7 @@ const Sales = () => {
                     </Button>
                   )}
 
-                  
+
                   {purchase?.isTokenVerify ? (
                     <Button
                       bgColor="white"
@@ -942,7 +946,7 @@ const Sales = () => {
                       Update Pro Forma Invoice
                     </Button>
                   ) : null}
-                  
+
                   {/* {["sales", "admin"].includes(
                     role.toLowerCase()
                   ) && purchase?.customer_approve === "Approved" ? (
@@ -978,26 +982,26 @@ const Sales = () => {
                   } */}
 
                   {purchase?.customer_pyement_ss ? (
-                  <Button
-                    bgColor="white"
-                    leftIcon={<IoEyeSharp />}
-                    _hover={{ bgColor: "orange.500" }}
-                    className="border border-orange-500 hover:text-white"
-                    onClick={() =>
-                      handlePayment(
-                        purchase?.sale_id,
-                        purchase?.customer_pyement_ss,
-                        purchase?.payment_verify,
-                        purchase?.id,
-                        "payment"
-                      )
-                    }
-                    width={{ base: "full", sm: "auto" }}
-                  >
+                    <Button
+                      bgColor="white"
+                      leftIcon={<IoEyeSharp />}
+                      _hover={{ bgColor: "orange.500" }}
+                      className="border border-orange-500 hover:text-white"
+                      onClick={() =>
+                        handlePayment(
+                          purchase?.sale_id,
+                          purchase?.customer_pyement_ss,
+                          purchase?.payment_verify,
+                          purchase?.id,
+                          "payment"
+                        )
+                      }
+                      width={{ base: "full", sm: "auto" }}
+                    >
                       View Payment
                     </Button>
                   ) : null}
-                  
+
                   <Button
                     bgColor="white"
                     _hover={{ bgColor: "orange.500" }}
@@ -1019,59 +1023,86 @@ const Sales = () => {
 
 
       {/* half payment modal */}
-      <Modal isOpen={half_payment.isOpen} onClose={half_payment.onClose}>
+      <Modal
+        isOpen={half_payment.isOpen}
+        onClose={half_payment.onClose}
+        size={{ base: "md", sm: "sm", md: "md" }} // Responsive modal width
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Enter Half Amount</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-md"
+          mx={{ base: 4, md: "auto" }} // Margin on mobile to avoid edge clipping
+          p={{ base: 2, md: 4 }}
+        >
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Enter Half Amount
+          </ModalHeader>
           <ModalCloseButton />
+
           <ModalBody>
             <FormControl>
-              {/* <FormLabel>Number</FormLabel> */}
               <Input
                 type="number"
                 id="number-input"
-                placeholder="Enter a number"
-                value={halfAmountId?.allsale?.half_payment ? halfAmountId?.allsale?.half_payment : halfAmount}
+                placeholder="Enter amount"
+                value={
+                  halfAmountId?.allsale?.half_payment
+                    ? halfAmountId?.allsale?.half_payment
+                    : halfAmount
+                }
                 onChange={(e) => sethalfAmount(e.target.value)}
+                className="rounded-md"
+                _focus={{ borderColor: "#0d9488", boxShadow: "0 0 0 1px #14b8a6" }}
               />
             </FormControl>
           </ModalBody>
-          <ModalFooter>
+
+          <ModalFooter className="flex flex-col md:flex-row gap-2 w-full">
             <Button
-              colorScheme="blue"
-              mr={3}
+              colorScheme="teal"
               onClick={handleHalfPayment}
               isDisabled={!halfAmount}
+              className="w-full md:w-auto"
             >
               Submit
             </Button>
-            <Button variant="ghost" onClick={half_payment.onClose}>
+            <Button
+              variant="outline"
+              onClick={half_payment.onClose}
+              className="w-full md:w-auto"
+            >
               Cancel
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
 
+
       {/* Create Sale Modal */}
-      <Modal
-        isOpen={createDisclosure.isOpen}
-        onClose={createDisclosure.onClose}
-      >
+      <Modal isOpen={createDisclosure.isOpen} onClose={createDisclosure.onClose} size={{ base: "md", sm: "md", md: "lg" }}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add A New Sale</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-xl"
+          mx={{ base: 4, sm: "auto" }} // Add margin-x on small screens
+          p={{ base: 2, md: 4 }}       // Padding inside the modal
+        >
+          <ModalHeader className="text-lg font-semibold text-gray-700">
+            Add A New Sale
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+
+          <ModalBody className="space-y-4">
             <CreateSale
               onClose={createDisclosure.onClose}
-              refresh={fetchPurchases}  
+              refresh={fetchPurchases}
             />
           </ModalBody>
+
           <ModalFooter>
             <Button
               bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
+              _hover={{ bgColor: "red.500", color: "white" }}
+              className="border border-red-500 w-full"
               onClick={createDisclosure.onClose}
             >
               Cancel
@@ -1080,26 +1111,33 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
+
       {/* Update Sale Modal */}
       <Modal
         isOpen={updateDisclosure.isOpen}
         onClose={updateDisclosure.onClose}
+        size={{ base: "md", sm: "sm", md: "md", lg: "lg" }} // Responsive modal size
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Edit Sale</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-md"
+          mx={{ base: 4, md: "auto" }} // Margin for mobile screens
+          p={{ base: 2, md: 4 }}
+        >
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Edit Sale
+          </ModalHeader>
           <ModalCloseButton />
+
           <ModalBody>
-            <UpdateSale
-              sale={selectedSale}
-              onClose={updateDisclosure.onClose}
-            />
+            <UpdateSale sale={selectedSale} onClose={updateDisclosure.onClose} />
           </ModalBody>
-          <ModalFooter>
+
+          <ModalFooter className="flex flex-col md:flex-row gap-2 w-full">
             <Button
               bgColor="white"
               _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
+              className="border border-red-500 hover:text-white w-full md:w-auto"
               onClick={updateDisclosure.onClose}
             >
               Cancel
@@ -1108,15 +1146,24 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
+
       {/* Assign Employee Modal */}
       <Modal
         isOpen={assignDisclosure.isOpen}
         onClose={assignDisclosure.onClose}
+        size={{ base: "md", sm: "sm", md: "md", lg: "lg" }} // Responsive sizes
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Assign Employee</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-md"
+          mx={{ base: 4, md: "auto" }} // Padding for mobile view
+          p={{ base: 2, md: 4 }}
+        >
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Assign Employee
+          </ModalHeader>
           <ModalCloseButton />
+
           <ModalBody>
             <Assign
               empData={employees}
@@ -1124,11 +1171,12 @@ const Sales = () => {
               onClose={assignDisclosure.onClose}
             />
           </ModalBody>
-          <ModalFooter>
+
+          <ModalFooter className="flex flex-col md:flex-row gap-2 w-full">
             <Button
               bgColor="white"
               _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
+              className="border border-red-500 hover:text-white w-full md:w-auto"
               onClick={assignDisclosure.onClose}
             >
               Cancel
@@ -1137,30 +1185,56 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
+
       {/* Remarks Modal */}
       <Modal
         isOpen={remarksDisclosure.isOpen}
         onClose={remarksDisclosure.onClose}
+        size={{ base: "md", sm: "sm", md: "md", lg: "lg" }} // Responsive sizes
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Remarks</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-md"
+          mx={{ base: 4, md: "auto" }}  // Margin for smaller screens
+          p={{ base: 2, md: 4 }}
+        >
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Remarks
+          </ModalHeader>
           <ModalCloseButton />
+
           <ModalBody>
-            <Text className="p-3 bg-orange-100 mb-5">{comment}</Text>
+            <Text
+              className="p-3 mb-5 rounded-md"
+              bg="orange.100"
+              fontSize={{ base: "sm", md: "md" }}
+              whiteSpace="pre-wrap" // keeps line breaks and formatting
+            >
+              {comment || "No remarks provided."}
+            </Text>
           </ModalBody>
         </ModalContent>
       </Modal>
+
 
       {/* sample modal */}
       <Modal
         isOpen={sampleDisclosure.isOpen}
         onClose={sampleDisclosure.onClose}
+        size={{ base: "md", sm: "sm", md: "md", lg: "lg" }} // Responsive sizing
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader> Approve Sample</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-md"
+          mx={{ base: 4, md: "auto" }}  // Side margins for mobile
+          p={{ base: 2, md: 4 }}
+        >
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Approve Sample
+          </ModalHeader>
+
           <ModalCloseButton />
+
           <ModalBody>
             <SampleModal
               sale={selectedSale}
@@ -1169,11 +1243,15 @@ const Sales = () => {
               approveStatus={approveStatus}
             />
           </ModalBody>
-          <ModalFooter>
+
+          <ModalFooter className="flex justify-end gap-2">
             <Button
-              bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
+              bg="white"
+              color="red.500"
+              border="1px solid"
+              borderColor="red.500"
+              _hover={{ bg: "red.500", color: "white" }}
+              className="w-full md:w-auto"
               onClick={sampleDisclosure.onClose}
             >
               Cancel
@@ -1182,65 +1260,108 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
+
       {/* sales status Modal */}
-      <Modal isOpen={isImageModalOpen} onClose={onImageClose}>
+      <Modal
+        isOpen={isImageModalOpen}
+        onClose={onImageClose}
+        size={{ base: "md", sm: "sm", md: "md", lg: "lg" }} // Responsive modal sizes
+        isCentered
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Sales Status</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-lg"
+          mx={{ base: 4, md: "auto" }} // Margin for mobile padding
+          p={{ base: 2, md: 4 }}
+        >
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Sales Status
+          </ModalHeader>
+
           <ModalCloseButton />
+
           <ModalBody>
-            {/* {selectedDesign && selectedData && ( */}
-              <Salestatus
-                designUrl={selectedDesign}
-                purchaseData={selectedData}
-                approve={customerApprove}
-                onClose={onImageClose}
-              />
-            {/* )} */}
+            <Salestatus
+              designUrl={selectedDesign}
+              purchaseData={selectedData}
+              approve={customerApprove}
+              onClose={onImageClose}
+            />
           </ModalBody>
         </ModalContent>
       </Modal>
+
 
 
       {/* sample image Modal */}
-      <Modal isOpen={isSampleModalOpen} onClose={onSampleClose}>
+
+      <Modal
+        isOpen={isSampleModalOpen}
+        onClose={onSampleClose}
+        size={{ base: "md", sm: "sm", md: "md", lg: "lg" }} // Responsive sizes
+        isCentered
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Sample Image</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-lg"
+          mx={{ base: 4, md: "auto" }} // Padding for mobile
+          p={{ base: 2, md: 4 }}
+        >
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Sample Image
+          </ModalHeader>
+
           <ModalCloseButton />
+
           <ModalBody>
-            {/* {selectedDesign && selectedData && ( */}
-            <Sampleimage
-              purchaseData={selectedData}
-              onClose={onSampleClose}
-            />
-            {/* )} */}
+            <Sampleimage purchaseData={selectedData} onClose={onSampleClose} />
           </ModalBody>
         </ModalContent>
       </Modal>
 
-      {/* Order image Modal */}
-      <Modal isOpen={isOrderModalOpen} onClose={onOrderClose}>
+
+      {/* Order Image Modal */}
+      <Modal
+        isOpen={isOrderModalOpen}
+        onClose={onOrderClose}
+        size={{ base: "md", sm: "sm", md: "md", lg: "lg" }} // Responsive sizes
+        isCentered
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Order Image</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-lg"
+          mx={{ base: 4, md: "auto" }}
+          p={{ base: 2, md: 4 }}
+        >
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Order Image
+          </ModalHeader>
+
           <ModalCloseButton />
+
           <ModalBody>
-            {/* {selectedDesign && selectedData && ( */}
-            <Orderimage
-              purchaseData={selectedData}
-              onClose={onSampleClose}
-            />
-            {/* )} */}
+            <Orderimage purchaseData={selectedData} onClose={onOrderClose} />
           </ModalBody>
         </ModalContent>
       </Modal>
+
 
       {/* View Design Modal */}
-      <Modal isOpen={isDesignModalOpen} onClose={onDesignerClose}>
+      <Modal
+        isOpen={isDesignModalOpen}
+        onClose={onDesignerClose}
+        size={{ base: "md", sm: "sm", md: "md", lg: "lg" }}
+        isCentered
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>View Design</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-lg"
+          mx={{ base: 4, md: "auto" }}
+          p={{ base: 2, md: 4 }}
+        >
+          <ModalHeader className="text-lg  font-semibold text-gray-800">
+            View Design
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {selectedDesign && selectedData && (
@@ -1256,39 +1377,73 @@ const Sales = () => {
       </Modal>
 
       {/* account payment preview */}
-      <Modal isOpen={isAccountpreviewOpen} onClose={onAccountpreviewClose}>
+      <Modal
+        isOpen={isAccountpreviewOpen}
+        onClose={onAccountpreviewClose}
+        size={{ base: "md", sm: "sm", md: "md", lg: "lg" }}
+        isCentered
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Account Details</ModalHeader>
+        <ModalContent className="rounded-lg shadow-lg p-4">
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Account Details
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <Img src={selectedData?.token_ss} />
+          <ModalBody className="flex justify-center">
+            <Img
+              src={selectedData?.token_ss}
+              alt="Account Screenshot"
+              maxH={{ base: "200px", md: "400px" }}
+              maxW="100%"
+              objectFit="contain"
+              className="rounded-md"
+            />
           </ModalBody>
         </ModalContent>
       </Modal>
-      
+
+
       {/* preview invoice */}
-      <Modal isOpen={isInvoicepreviewOpen} onClose={onInvoicepreviewClose}>
+      <Modal
+        isOpen={isInvoicepreviewOpen}
+        onClose={onInvoicepreviewClose}
+        size={{ base: "md", sm: "md", md: "lg", lg: "xl" }}
+        isCentered
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Invoice Details</ModalHeader>
+        <ModalContent className="rounded-lg shadow-lg p-4">
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Invoice Details
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <Text>{selectedData?.invoice_remark}</Text>
-            <Img src={selectedData?.invoice_image} />
+          <ModalBody className="flex flex-col space-y-4">
+            <Text className="text-gray-700">{selectedData?.invoice_remark || "No remarks available."}</Text>
+            <Img
+              src={selectedData?.invoice_image}
+              alt="Invoice Image"
+              maxH={{ base: "200px", md: "400px" }}
+              maxW="100%"
+              objectFit="contain"
+              className="rounded-md shadow-sm"
+            />
           </ModalBody>
         </ModalContent>
       </Modal>
+
 
 
       {/* Modal for invoice upload, payment and dispatch */}
       <Modal
         isOpen={invoiceDisclosure.isOpen}
         onClose={invoiceDisclosure.onClose}
+        size={{ base: "md", sm: "md", md: "lg", lg: "xl" }}
+        isCentered
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Upload Invoice</ModalHeader>
+        <ModalContent className="rounded-lg  shadow-lg p-4">
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Upload Invoice
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <UploadInvoice
@@ -1297,13 +1452,13 @@ const Sales = () => {
               onClose={invoiceDisclosure.onClose}
             />
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
             <Button
               bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
-              mr={3}
-              onClick={() => invoiceDisclosure.onClose()}
+              _hover={{ bgColor: "red.500", color: "white" }}
+              className="border border-red-500 w-full sm:w-auto"
+              mr={{ base: 0, sm: 3 }}
+              onClick={invoiceDisclosure.onClose}
             >
               Cancel
             </Button>
@@ -1311,14 +1466,19 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
+
       {/* Modal update proforma invoice */}
       <Modal
         isOpen={proformainvoiceDisclosure.isOpen}
         onClose={proformainvoiceDisclosure.onClose}
+        size={{ base: "md", sm: "md", md: "lg", lg: "xl" }}
+        isCentered
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Upload Pro Forma Invoice</ModalHeader>
+        <ModalContent className="rounded-lg shadow-lg p-4">
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Upload Pro Forma Invoice
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <ProformaInvoice
@@ -1327,13 +1487,13 @@ const Sales = () => {
               onClose={proformainvoiceDisclosure.onClose}
             />
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
             <Button
               bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
-              mr={3}
-              onClick={() => proformainvoiceDisclosure.onClose()}
+              _hover={{ bgColor: "red.500", color: "white" }}
+              className="border border-red-500 w-full sm:w-auto"
+              mr={{ base: 0, sm: 3 }}
+              onClick={proformainvoiceDisclosure.onClose}
             >
               Cancel
             </Button>
@@ -1341,11 +1501,19 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
+
       {/* Track Production Modal */}
-      <Modal isOpen={isProductionModalOpen} onClose={onProductionClose}>
+      <Modal
+        isOpen={isProductionModalOpen}
+        onClose={onProductionClose}
+        size={{ base: "md", sm: "md", md: "lg", lg: "xl" }}
+        isCentered
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Track Production</ModalHeader>
+        <ModalContent className="rounded-lg shadow-lg p-4">
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Track Production
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <TrackProduction
@@ -1357,11 +1525,19 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
+
       {/* token modal */}
-      <Modal isOpen={tokenDisclosure.isOpen} onClose={tokenDisclosure.onClose}>
+      <Modal
+        isOpen={tokenDisclosure.isOpen}
+        onClose={tokenDisclosure.onClose}
+        size={{ base: "md", sm: "md", md: "lg", lg: "xl" }}
+        isCentered
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader> Sample Token Amount</ModalHeader>
+        <ModalContent className="rounded-lg shadow-lg p-4">
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Sample Token Amount
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <TokenAmount
@@ -1374,7 +1550,7 @@ const Sales = () => {
           <ModalFooter>
             <Button
               bgColor="white"
-              _hover={{ bgColor: "red.500" }}
+              _hover={{ bgColor: "red.500", color: "white" }}
               className="border border-red-500 hover:text-white w-full ml-2"
               onClick={tokenDisclosure.onClose}
             >
@@ -1384,38 +1560,47 @@ const Sales = () => {
         </ModalContent>
       </Modal>
 
+
       {/* Modal for  payment */}
-            <Modal
-              isOpen={paymentDisclosure.isOpen}
+      <Modal
+        isOpen={paymentDisclosure.isOpen}
+        onClose={paymentDisclosure.onClose}
+        size={{ base: "md", md: "lg", lg: "xl" }} // smaller on mobile, larger on desktop
+        isCentered
+        scrollBehavior="inside"
+      >
+        <ModalOverlay />
+        <ModalContent className="rounded-lg shadow-lg p-4 max-w-full mx-2">
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Payment
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody px={{ base: 4, md: 6 }} py={{ base: 3, md: 5 }}>
+            <PaymentModal
+              sale_id={saleId}
+              payment={paymentfile}
+              verify={verifystatus}
+              assign={assignId}
+              payfor={paymentFor}
               onClose={paymentDisclosure.onClose}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              bgColor="white"
+              _hover={{ bgColor: "red.500", color: "white" }}
+              className="border border-red-500 hover:text-white w-full ml-0 md:ml-2"
+              mr={{ base: 0, md: 3 }}
+              onClick={paymentDisclosure.onClose}
+              size="md"
             >
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Payment</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <PaymentModal
-                    sale_id={saleId}
-                    payment={paymentfile}
-                    verify={verifystatus}
-                    assign={assignId}
-                    payfor= {paymentFor}
-                    onClose={paymentDisclosure.onClose}
-                  />
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    bgColor="white"
-                    _hover={{ bgColor: "red.500" }}
-                    className="border border-red-500 hover:text-white w-full ml-2"
-                    mr={3}
-                    onClick={() => paymentDisclosure.onClose()}
-                  >
-                    Cancel
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+
       <Pagination page={pages} setPage={setPages} length={purchases.length} />
     </div>
   );

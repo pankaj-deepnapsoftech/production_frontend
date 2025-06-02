@@ -203,92 +203,94 @@ const Buyers: React.FC = () => {
         Buyers
       </div>
       {/* Stores Page */}
-      <div className="w-full  flex justify-between gap-4 pb-2">
+      <div className="w-full flex flex-col md:flex-row md:items-start gap-4 pb-4">
+        {/* Search Box */}
         <div className="w-full">
           <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
+            className="rounded-[10px] w-full px-3 py-2 text-sm border resize-none border-[#0d9488] focus:outline-[#14b8a6] hover:outline-[#14b8a6] transition"
             rows={1}
             placeholder="Search"
             value={searchKey}
             onChange={(e) => setSearchKey(e.target.value)}
           />
         </div>
-        <div className="flex  justify-between gap-4">  
+
+        {/* Action Buttons and Upload */}
+        <div className="w-full md:w-auto flex flex-wrap md:flex-nowrap gap-4">
+          {/* Add New Buyer */}
           <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 200 }}
+            fontSize="14px"
+            paddingX="12px"
+            paddingY="8px"
+           
+            width={{ base: "100%", md: "200px" }}
             onClick={openAddBuyerDrawerHandler}
             color="#ffffff"
-              backgroundColor={MainColor}
-              _hover={{backgroundColor:"#14b8a6"}}
-              className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+            backgroundColor={MainColor}
+            _hover={{ backgroundColor: "#14b8a6" }}
+            className="text-white rounded-lg"
           >
             Add New Buyer
           </Button>
-          <div className="w-[200px]">
+
+          {/* Bulk Upload */}
+          <div className="w-full md:w-[200px] relative">
             <Button
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 200 }}
+              fontSize="14px"
+              paddingX="12px"
+              paddingY="8px"
+              width="full"
               onClick={() => setShowBulkUploadMenu(true)}
               color="#ffffff"
               backgroundColor={MainColor}
-              _hover={{backgroundColor:"#14b8a6"}}
-              className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+              _hover={{ backgroundColor: "#14b8a6" }}
+              className="text-white rounded-lg"
               rightIcon={<AiFillFileExcel size={22} />}
             >
               Bulk Upload
             </Button>
+
             {showBulkUploadMenu && (
-              <div className="mt-1 border border-[#a9a9a9] rounded p-1">
+              <div className="mt-2 border border-[#a9a9a9] rounded p-3 bg-white shadow-md z-10">
                 <form>
                   <FormControl>
                     <FormLabel fontWeight="bold">Choose File (.csv)</FormLabel>
                     <Input
                       ref={fileRef}
-                      borderWidth={1}
-                      borderColor={"#a9a9a9"}
-                      paddingTop={1}
                       type="file"
                       accept=".csv, .xlsx"
+                      className="border border-gray-300 py-1"
                     />
                   </FormControl>
-                  <div className="flex gap-1">
+
+                  <div className="flex gap-2 mt-2">
                     <Button
                       type="submit"
-                      fontSize={{ base: "14px", md: "14px" }}
                       onClick={bulkUploadHandler}
-                      color="white"
-                      backgroundColor={MainColor}
-                      className="mt-1"
-                      rightIcon={<AiFillFileExcel size={22} />}
                       isLoading={bulkUploading}
+                      fontSize="14px"
+                      className="bg-[#14b8a6] text-white"
+                      rightIcon={<AiFillFileExcel size={22} />}
                     >
                       Upload
                     </Button>
                     <Button
                       type="button"
-                      fontSize={{ base: "14px", md: "14px" }}
                       onClick={() => setShowBulkUploadMenu(false)}
-                      color="white"
-                      backgroundColor={MainColor}
-                      className="mt-1"
+                      fontSize="14px"
+                      className="bg-red-500 text-white"
                       rightIcon={<RxCross2 size={22} />}
                     >
                       Close
                     </Button>
                   </div>
-                  <a href={SampleCSV}>
+
+                  <a href={SampleCSV} className="block mt-2">
                     <Button
                       type="button"
-                      fontSize={{ base: "14px", md: "14px" }}
-                      width={{ base: "-webkit-fill-available", md: 190 }}
-                      color="white"
-                      backgroundColor={MainColor}
-                      className="mt-1"
+                      fontSize="14px"
+                      width="full"
+                      className="bg-[#14b8a6] text-white"
                       rightIcon={<AiFillFileExcel size={22} />}
                     >
                       Sample CSV
@@ -298,11 +300,13 @@ const Buyers: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Refresh */}
           <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 100 }}
+            fontSize="14px"
+            paddingX="12px"
+            paddingY="8px"
+            width={{ base: "100%", md: "100px" }}
             onClick={fetchBuyersHandler}
             leftIcon={<MdOutlineRefresh />}
             color="#319795"
@@ -311,18 +315,20 @@ const Buyers: React.FC = () => {
           >
             Refresh
           </Button>
-            <Select
-              // onChange={(e) => setPageSize(e.target.value)}
-              width="80px"
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-              <option value={100000}>All</option>
-            </Select>
+
+          {/* Page Size Select */}
+          <Select
+            width="100px"
+            fontSize="14px"
+            className="mt-1 md:mt-0"
+          >
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+            <option value={100000}>All</option>
+          </Select>
         </div>
-        
       </div>
 
       <div>

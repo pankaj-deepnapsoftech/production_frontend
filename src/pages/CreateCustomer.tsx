@@ -92,8 +92,9 @@ const CreateCustomer: React.FC = ({ onClose, refresh }) => {
   };
 
   return (
-    <Box className="w-full mx-auto ">
+    <Box className="w-[100%]  mx-auto px-2">
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Customer Type */}
         <FormControl id="type" isRequired>
           <FormLabel className="text-lg font-medium">Customer Type</FormLabel>
           <Select
@@ -106,48 +107,52 @@ const CreateCustomer: React.FC = ({ onClose, refresh }) => {
           </Select>
         </FormControl>
 
-        {/* Full Name Field */}
-        <FormControl id="fullName" isRequired>
-          <FormLabel className="text-lg font-medium">Full Name</FormLabel>
-          <Input
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            type="text"
-            placeholder="Enter full name"
-            className="border-2 border-gray-300 rounded-md p-2"
-          />
-        </FormControl>
+        {/* Full Name & Email (side by side on desktop) */}
+        <div className="flex flex-col md:flex-row gap-4">
+          <FormControl id="fullName" isRequired className="w-full">
+            <FormLabel className="text-lg font-medium">Full Name</FormLabel>
+            <Input
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              type="text"
+              placeholder="Enter full name"
+              className="border-2 border-gray-300 rounded-md p-2"
+            />
+          </FormControl>
 
-        <FormControl id="email" isRequired>
-          <FormLabel className="text-lg font-medium">Email</FormLabel>
-          <Input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            placeholder="Enter email"
-            className="border-2 border-gray-300 rounded-md p-2"
-          />
-        </FormControl>
+          <FormControl id="email" isRequired className="w-full">
+            <FormLabel className="text-lg font-medium">Email</FormLabel>
+            <Input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              placeholder="Enter email"
+              className="border-2 border-gray-300 rounded-md p-2"
+            />
+          </FormControl>
+        </div>
 
+        {/* Password with eye icon (fixed positioning) */}
         <FormControl id="password" isRequired className="relative">
           <FormLabel className="text-lg font-medium">Password</FormLabel>
-          
-            <Input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter password"
-              className="border-2 border-gray-300 relative rounded-md p-2 pr-10" // Added pr-10 to create padding for the icon
-            />
-            <IconButton
-              aria-label="Toggle password visibility"
-              icon={showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
-              onClick={toggleShowPassword}
-              className="absolute bottom-10 left-[22.4rem] flex items-center justify-center p-2" // Ensure it's vertically centered
-            />
-   
+          <Input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter password"
+            className="border-2 border-gray-300 rounded-md p-2 pr-10"
+          />
+          <IconButton
+            aria-label="Toggle password visibility"
+            icon={showPassword ? <AiFillEye /> : <AiFillEyeInvisible />}
+            onClick={toggleShowPassword}
+            variant="ghost"
+            size="sm"
+            className="!absolute top-[43px] right-3 z-10"
+          />
         </FormControl>
-        {/* Phone Number Field */}
+
+        {/* Phone Number */}
         <FormControl id="phoneNo" isRequired>
           <FormLabel className="text-lg font-medium">Phone Number</FormLabel>
           <Input
@@ -159,13 +164,11 @@ const CreateCustomer: React.FC = ({ onClose, refresh }) => {
           />
         </FormControl>
 
-        {/* Conditionally Render Company Name and GST No if Company is Selected */}
+        {/* Company Fields (conditionally rendered) */}
         {customerType === "company" && (
-          <>
-            <FormControl id="companyName" isRequired>
-              <FormLabel className="text-lg font-medium">
-                Company Name
-              </FormLabel>
+          <div className="flex flex-col md:flex-row gap-4">
+            <FormControl id="companyName" isRequired className="w-full">
+              <FormLabel className="text-lg font-medium">Company Name</FormLabel>
               <Input
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
@@ -175,7 +178,7 @@ const CreateCustomer: React.FC = ({ onClose, refresh }) => {
               />
             </FormControl>
 
-            <FormControl id="gstNo" isRequired>
+            <FormControl id="gstNo" isRequired className="w-full">
               <FormLabel className="text-lg font-medium">GST No</FormLabel>
               <Input
                 value={gstNo}
@@ -185,22 +188,23 @@ const CreateCustomer: React.FC = ({ onClose, refresh }) => {
                 className="border-2 border-gray-300 rounded-md p-2"
               />
             </FormControl>
-          </>
+          </div>
         )}
 
-        {/* Submit Button */}
+        {/* Submit */}
         <Button
           type="submit"
-          colorScheme="teal.500"
           size="lg"
           width="full"
-          className="bg-teal-600 text-white"
-          disabled={isSubmitting}
+          colorScheme="teal"
+          isLoading={isSubmitting}
+          className="text-white"
         >
           Create Customer
         </Button>
       </form>
     </Box>
+  
   );
 };
 

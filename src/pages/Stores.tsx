@@ -206,130 +206,135 @@ const Stores: React.FC = () => {
         Stores
       </div>
       {/* Stores Page */}
-      <div className="w-full  flex justify-between gap-4 pb-2">
-        <div className="w-full">
-          <textarea
-              className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
-              rows={1}
-              placeholder="Search"
-              value={searchKey}
-              onChange={(e) => setSearchKey(e.target.value)}
-            />
-        </div>
-        <div className="flex  justify-between gap-4">
-            <Button
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 200 }}
-              onClick={openAddStoreDrawerHandler}
-              color="#ffffff"
-              backgroundColor={MainColor}
-              _hover={{backgroundColor:"#14b8a6"}}
-              className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
-            >
-              Add New Store
-            </Button>
-            
-            <div className="w-[200px]">
+   <div className="w-full flex flex-col md:flex-row md:items-center gap-4 md:gap-6 pb-2">
+  {/* Search textarea: full width always, flex-grow on desktop */}
+  <div className="w-full">
+    <textarea
+      rows={1}
+      placeholder="Search"
+      value={searchKey}
+      onChange={(e) => setSearchKey(e.target.value)}
+      className="rounded-[10px] w-full  px-2 py-2 md:px-3 md:py-2 text-sm resize-none border border-[#0d9488] focus:outline-[#14b8a6] hover:outline-[#14b8a6] transition max-h-12"
+    />
+  </div>
+
+  {/* Buttons + select container */}
+  <div className="flex flex-wrap gap-4 md:flex-nowrap md:items-center md:justify-end w-full ">
+    <Button
+      onClick={openAddStoreDrawerHandler}
+      color="#ffffff"
+      backgroundColor={MainColor}
+      _hover={{ backgroundColor: "#14b8a6" }}
+      className="py-3 rounded-lg text-white w-full  whitespace-nowrap"
+      fontSize={{ base: "14px", md: "14px" }}
+      paddingX={{ base: "10px", md: "12px" }}
+      paddingY={{ base: "0", md: "3px" }}
+    >
+      Add New Store
+    </Button>
+
+    <div className="w-full md:w-[200px] relative">
+      <Button
+        onClick={() => setShowBulkUploadMenu(true)}
+        color="#ffffff"
+        backgroundColor={MainColor}
+        _hover={{ backgroundColor: "#14b8a6" }}
+        className="py-3 rounded-lg text-white w-full whitespace-nowrap"
+        fontSize={{ base: "14px", md: "14px" }}
+        paddingX={{ base: "10px", md: "12px" }}
+        paddingY={{ base: "0", md: "3px" }}
+        rightIcon={<AiFillFileExcel size={22} />}
+      >
+        Bulk Upload
+      </Button>
+
+      {showBulkUploadMenu && (
+        <div className="absolute z-10 mt-1 w-full border border-[#a9a9a9] rounded p-1 bg-white shadow-lg">
+          <form>
+            <FormControl>
+              <FormLabel fontWeight="bold" htmlFor="bulk-file">
+                Choose File (.csv)
+              </FormLabel>
+              <Input
+                id="bulk-file"
+                ref={fileRef}
+                type="file"
+                accept=".csv, .xlsx"
+                borderWidth={1}
+                borderColor={"#a9a9a9"}
+                paddingTop={1}
+              />
+            </FormControl>
+
+            <div className="flex gap-2 mt-3 flex-wrap">
               <Button
-                fontSize={{ base: "14px", md: "14px" }}
-                paddingX={{ base: "10px", md: "12px" }}
-                paddingY={{ base: "0", md: "3px" }}
-                width={{ base: "-webkit-fill-available", md: 200 }}
-                onClick={() => setShowBulkUploadMenu(true)}
-                color="#ffffff"
+                type="submit"
+                onClick={bulkUploadHandler}
+                color="white"
                 backgroundColor={MainColor}
-                _hover={{backgroundColor:"#14b8a6"}}
-                className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
                 rightIcon={<AiFillFileExcel size={22} />}
+                isLoading={bulkUploading}
+                fontSize="sm"
               >
-                Bulk Upload
+                Upload
               </Button>
-              {showBulkUploadMenu && (
-                <div className="mt-1 border border-[#a9a9a9] rounded p-1">
-                  <form>
-                    <FormControl>
-                      <FormLabel fontWeight="bold">
-                        Choose File (.csv)
-                      </FormLabel>
-                      <Input
-                        ref={fileRef}
-                        borderWidth={1}
-                        borderColor={"#a9a9a9"}
-                        paddingTop={1}
-                        type="file"
-                        accept=".csv, .xlsx"
-                      />
-                    </FormControl>
-                    <div className="flex gap-1">
-                      <Button
-                        type="submit"
-                        fontSize={{ base: "14px", md: "14px" }}
-                        onClick={bulkUploadHandler}
-                        color="white"
-                        backgroundColor={MainColor}
-                        className="mt-1"
-                        rightIcon={<AiFillFileExcel size={22} />}
-                        isLoading={bulkUploading}
-                      >
-                        Upload
-                      </Button>
-                      <Button
-                        type="button"
-                        fontSize={{ base: "14px", md: "14px" }}
-                        onClick={() => setShowBulkUploadMenu(false)}
-                        color="white"
-                        backgroundColor={MainColor}
-                        className="mt-1"
-                        rightIcon={<RxCross2 size={22} />}
-                      >
-                        Close
-                      </Button>
-                    </div>
-                    <a href={SampleCSV}>
-                      <Button
-                        type="button"
-                        fontSize={{ base: "14px", md: "14px" }}
-                        width={{ base: "-webkit-fill-available", md: 190 }}
-                        color="white"
-                        backgroundColor={MainColor}
-                        className="mt-1"
-                        rightIcon={<AiFillFileExcel size={22} />}
-                      >
-                        Sample CSV
-                      </Button>
-                    </a>
-                  </form>
-                </div>
-              )}
+
+              <Button
+                type="button"
+                onClick={() => setShowBulkUploadMenu(false)}
+                color="white"
+                backgroundColor={MainColor}
+                rightIcon={<RxCross2 size={22} />}
+                fontSize="sm"
+              >
+                Close
+              </Button>
             </div>
-            <Button
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 100 }}
-              onClick={fetchStoresHandler}
-              leftIcon={<MdOutlineRefresh />}
-              color="#319795"
-              borderColor="#319795"
-              variant="outline"
-            >
-              Refresh
-            </Button>
-            <Select
-              // onChange={(e) => setPageSize(e.target.value)}
-              width="80px"
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-              <option value={100000}>All</option>
-            </Select>
+
+            <a href={SampleCSV} className="block mt-3">
+              <Button
+                type="button"
+                color="white"
+                backgroundColor={MainColor}
+                rightIcon={<AiFillFileExcel size={22} />}
+                fontSize="sm"
+                w="full"
+              >
+                Sample CSV
+              </Button>
+            </a>
+          </form>
         </div>
-        
-      </div>
+      )}
+    </div>
+
+    <Button
+      onClick={fetchStoresHandler}
+      leftIcon={<MdOutlineRefresh />}
+      variant="outline"
+      color="#319795"
+      borderColor="#319795"
+      className="py-3 rounded-lg w-full whitespace-nowrap"
+      fontSize={{ base: "14px", md: "14px" }}
+      paddingX={{ base: "10px", md: "12px" }}
+      paddingY={{ base: "0", md: "3px" }}
+    >
+      Refresh
+    </Button>
+
+    <Select
+      // onChange={(e) => setPageSize(e.target.value)}
+      className=""
+    >
+      <option value={10}>10</option>
+      <option value={20}>20</option>
+      <option value={50}>50</option>
+      <option value={100}>100</option>
+      <option value={100000}>All</option>
+    </Select>
+  </div>
+</div>
+
 
 
         <div>

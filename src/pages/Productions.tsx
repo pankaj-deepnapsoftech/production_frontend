@@ -149,57 +149,59 @@ const Productions = () => {
       Track Productions</div>
 
       {/* Employees Page */}
-      <div className="w-full  flex justify-between gap-4 pb-2">
-        <div className="w-full">
+        <div className="w-full flex flex-col md:flex-row gap-4 pb-2">
+          {/* Search Input */}
           <Input
             type="text"
             placeholder="Search production..."
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
-            className="w-full md:w-auto"
+            w="full"
             _focus={{
-              borderColor: "#0d9488", // or any Chakra color like "teal.400"
-              boxShadow: "0 0 0 1px #14b8a6" // optional for a ring-like effect
+              borderColor: "#0d9488",
+              boxShadow: "0 0 0 1px #14b8a6"
             }}
             transition="all 0.2s"
           />
-        </div>
-        <div className="flex  justify-between gap-4">
-          <Select
-            placeholder="Payment Status"
-            value={paymentFilter}
-            onChange={(e) => setPaymentFilter(e.target.value)}
-            className="w-full md:w-auto"
-            width="170px"
-          >
-            <option value="Pending">Pending</option>
-            <option value="Paied">Paid</option>
-          </Select>
-          <Select
-            placeholder="Product Status"
-            value={productFilter}
-            onChange={(e) => setProductFilter(e.target.value)}
-            className="w-full md:w-auto"
-            width="170px"
-          >
-            <option value="Dispatch">Dispatch</option>
-            <option value="Delivered">Delivered</option>
-          </Select>
-          <Button
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width="full md:w-auto"
+
+          {/* Filters & Button */}
+          <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+            <Select
+              placeholder="Payment Status"
+              value={paymentFilter}
+              onChange={(e) => setPaymentFilter(e.target.value)}
+              w={{ base: "full", md: "170px" }}
+            >
+              <option value="Pending">Pending</option>
+              <option value="Paied">Paid</option>
+            </Select>
+
+            <Select
+              placeholder="Product Status"
+              value={productFilter}
+              onChange={(e) => setProductFilter(e.target.value)}
+              w={{ base: "full", md: "170px" }}
+            >
+              <option value="Dispatch">Dispatch</option>
+              <option value="Delivered">Delivered</option>
+            </Select>
+
+            <Button
               onClick={fetchPurchases}
               leftIcon={<MdOutlineRefresh />}
+              fontSize="14px"
+              px="12px"
+              py="6px"
+              w={{ base: "full", md: "auto" }}
               color="#319795"
               borderColor="#319795"
               variant="outline"
             >
               Refresh
             </Button>
+          </div>
         </div>
-      </div>
+
         
         
         
@@ -460,16 +462,20 @@ const Productions = () => {
       </Box>
 
       {/* track Modal */}
-      <Modal isOpen={trackDisclosure.isOpen} onClose={trackDisclosure.onClose}>
+      <Modal isOpen={trackDisclosure.isOpen} onClose={trackDisclosure.onClose} size={{ base: "md", md: "lg" }}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent
+          mx={{ base: 2, sm: 4 }} // adds horizontal margin on small screens
+          borderRadius="md"
+        >
           <ModalHeader>Track</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody px={{ base: 4, md: 6 }} py={4}>
             <Track sale={selectedSale} selectedBomIndex={selectedBomIndex} />
           </ModalBody>
         </ModalContent>
       </Modal>
+
 
       <Pagination page={pages} setPage={setPages} length={purchases.length} />
     </div>

@@ -145,91 +145,92 @@ const Customer: React.FC = () => {
 
   return (
     <>
-      <Box className="max-w-7xl mx-auto">
-        
-      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
-        Customers
-      </div>
+      <Box className="max-w-7xl mx-auto p-4">
+        {/* Title */}
+        <div className="text-lg md:text-xl font-semibold pb-4">Customers</div>
 
-      {/* Employees Page */}
-      <div className="w-full  flex justify-between gap-4 pb-2">
-        <div className="w-full">
-          <Input
+        {/* Controls Section */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4">
+          {/* Search & Filter */}
+          <div className="w-full md:flex md:gap-4">
+            <Input
               className="w-full"
               placeholder="Search by customer name"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               _focus={{
-                borderColor: "#0d9488", // or any Chakra color like "teal.400"
-                boxShadow: "0 0 0 1px #14b8a6" // optional for a ring-like effect
+                borderColor: "#0d9488",
+                boxShadow: "0 0 0 1px #14b8a6",
               }}
               transition="all 0.2s"
-          />
-        </div>
-        <div className="flex  justify-between gap-4">
-          <Select 
-              width="150px"
+            />
+            <Select
+              width={{ base: "100%", md: "150px" }}
               placeholder="Filter by type"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              
               _hover={{
                 borderColor: "#0d9488",
-                backgroundColor: "white"
+                backgroundColor: "white",
               }}
               _focus={{
                 borderColor: "#0d9488",
                 backgroundColor: "white",
-                boxShadow: "0 0 0 1px #14b8a6"
+                boxShadow: "0 0 0 1px #14b8a6",
               }}
               transition="all 0.2s"
-              
             >
-              <option  value="individual">Individual</option>
-              <option  value="company">Company</option>
-          </Select>
-          <Button 
-            onClick={createDisclosure.onOpen} 
-            color="#ffffff"
-            backgroundColor="#0d9488"
-            _hover={{backgroundColor:"#14b8a6"}}
-            className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
-          >
-            New Customer
-          </Button>
-          <Button
-            onClick={() => fetchCustomers(currentPage)}
-            leftIcon={<MdOutlineRefresh />}
-            color="#319795"
-            borderColor="#319795"
-            variant="outline"
-          >
-            Refresh
-          </Button>
-          <Select
-                value={pageSize}
-                onChange={(e) => {
-                  const newSize = Number(e.target.value);
-                  setPageSize(newSize);
-                  setCurrentPage(1);
-                  gotoPage(0);
-                }}
-                width="80px"
-              >
-                {[10, 20, 50, 100, 100000].map((size) => (
-                  <option key={size} value={size}>
-                    {size === 100000 ? "All" : size}
-                  </option>
-                ))}
-              </Select>
+              <option value="individual">Individual</option>
+              <option value="company">Company</option>
+            </Select>
+          </div>
+
+          {/* Buttons Section */}
+          <div className="flex flex-col md:flex-row gap-2 md:gap-4 w-full md:w-auto">
+            <Button
+              onClick={createDisclosure.onOpen}
+              color="white"
+              backgroundColor="#0d9488"
+              _hover={{ backgroundColor: "#14b8a6" }}
+              className="w-full md:w-auto"
+            >
+              New Customer
+            </Button>
+
+            <Button
+              onClick={() => fetchCustomers(currentPage)}
+              leftIcon={<MdOutlineRefresh />}
+              color="#319795"
+              borderColor="#319795"
+              variant="outline"
+              className="w-full md:w-auto"
+            >
+              Refresh
+            </Button>
+
+            <Select
+              value={pageSize}
+              onChange={(e) => {
+                const newSize = Number(e.target.value);
+                setPageSize(newSize);
+                setCurrentPage(1);
+                gotoPage(0);
+              }}
+              width={{ base: "100%", md: "80px" }}
+            >
+              {[10, 20, 50, 100, 100000].map((size) => (
+                <option key={size} value={size}>
+                  {size === 100000 ? "All" : size}
+                </option>
+              ))}
+            </Select>
+          </div>
         </div>
-        
-      </div>
 
-
-
+        {/* Loading */}
         {isLoading && <Loading />}
 
+        {/* No Data */}
         {!isLoading && filteredCustomers.length === 0 && (
           <div className="mx-auto w-max text-center">
             <FcDatabase size={100} />
@@ -237,9 +238,10 @@ const Customer: React.FC = () => {
           </div>
         )}
 
+        {/* Table Data */}
         {!isLoading && filteredCustomers.length > 0 && (
           <>
-            <TableContainer maxHeight="600px" overflowY="auto">
+            <TableContainer maxHeight="600px" overflowY="auto" overflowX="auto">
               <Table variant="simple" {...getTableProps()}>
                 <Thead>
                   {headerGroups.map((headerGroup) => (
@@ -252,9 +254,7 @@ const Customer: React.FC = () => {
                           fontWeight="700"
                           color="white"
                           backgroundColor={MainColor}
-                          {...column.getHeaderProps(
-                            column.getSortByToggleProps()
-                          )}
+                          {...column.getHeaderProps(column.getSortByToggleProps())}
                         >
                           <span className="flex items-center">
                             {column.render("Header")}
@@ -304,46 +304,65 @@ const Customer: React.FC = () => {
               </Table>
             </TableContainer>
 
-            <div className="w-[max-content] m-auto my-7">
-              <button
-                className="text-sm bg-table-color py-1 px-4 text-white border rounded-3xl disabled:bg-[#b2b2b2]"
+            {/* Pagination */}
+            <div className="w-max mx-auto my-6 flex items-center gap-4 text-sm">
+              <Button
+                size="sm"
                 onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
+                isDisabled={currentPage === 1}
+                backgroundColor="gray.600"
+                color="white"
+                _disabled={{ backgroundColor: "gray.300" }}
               >
                 Prev
-              </button>
-              <span className="mx-3 text-sm">
-                {currentPage} of {Math.ceil(total / pageSize)}
+              </Button>
+              <span>
+                Page {currentPage} of {Math.ceil(total / pageSize)}
               </span>
-              <button
-                className="text-sm bg-table-color py-1 px-4 text-white border rounded-3xl disabled:bg-[#b2b2b2]"
+              <Button
+                size="sm"
                 onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage >= Math.ceil(total / pageSize)}
+                isDisabled={currentPage >= Math.ceil(total / pageSize)}
+                backgroundColor="gray.600"
+                color="white"
+                _disabled={{ backgroundColor: "gray.300" }}
               >
                 Next
-              </button>
+              </Button>
             </div>
           </>
         )}
       </Box>
 
-      <Modal isOpen={updateDisclosure.isOpen} onClose={updateDisclosure.onClose}>
+      {/* Update Customer Modal */}
+      <Modal
+        isOpen={updateDisclosure.isOpen}
+        onClose={updateDisclosure.onClose}
+        size={{ base: "md", sm: "md", md: "lg" }} // Responsive modal size
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Update Customer</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-md"
+          mx={{ base: 4, md: "auto" }} // Horizontal margin for mobile
+          p={{ base: 2, md: 4 }}       // Padding inside modal content
+        >
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Update Customer
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+
+          <ModalBody className="space-y-4">
             <UpdateCustomer
               onClose={updateDisclosure.onClose}
               customerData={selectedCustomer}
             />
           </ModalBody>
+
           <ModalFooter>
             <Button
               bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
-              mr={3}
+              _hover={{ bgColor: "red.500", color: "white" }}
+              className="border border-red-500 w-full"
               onClick={updateDisclosure.onClose}
             >
               Cancel
@@ -352,23 +371,35 @@ const Customer: React.FC = () => {
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={createDisclosure.isOpen} onClose={createDisclosure.onClose}>
+      {/* Create Customer Modal */}
+      <Modal
+        isOpen={createDisclosure.isOpen}
+        onClose={createDisclosure.onClose}
+        size={{ base: "md", sm: "md", md: "lg" }} // Responsive width
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create A New Customer</ModalHeader>
+        <ModalContent
+          className="rounded-lg shadow-md"
+          mx={{ base: 4, md: "auto" }} // Responsive horizontal margin
+          p={{ base: 2, md: 4 }}       // Padding inside modal
+        >
+          <ModalHeader className="text-lg font-semibold text-gray-800">
+            Create A New Customer
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+
+          <ModalBody className="space-y-4">
             <CreateCustomer
               onClose={createDisclosure.onClose}
               refresh={() => fetchCustomers(currentPage)}
             />
           </ModalBody>
+
           <ModalFooter>
             <Button
               bgColor="white"
-              _hover={{ bgColor: "red.500" }}
-              className="border border-red-500 hover:text-white w-full ml-2"
-              mr={3}
+              _hover={{ bgColor: "red.500", color: "white" }}
+              className="border border-red-500 w-full"
               onClick={createDisclosure.onClose}
             >
               Cancel
@@ -376,7 +407,9 @@ const Customer: React.FC = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
     </>
+  
   );
 };
 

@@ -116,8 +116,8 @@ const Employees: React.FC = () => {
   }
 
   return (
-    <div>
-      {/* Update Employee Drawer */}
+    <div className="p-4">
+      {/* Drawers */}
       {isUpdateEmployeeDrawerOpened && (
         <UpdateEmployee
           closeDrawerHandler={closeUpdateEmployeeDrawerHandler}
@@ -125,7 +125,7 @@ const Employees: React.FC = () => {
           fetchEmployeesHandler={fetchEmployeesHandler}
         />
       )}
-      {/* Employee Details Drawer */}
+
       {isEmployeeDetailsDrawerOpened && (
         <EmployeeDetails
           closeDrawerHandler={closeEmployeeDetailsDrawerHandler}
@@ -133,38 +133,40 @@ const Employees: React.FC = () => {
         />
       )}
 
-      <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
-        Employees
-      </div>
+      {/* Heading */}
+      <div className="text-lg md:text-xl font-semibold pb-4">Employees</div>
 
-      {/* Employees Page */}
-      <div className="w-full  flex justify-between gap-4">
-        <div className="w-full">
-          <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
-            rows={1}
-            placeholder="Search"
-            value={searchKey}
-            onChange={(e) => setSearchKey(e.target.value)}
-          />
-        </div>
-        <div className="flex  justify-between gap-4">
+      {/* Top Controls */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+        {/* Search Box */}
+        <textarea
+          className="w-full md:w-1/2 rounded-lg px-3 py-2 text-sm border border-[#0d9488] focus:outline-[#14b8a6] resize-none"
+          rows={1}
+          placeholder="Search"
+          value={searchKey}
+          onChange={(e) => setSearchKey(e.target.value)}
+        />
+
+        {/* Buttons & Select */}
+        <div className="flex flex-col md:flex-row gap-2 md:gap-4 w-full md:w-auto">
           <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 100 }}
+            fontSize="14px"
+            paddingX="12px"
+            paddingY="6px"
             onClick={fetchEmployeesHandler}
             leftIcon={<MdOutlineRefresh />}
             color="#319795"
             borderColor="#319795"
             variant="outline"
+            className="text-sm"
           >
             Refresh
           </Button>
+
           <Select
-            // onChange={(e) => setPageSize(e.target.value)}
+            // onChange={(e) => setPageSize(Number(e.target.value))}
             width="80px"
+            className="text-sm border-[#319795] focus:outline-[#319795]"
           >
             <option value={10}>10</option>
             <option value={20}>20</option>
@@ -173,10 +175,10 @@ const Employees: React.FC = () => {
             <option value={100000}>All</option>
           </Select>
         </div>
-        
       </div>
 
-      <div>
+      {/* Table */}
+      <div className="overflow-x-auto">
         <EmployeeTable
           employees={filteredData}
           openEmployeeDetailsDrawerHandler={openEmployeeDetailsDrawerHandler}
@@ -185,6 +187,7 @@ const Employees: React.FC = () => {
         />
       </div>
     </div>
+  
   );
 };
 

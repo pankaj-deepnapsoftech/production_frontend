@@ -164,46 +164,49 @@ const Process: React.FC = () => {
         Production Process
       </div>
 
-      <div className="w-full  flex justify-between gap-4 pb-2">
-        <div className="w-full">
+      <div className="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-2">
+        {/* Search Input */}
+        <div  className="max-[800px]:w-full">
           <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
+            className="rounded-[10px]  px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline-[#14b8a6] border resize-none border-[#0d9488]"
             rows={1}
             placeholder="Search"
             value={searchKey}
             onChange={(e) => setSearchKey(e.target.value)}
           />
         </div>
-        <div className="flex  justify-between gap-4">
+
+        {/* Buttons & Select Controls */}
+        <div className="w-full  flex flex-col md:flex-row items-start md:items-center gap-4">
           <Button
             fontSize={{ base: "14px", md: "14px" }}
             paddingX={{ base: "10px", md: "12px" }}
             paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 230 }}
+            width="full"
             onClick={openAddProcessDrawerHandler}
             color="#ffffff"
-              backgroundColor={MainColor}
-              _hover={{backgroundColor:"#14b8a6"}}
-              className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+            backgroundColor={MainColor}
+            _hover={{ backgroundColor: "#14b8a6" }}
+            className="text-white rounded-lg py-3 w-full hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
           >
             Add New Production Process
           </Button>
+
           <Button
             fontSize={{ base: "14px", md: "14px" }}
             paddingX={{ base: "10px", md: "12px" }}
             paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 100 }}
+            width="full"
             onClick={fetchProcessHandler}
             leftIcon={<MdOutlineRefresh />}
             color="#319795"
             borderColor="#319795"
             variant="outline"
+            className="w-full "
           >
             Refresh
           </Button>
-          <Select
-          //  onChange={(e) => setPageSize(e.target.value)} 
-           width="80px">
+          <Select className="w-full md:w-[80px]">
             <option value={10}>10</option>
             <option value={20}>20</option>
             <option value={50}>50</option>
@@ -212,8 +215,8 @@ const Process: React.FC = () => {
           </Select>
 
         </div>
-        
       </div>
+
 
       <div>
         <ProcessTable
