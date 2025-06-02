@@ -84,18 +84,19 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
         />
       </div>
 
-      {/* Login Card */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white/80 backdrop-blur-lg shadow-xl rounded-2xl p-10 w-full max-w-md border border-white/50">
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white/80 backdrop-blur-lg shadow-xl rounded-2xl px-6 py-10 w-[90%] sm:w-96 md:w-[35%] border border-white/50">
         {/* Logo */}
-        <div className="absolute z-50 -top-10   left-28">
-          <img src={logo} alt="Company Logo" className="h-56 w-auto" />
+        <div className="absolute z-50 -top-10 max-[800px]:-top-5   left-1/2 transform -translate-x-1/2">
+          <img src={logo} alt="Company Logo" className="h-36 sm:h-40 md:h-56 w-auto" />
         </div>
 
         {/* Title */}
-        <h2 className="text-3xl font-bold text-center pt-20 text-sky-800 mb-8 font-serif">Sign In</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-center md:pt-20 pt-12 text-sky-800 mb-6 sm:mb-8 font-serif">
+          Sign In
+        </h2>
 
         {/* Form */}
-        <form onSubmit={loginHandler} className="space-y-6">
+        <form onSubmit={loginHandler} className="space-y-5 sm:space-y-6">
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
@@ -105,7 +106,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email Address"
-                className="pl-4 pr-4 py-2 w-full border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="pl-4 pr-4 py-2 w-full border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm sm:text-base"
               />
             </div>
           </div>
@@ -114,43 +115,46 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <div className="relative">
-          
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
                 required
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-4 pr-4 py-2 w-full border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="pl-4 pr-10 py-2 w-full border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm sm:text-base"
               />
               {!showPassword ? (
-              <IoEyeOffOutline
-                onClick={() => setShowPassword(true)}
-                size={20}
-                className="absolute top-[12px] right-3"
-              />
-            ) : (
-              <IoEyeOutline
-                onClick={() => setShowPassword(false)}
-                size={20}
-                className="absolute top-[12px] right-3"
-              />
-            )}
+                <IoEyeOffOutline
+                  onClick={() => setShowPassword(true)}
+                  size={20}
+                  className="absolute top-[12px] right-3 cursor-pointer"
+                />
+              ) : (
+                <IoEyeOutline
+                  onClick={() => setShowPassword(false)}
+                  size={20}
+                  className="absolute top-[12px] right-3 cursor-pointer"
+                />
+              )}
             </div>
           </div>
 
           {/* Remember Me and Forgot */}
-          <div className="flex items-center justify-between text-sm text-gray-600">
+          <div className="flex  sm:flex-row items-start sm:items-center justify-between text-sm text-gray-600 gap-2">
             <Link to="/register" className="text-blue-600 hover:underline">
               Registration
             </Link>
-            <a href="#" className="text-blue-600 hover:underline"
+            <button
+              type="button"
+              className="text-blue-600 hover:underline"
               onClick={() => {
                 setShowForgetPasswordComponent(true);
                 setShowLoginComponent(false);
                 setShowOTPVerificationComponent(false);
               }}
-            >Forgot password?</a>
+            >
+              Forgot password?
+            </button>
           </div>
 
           {/* Submit Button */}
@@ -177,10 +181,10 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
             <Link to="/customer-login" className="text-sm text-blue-600 hover:underline">
               Sign in with customer
             </Link>
-         
           </button>
         </form>
       </div>
+
     </section>
   );
 };

@@ -70,112 +70,115 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
 
   return (
     <section className="relative h-screen w-full bg-gradient-to-br from-[#a1c4fd] to-[#c2e9fb] overflow-hidden">
-        <div className="absolute inset-0">
-            <img
-                className="w-full h-full object-cover transform -scale-x-100 filter   brightness-75"
-                src="/manufacturing-productio.gif"
-                alt="Background"
-            />
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img
+          className="w-full h-full object-cover transform -scale-x-100 filter brightness-75"
+          src="/manufacturing-productio.gif"
+          alt="Background"
+        />
+      </div>
+
+      {/* Forgot Password Card */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white/90 backdrop-blur-md shadow-xl rounded-2xl px-4 sm:px-6 md:px-10 py-10 w-[90%] sm:w-full md:w-[40%] border border-white/50">
+
+
+        {/* Logo */}
+        <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 mb-4">
+          <img src={logo} alt="Company Logo" className="h-36 sm:h-40 md:h-48 w-auto" />
         </div>
-        <div  className=" absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white/90 backdrop-blur-md shadow-xl rounded-2xl p-10  border border-white/50">
-            <div className=" absolute -top-7 left-44  mb-4">
-                <img src={logo} alt="Company Logo" className="h-36 w-auto" />
+
+        {/* Title */}
+        <h2 className="text-2xl sm:text-3xl md:pt-16 pt-8 font-bold text-center text-sky-800 mb-6 font-serif">
+          Company Forgot Password
+        </h2>
+
+        {/* Email Form */}
+        {!gotOtp && (
+          <form onSubmit={forgetPasswordHandler} className="space-y-6">
+            <div>
+              <label className="block text-sm font-[600] text-gray-700 mb-1">Email Address</label>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                placeholder="Email Address"
+                className="w-full px-4 py-2 border  border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+              />
             </div>
 
-
-            <h2 className="text-3xl pt-12 font-bold text-center text-sky-800 mb-6 font-serif"> Company Forgot Password</h2>
-          
-            {!gotOtp && <form
-              onSubmit={forgetPasswordHandler}
-              className="space-y-6"
-            > 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                    <input
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        type="email"
-                        placeholder="Email Address"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                    />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isForgetPasswordLoading}
-                  className="w-full bg-sky-600 text-white font-semibold py-2 rounded-md hover:bg-sky-700 transition duration-200"
-                >
-                    {isForgetPasswordLoading ? "Sending OTP..." : "Get OTP"}
-                </button>
-            </form>}
-
-            {gotOtp && <form
-              onSubmit={resetPasswordHandler}
-              className="mt-4 w-[100%]"
+            <button
+              type="submit"
+              disabled={isForgetPasswordLoading}
+              className="w-full bg-sky-600 text-white font-semibold py-2 rounded-md hover:bg-sky-700 transition duration-200"
             >
-              <div className="flex flex-col items-start">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  OTP
-                </label>
-                <div className="relative w-[100%]">
-                  
-                  <input
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    className="pl-4 pr-4 py-2 w-full border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                    type="otp"
-                    placeholder="OTP"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="mt-2 flex flex-col items-start">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  New Password
-                </label>
-                <div className="relative w-[100%]">
-                  
-                  <input
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="pl-4 pr-4 py-2 w-full border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                    type={showNewPassword ? "text" : "password"}
-                    placeholder="New Password"
-                    required
-                  />
-                  {!showNewPassword ? (
-                    <IoEyeOffOutline
-                      onClick={() => setShowNewPassword(true)}
-                      size={20}
-                      className="absolute top-[12px] right-3"
-                    />
-                  ) : (
-                    <IoEyeOutline
-                      onClick={() => setShowNewPassword(false)}
-                      size={20}
-                      className="absolute top-[12px] right-3"
-                    />
-                  )}
-                </div>
-              </div>
+              {isForgetPasswordLoading ? "Sending OTP..." : "Get OTP"}
+            </button>
+          </form>
+        )}
 
-              <button
-                type="submit"
-                disabled={isResetPasswordLoading}
-                style={{ boxShadow: "0 2px 0 rgba(5, 95, 255, 0.1)" }}
-                className="mt-4 w-[100%] rounded-lg bg-sky-600 text-white py-2 font-bold disabled:cursor-not-allowed disabled:bg-[#b7b6b6]"
-              >
-                {isResetPasswordLoading ? "Updating password..." : "Update Password"}
-              </button>
-            </form>}
-      
-            <div className="text-center mt-6">
-              <a href="/login" className="text-sm text-blue-600 hover:underline">
-                  Back to Sign In
-              </a>
+        {/* OTP + New Password Form */}
+        {gotOtp && (
+          <form onSubmit={resetPasswordHandler} className="mt-4 space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">OTP</label>
+              <input
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                type="text"
+                placeholder="OTP"
+                required
+              />
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+              <div className="relative">
+                <input
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  type={showNewPassword ? "text" : "password"}
+                  placeholder="New Password"
+                  required
+                />
+                {!showNewPassword ? (
+                  <IoEyeOffOutline
+                    onClick={() => setShowNewPassword(true)}
+                    size={20}
+                    className="absolute top-[12px] right-3 cursor-pointer"
+                  />
+                ) : (
+                  <IoEyeOutline
+                    onClick={() => setShowNewPassword(false)}
+                    size={20}
+                    className="absolute top-[12px] right-3 cursor-pointer"
+                  />
+                )}
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isResetPasswordLoading}
+              style={{ boxShadow: "0 2px 0 rgba(5, 95, 255, 0.1)" }}
+              className="w-full rounded-md bg-sky-600 text-white py-2 font-bold disabled:cursor-not-allowed disabled:bg-[#b7b6b6]"
+            >
+              {isResetPasswordLoading ? "Updating password..." : "Update Password"}
+            </button>
+          </form>
+        )}
+
+        {/* Back to Sign In */}
+        <div className="text-center mt-6">
+          <a href="/login" className="text-sm text-blue-600 hover:underline">
+            Back to Sign In
+          </a>
         </div>
+      </div>
     </section>
+  
   );
 };
 
