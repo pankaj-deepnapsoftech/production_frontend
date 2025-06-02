@@ -48,7 +48,7 @@ const RegisterComponent: React.FC<RegisterComponentProps> = ({email, setEmail, s
         <section className="relative h-screen w-full bg-gradient-to-br from-[#a1c4fd] to-[#c2e9fb] overflow-hidden">
           <div className="absolute inset-0">
               <img
-                  className="w-full h-full object-cover transform -scale-x-100 filter blur-sm brightness-75"
+                  className="w-full h-full object-cover transform -scale-x-100 filter   brightness-75"
                   src="/manufacturing-productio.gif"
                   alt="Background"
               />

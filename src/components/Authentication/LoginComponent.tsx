@@ -78,7 +78,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          className="w-full h-full object-cover transform -scale-x-100 filter blur-sm brightness-75"
+          className="w-full h-full object-cover transform -scale-x-100 filter   brightness-75"
           src="/manufacturing-productio.gif"
           alt="Background"
         />
