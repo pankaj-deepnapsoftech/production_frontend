@@ -71,13 +71,18 @@ const ForgetPasswordComponent: React.FC<ForgetPasswordComponentProps> = ({
   return (
     <section className="relative h-screen w-full bg-gradient-to-br from-[#a1c4fd] to-[#c2e9fb] overflow-hidden">
       {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
-          className="w-full h-full object-cover transform -scale-x-100 filter brightness-75"
-          src="/manufacturing-productio.gif"
-          alt="Background"
-        />
-      </div>
+      <div className="absolute inset-0 z-0">
+              <video
+                className="w-full h-full object-cover filter brightness-75"
+                autoPlay
+                loop
+                muted
+                playsInline
+              >
+                <source src="/manufacturing-productio.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
 
       {/* Forgot Password Card */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white/90 backdrop-blur-md shadow-xl rounded-2xl px-4 sm:px-6 md:px-10 py-10 w-[90%] sm:w-full md:w-[40%] border border-white/50">

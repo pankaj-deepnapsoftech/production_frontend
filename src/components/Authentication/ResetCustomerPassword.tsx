@@ -28,12 +28,17 @@ const ResetCustomerPassword: FC<IResetCustomerPassword> = ({ setStep, email }): 
     }
     return (
         <section className="relative h-screen w-full bg-gradient-to-br from-[#a1c4fd] to-[#c2e9fb] overflow-hidden">
-            <div className="absolute inset-0">
-                <img
-                className="w-full h-full object-cover transform -scale-x-100 filter   brightness-75"
-                src="/manufacturing-productio.gif"
-                alt="Background"
-                />
+            <div className="absolute inset-0 z-0">
+              <video
+                className="w-full h-full object-cover filter brightness-75"
+                autoPlay
+                loop
+                muted
+                playsInline
+              >
+                <source src="/manufacturing-productio.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white/80 backdrop-blur-lg shadow-xl rounded-2xl p-10 w-full max-w-md border border-white/50">
     

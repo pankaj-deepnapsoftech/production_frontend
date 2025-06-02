@@ -14,13 +14,14 @@ const DispatchOverview = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}production-process/accountant-data`,
+        `${process.env.REACT_APP_BACKEND_URL}production-process/accountantdata`,
         {
           headers: {
             Authorization: `Bearer ${cookies?.access_token}`,
           },
         }
       );
+      console.log('response.data.data =', response.data.data)
       setDispatchData(response.data.data);
     } catch (error) {
       console.log(error);
@@ -37,10 +38,11 @@ const DispatchOverview = () => {
       let deliveredCount = 0;
 
       dispatchData.forEach((data) => {
-        if (data?.bom[0]?.sale_id[0]?.product_status) {
-          if (data?.bom[0]?.sale_id[0]?.product_status === "Dispatch") {
+        // console.log("bdhebh", data?.bom?.sale_id[0])
+        if (data?.bom?.sale_id[0]?.product_status) {
+          if (data?.bom?.sale_id[0]?.product_status === "Dispatch") {
             dispatchCount += 1;
-          } else if (data?.bom[0]?.sale_id[0]?.product_status === "Delivered") {
+          } else if (data?.bom?.sale_id[0]?.product_status === "Delivered") {
             deliveredCount += 1;
           }
         }
