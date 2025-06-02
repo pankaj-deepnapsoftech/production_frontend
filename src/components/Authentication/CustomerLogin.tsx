@@ -37,7 +37,7 @@ const CustomerLogin: React.FC = () => {
       setCookie("name", data.user.full_name, { maxAge: 86400 });
       setCookie("email", data.user.email, { maxAge: 86400 });
       toast.success(data.message);
-
+ 
       window.location.href = "/userboard";
     } catch (error) {
       console.error("Login failed:", error);
@@ -53,7 +53,7 @@ const CustomerLogin: React.FC = () => {
         <section className="relative h-screen w-full bg-gradient-to-br from-[#a1c4fd] to-[#c2e9fb] overflow-hidden">
           <div className="absolute inset-0">
             <img
-              className="w-full h-full object-cover transform -scale-x-100 filter blur-sm brightness-75"
+              className="w-full h-full object-cover transform -scale-x-100 filter   brightness-75"
               src="/manufacturing-productio.gif"
               alt="Background"
             />
@@ -65,15 +65,18 @@ const CustomerLogin: React.FC = () => {
               <img src={logo} alt="Company Logo" className="h-56 w-auto" />
             </div>
 
-            <h2 className="text-3xl font-bold text-center pt-20 text-sky-800 mb-8 font-serif">Sign In</h2>
+            <h2 className="text-3xl font-bold text-center pt-20 text-sky-800 mb-8 font-serif">Customer Sign In</h2>
 
             
-            <form  className="space-y-6">
+            <form onSubmit={loginHandler}  className="space-y-6">
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                 <div className="relative">
                   <input
+                    value={email}
+                    required
+                    onChange={(e) => setEmail(e.target.value)}
                     type="email"
                     placeholder="Email Address"
                     className="pl-4 pr-4 py-2 w-full border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
@@ -86,25 +89,44 @@ const CustomerLogin: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <div className="relative">
                   <input
-                    type="password"
+                    value={password}
+                    required
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
+                    type={showPassword ? "text" : "password"}
                     className="pl-4 pr-4 py-2 w-full border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
+                  {!showPassword ? (
+                  <IoEyeOffOutline
+                    onClick={() => setShowPassword(true)}
+                    size={20}
+                    className="absolute top-[12px] right-3 cursor-pointer"
+                  />
+                ) : (
+                  <IoEyeOutline
+                    onClick={() => setShowPassword(false)}
+                    size={20}
+                    className="absolute top-[12px] right-3 cursor-pointer"
+                  />
+                )}
                 </div>
               </div>
 
               
               <div className="flex items-center justify-between text-sm text-gray-600">
-                <Link to="/company-forgot-password" className="text-blue-600 hover:underline">Forgot password?</Link>
+                <button type="button" onClick={() => setStep(1)} className="text-blue-600 hover:underline">
+                  Forgot password?</button>
               </div>
 
               <button
+                disabled={isLoginLoading}
                 type="submit"
                 className="w-full bg-sky-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-sky-700 transition duration-200"
               >
-                Sign In
+                {isLoginLoading ? "Sign In..." : "Sign In"}
               </button>
-
+              
+            </form>
 
               <div className="flex items-center my-4">
                 <hr className="flex-grow border-t border-gray-300" />
@@ -121,7 +143,7 @@ const CustomerLogin: React.FC = () => {
                   Sign in with company
                 </Link>
               </button>
-            </form>
+            
           </div>
         </section>
       ) : step === 1 ? (

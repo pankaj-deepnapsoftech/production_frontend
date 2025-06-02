@@ -8,7 +8,7 @@ import {
 } from "../../redux/api/api";
 import { toast } from "react-toastify";
 import { TbPasswordMobilePhone } from "react-icons/tb";
-import logo from "../../assets/images/logo/logo.png";
+
 interface OTPVerificationComponentProps {
   email: string | undefined;
 }
@@ -84,60 +84,54 @@ const OTPVerificationComponent: React.FC<OTPVerificationComponentProps> = ({
   }, [canResend]);
 
   return (
-    <section className="relative h-screen w-full bg-gradient-to-br from-[#a1c4fd] to-[#c2e9fb] overflow-hidden">
-      <div className="absolute inset-0">
-          <img
-              className="w-full h-full object-cover transform -scale-x-100 filter   brightness-75"
-              src="/manufacturing-productio.gif"
-              alt="Background"
-          />
-      </div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white/90 backdrop-blur-md shadow-xl rounded-2xl p-10  w-1/3 border border-white/50">
+    <div className="w-[80%] md:w-[60%]">
+      <h1 className="flex gap-x-1 text-4xl text-black font-bold border-b pb-5">
+        <IoMdArrowBack onClick={() => navigate(0)} />
+        OTP Verification
+      </h1>
 
-
-          <div className="absolute -top-6 left-32 ">
-              <img onClick={() => navigate(0)} src={logo} alt="Company Logo" className="h-40 w-auto" />
+      <form onSubmit={verifyHandler} className="mt-4 w-[100%]">
+        <div className="flex flex-col items-start">
+          <label className="flex gap-x-1 items-center font-bold text-sm text-[rgba(0, 0, 0, 0.88)]">
+            <span>
+              <FaStarOfLife size="6px" color="red" />
+            </span>
+            OTP
+          </label>
+          <div className="relative w-[100%]">
+            <div className="absolute top-[18px] left-[7px] text-base">
+              <TbPasswordMobilePhone />
+            </div>
+            <input
+              value={otp}
+              required
+              onChange={(e) => setOtp(e.target.value)}
+              className="w-[100%] outline-none text-base pl-7 pr-2 py-2 border mt-2 border-[#d9d9d9] rounded-[10px] hover:border-[#1640d6] cursor-pointer"
+              type="text"
+              placeholder="OTP"
+            />
           </div>
-
-
-          <h2 className="text-3xl font-bold text-center text-sky-800 pt-20 mb-6">OTP VERIFICATION </h2>
-
-          <form onSubmit={verifyHandler} className="space-y-6">
-
-              <div>
-                  <label className="block text-md font-bold text-gray-700 mb-1">OTP</label>
-                  <input
-                    value={otp}
-                    required
-                    onChange={(e) => setOtp(e.target.value)}
-                      type="text"
-                      placeholder="Enter your Otp.."
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
-                  />
-              </div>
-
-              <div className='flex gap-5'>
-                  <button
-                      type="button"
-                      onClick={resendOTPHandler}
+        </div>
+        <div className="flex items-center gap-x-1">
+          <button
+            type="button"
+            onClick={resendOTPHandler}
             disabled={!canResend}
-                      className="w-full bg-sky-600 text-white font-semibold py-2 rounded-md hover:bg-sky-700 transition duration-200"
-                  >
-                      {canResend ? "Resend OTP" : `Resend (${secondsLeft}s)`}
-                  </button>
-                  <button
-                      disabled={isVerifyingOTP}
-                      type="submit"
-                      className="w-full bg-sky-600 text-white font-semibold py-2 rounded-md hover:bg-sky-700 transition duration-200"
-                  >
-                      {isVerifyingOTP ? "Verifying OTP..." : "Verify OTP"}
-                  </button>
-              </div>
-          </form>
-
-
-      </div>
-    </section>
+            style={{ boxShadow: "0 2px 0 rgba(5, 95, 255, 0.1)" }}
+            className="mt-4 w-[100%] rounded-lg bg-[#1640d6] text-white py-2 font-bold disabled:cursor-not-allowed disabled:bg-[#b7b6b6]"
+          >
+            {canResend ? "Resend OTP" : `Resend (${secondsLeft}s)`}
+          </button>
+          <button
+            disabled={isVerifyingOTP}
+            style={{ boxShadow: "0 2px 0 rgba(5, 95, 255, 0.1)" }}
+            className="mt-4 w-[100%] rounded-lg bg-[#1640d6] text-white py-2 font-bold disabled:cursor-not-allowed disabled:bg-[#b7b6b6]"
+          >
+            {isVerifyingOTP ? "Verifying OTP..." : "Verify OTP"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
