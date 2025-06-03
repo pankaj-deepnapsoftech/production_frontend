@@ -393,7 +393,7 @@ const AddBom: React.FC<AddBomProps> = ({
             "rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px",
         }}
       >
-        <h1 className="px-4 flex gap-x-2 items-center text-xl py-3 border-b">
+        <h1 className="px-4 flex gap-x-2 items-center cursor-pointer text-xl py-3 border-b">
           <BiX onClick={closeDrawerHandler} size="26px" />
           Bill Of Materials (BOM)
         </h1>

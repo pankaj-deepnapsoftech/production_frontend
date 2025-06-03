@@ -109,6 +109,7 @@ const Scrap: React.FC = () => {
             variant="outline"
             borderColor="#319795"
             marginBottom="10px"
+            marginTop="10px"
           >
             <option value={10}>10</option>
             <option value={20}>20</option>

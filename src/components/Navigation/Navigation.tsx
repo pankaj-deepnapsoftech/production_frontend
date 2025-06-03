@@ -146,9 +146,7 @@ const Navigation: React.FC<{ setShowSideBar: () => void }> = ({ setShowSideBar }
             {routes.map((route, ind) => {
               const isAllowed =
                 isSuper || allowedroutes.includes(route.path.replaceAll("/", ""));
-
               if (route.name === "Task" && isSuper) return null;
-
               // Sublink menu
               if (route.isSublink) {
                 return (
@@ -182,6 +180,8 @@ const Navigation: React.FC<{ setShowSideBar: () => void }> = ({ setShowSideBar }
                       {openSubMenus[route.path] &&
                         route.sublink?.map((sublink, index) => (
                           <NavLink
+                            onMouseEnter={() => dispatch(setWidth({ changewidth: true }))}
+                            onMouseLeave={() => dispatch(setWidth({ changewidth: false }))}
                             key={index}
                             to={route.path + "/" + sublink.path}
                             onClick={setShowSideBar}
@@ -195,10 +195,7 @@ const Navigation: React.FC<{ setShowSideBar: () => void }> = ({ setShowSideBar }
                               pointerEvents: isAllowed ? "auto" : "none",
                             }}
                           >
-                            <li
-                              onMouseEnter={() => dispatch(setWidth({ changewidth: true }))}
-                              onMouseLeave={() => dispatch(setWidth({ changewidth: false }))}
-                            >
+                            <li>
                               <span className="text-xl">{sublink.icon}</span>
                               <span
                                 className={`absolute left-12 ${changewidth ? "opacity-100" : "opacity-0"
@@ -220,6 +217,8 @@ const Navigation: React.FC<{ setShowSideBar: () => void }> = ({ setShowSideBar }
               if (route.name === "Approval" && isSuper) {
                 return (
                   <NavLink
+                  onMouseEnter={() => dispatch(setWidth({ changewidth: true }))}
+                  onMouseLeave={() => dispatch(setWidth({ changewidth: false }))}
                     key={ind}
                     to={route.path || ""}
                     onClick={setShowSideBar}
@@ -233,10 +232,7 @@ const Navigation: React.FC<{ setShowSideBar: () => void }> = ({ setShowSideBar }
                       pointerEvents: ind === 0 || isAllowed ? "auto" : "none",
                     }}
                   >
-                    <li
-                      onMouseEnter={() => dispatch(setWidth({ changewidth: true }))}
-                      onMouseLeave={() => dispatch(setWidth({ changewidth: false }))}
-                    >
+                    <li>
                       <span className="text-xl">{route.icon}</span>
                       <span
                         className={`absolute left-12 ${changewidth ? "opacity-100" : "opacity-0"
@@ -255,6 +251,8 @@ const Navigation: React.FC<{ setShowSideBar: () => void }> = ({ setShowSideBar }
               if (route.name !== "Approval") {
                 return (
                   <NavLink
+                  onMouseEnter={() => dispatch(setWidth({ changewidth: true }))}
+                  onMouseLeave={() => dispatch(setWidth({ changewidth: false }))}
                     key={ind}
                     to={route.path || ""}
                     onClick={setShowSideBar}
@@ -268,10 +266,7 @@ const Navigation: React.FC<{ setShowSideBar: () => void }> = ({ setShowSideBar }
                       pointerEvents: ind === 0 || isAllowed ? "auto" : "none",
                     }}
                   >
-                    <li
-                      onMouseEnter={() => dispatch(setWidth({ changewidth: true }))}
-                      onMouseLeave={() => dispatch(setWidth({ changewidth: false }))}
-                    >
+                    <li>
                       <span className="text-xl">{route.icon}</span>
                       <span
                         className={`absolute left-12 ${changewidth ? "opacity-100" : "opacity-0"

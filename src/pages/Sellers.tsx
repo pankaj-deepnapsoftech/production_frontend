@@ -220,7 +220,7 @@ const Sellers: React.FC = () => {
             _hover={{ backgroundColor: "#14b8a6" }}
             className="rounded-lg text-sm"
           >
-            Add New Buyer
+            Add New Supplier
           </Button>
         </div>
 
