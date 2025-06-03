@@ -318,7 +318,7 @@ const Buyers: React.FC = () => {
 
           {/* Page Size Select */}
           <Select
-            width="100px"
+            width={{ base: "100%", md: "100px" }}
             fontSize="14px"
             className="mt-1 md:mt-0"
           >

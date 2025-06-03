@@ -146,10 +146,10 @@ const ScrapTable: React.FC<ScrapTableProps> = ({
             )}
             {!isLoadingScraps && scraps.length > 0 && (
                 <div>
-                    <div className="flex justify-end mb-2">
+                    <div className="md:flex md:justify-end mt-3  mb-2">
                         <Select
                             onChange={(e) => setPageSize(e.target.value)}
-                            width="80px"
+                            width=" "
                         >
                             <option value={10}>10</option>
                             <option value={20}>20</option>

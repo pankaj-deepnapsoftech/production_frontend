@@ -205,22 +205,22 @@ const UserRole: React.FC = () => {
           >
             Refresh
           </Button>
-
           <Select
             onChange={(e) => setPageSize(Number(e.target.value))}
-            className="text-sm border-[#319795] focus:outline-[#319795]"
-            width="80px"
+            className="text-sm  focus:outline-none"
+            width={{ base: "full", md: "80px" }}
+                
           >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-            <option value={100000}>All</option>
+            <option   value={10}>10</option>
+            <option  value={20}>20</option>
+            <option  value={50}>50</option>
+            <option  value={100}>100</option>
+            <option  value={100000}>All</option>
           </Select>
         </div>
       </div>
 
-      {/* Table */}
+
       <div className="overflow-x-auto">
         <UserRoleTable
           pageSize={PageSize}

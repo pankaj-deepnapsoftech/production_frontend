@@ -166,9 +166,9 @@ const Process: React.FC = () => {
 
       <div className="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-2">
         {/* Search Input */}
-        <div  className="max-[800px]:w-full">
+        <div className="w-full md:max-w-xs">
           <textarea
-            className="rounded-[10px]  px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline-[#14b8a6] border resize-none border-[#0d9488]"
+            className="w-full rounded-[10px] border border-[#0d9488] px-3 py-2 text-sm resize-none focus:outline-[#14b8a6] hover:outline-[#14b8a6]"
             rows={1}
             placeholder="Search"
             value={searchKey}
@@ -176,46 +176,58 @@ const Process: React.FC = () => {
           />
         </div>
 
-        {/* Buttons & Select Controls */}
-        <div className="w-full  flex flex-col md:flex-row items-start md:items-center gap-4">
+        {/* Controls: Add, Refresh, Select */}
+        <div className="w-full flex flex-col md:flex-row items-start md:items-center gap-3">
+          {/* Add Button */}
           <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            paddingY={{ base: "0", md: "3px" }}
-            width="full"
+            fontSize="14px"
+            px={4}
+            py={2.5}
+            w="full"
             onClick={openAddProcessDrawerHandler}
-            color="#ffffff"
-            backgroundColor={MainColor}
-            _hover={{ backgroundColor: "#14b8a6" }}
-            className="text-white rounded-lg py-3 w-full hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+            bg={MainColor}
+            color="white"
+            _hover={{ bg: "#14b8a6" }}
+            className="rounded-lg text-sm"
           >
             Add New Production Process
           </Button>
 
+          {/* Refresh Button */}
           <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            paddingY={{ base: "0", md: "3px" }}
-            width="full"
+            fontSize="14px"
+            px={4}
+            py={2.5}
+            w="full"
             onClick={fetchProcessHandler}
             leftIcon={<MdOutlineRefresh />}
-            color="#319795"
             borderColor="#319795"
+            color="#319795"
             variant="outline"
-            className="w-full "
+            className="rounded-lg text-sm"
           >
             Refresh
           </Button>
-          <Select className="w-full md:w-[80px]">
+
+          {/* Page Size Selector */}
+          <Select
+            width={{base:"full" , md:"220px"}}
+            
+            size="md"
+            variant="outline"
+            className="text-sm"
+            defaultValue={10}
+            
+          >
             <option value={10}>10</option>
             <option value={20}>20</option>
             <option value={50}>50</option>
             <option value={100}>100</option>
             <option value={100000}>All</option>
           </Select>
-
         </div>
       </div>
+
 
 
       <div>

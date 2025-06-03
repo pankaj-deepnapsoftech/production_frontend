@@ -12,37 +12,54 @@ const Pagination = ({page,setPage,length}) => {
       <Box className="flex justify-center items-center mt-4">
         <HStack spacing={2}>
           {/* Previous Button */}
-          <Button
-            size="sm"
-            colorScheme="blue"
-            isDisabled={page === 1}
-            onClick={()=>setPage(page - 1)}
-            className="rounded-md shadow-md"
-          >
-            Previous
-          </Button>
-
-         
+          <div className="flex items-center gap-2 mt-4">
+            {/* Previous Button */}
             <Button
-              key={page}
               size="sm"
-              colorScheme={"gray"}
-              className={`rounded-md shadow-md bg-green-500 text-white`}
+              isDisabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              bg="#319795"
+              px={4}
+         
+              color="white"
+              _hover={{ bg: "table-color", opacity: 0.9 }}
+              _disabled={{ bg: "gray.300", cursor: "not-allowed" }}
+              borderRadius="20px"
+              boxShadow="md"
+            >
+              Prev
+            </Button>
+
+            {/* Current Page (Disabled) */}
+            <Button
+              size="sm"
+              isDisabled
+            
+              color="black"
+              borderRadius="md"
+              boxShadow="md"
+              cursor="default"
             >
               {page}
             </Button>
-          
 
-          {/* Next Button */}
-          <Button
-            size="sm"
-            colorScheme="blue"
-            isDisabled={length < 5}
-            onClick={()=>setPage(page + 1)}
-            className="rounded-md shadow-md"
-          >
-            Next
-          </Button>
+            {/* Next Button */}
+            <Button
+              size="sm"
+              px={4}
+              isDisabled={length < 5}
+              onClick={() => setPage(page + 1)}
+              bg="#319795"
+              color="white"
+              _hover={{ bg: "table-color", opacity: 0.9 }}
+              _disabled={{ bg: "gray.300", cursor: "not-allowed" }}
+              borderRadius="20px"
+              boxShadow="md"
+            >
+              Next
+            </Button>
+          </div>
+
         </HStack>
       </Box>
     </VStack>

@@ -72,7 +72,7 @@ const Scrap: React.FC = () => {
       </div>
 
       {/* Employees Page */}
-      <div className="w-full  flex justify-between gap-4">
+      <div className="w-full  md:flex justify-between gap-4">
         <div className="w-full">
           <textarea
             className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"

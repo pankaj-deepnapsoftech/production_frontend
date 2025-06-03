@@ -87,7 +87,7 @@ const AddUserRole: React.FC<AddUserRoleProps> = ({
         }}
       >
         <h1 className="px-4 flex gap-x-2 items-center text-xl py-3 border-b">
-          <BiX onClick={closeDrawerHandler} size="26px" />
+          <BiX onClick={closeDrawerHandler} className="cursor-pointer" size="26px" />
           User Role
         </h1>
 

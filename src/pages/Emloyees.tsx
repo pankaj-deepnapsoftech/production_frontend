@@ -165,8 +165,8 @@ const Employees: React.FC = () => {
 
           <Select
             // onChange={(e) => setPageSize(Number(e.target.value))}
-            width="80px"
-            className="text-sm border-[#319795] focus:outline-[#319795]"
+            width={{ base: "full", md: "80px" }}
+            className="text-sm  focus:outline-none"
           >
             <option value={10}>10</option>
             <option value={20}>20</option>

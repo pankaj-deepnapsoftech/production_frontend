@@ -47,10 +47,10 @@ const BOMTable: React.FC<BOMCardProps> = ({
         </Box>
       )}
       {!isLoadingBoms && boms.length === 0 && (
-        <Box textAlign="center" mt={10}>
+        <div className="mx-auto w-max">
           <FcDatabase size={100} />
-          <Text fontSize="lg">No Data Found</Text>
-        </Box>
+          <p className="text-lg">No Data Found</p>
+        </div>
       )}
       {!isLoadingBoms && boms.length > 0 && (
         <div className="mt-5">
@@ -119,7 +119,7 @@ const BOMTable: React.FC<BOMCardProps> = ({
 
                 {openUpdateBomDrawerHandler && (
                   <IconButton
-                    icon={<MdEdit />}
+                    icon={<MdEdit color="white" />}
                     aria-label="Edit"
                     onClick={() =>
                       openUpdateBomDrawerHandler(bom?._id)

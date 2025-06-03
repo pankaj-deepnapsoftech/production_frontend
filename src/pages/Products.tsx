@@ -381,7 +381,7 @@ const Products: React.FC = () => {
 
         {/* Page size selector */}
         <select
-          className="border border-gray-400 rounded  px-2 py-1 w-[60px]  "
+          className="border w-full border-gray-400 rounded  px-2 py-1.5 md:w-[60px]  "
         // onChange={(e) => setPageSize(e.target.value)}
         >
           <option value="10">10</option>

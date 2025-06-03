@@ -361,7 +361,7 @@ const Dashboard: React.FC = () => {
                       boxShadow="md"
                       className="bg-white flex items-center justify-between gap-4 cursor-pointer hover:scale-105 transition-all ease-in"
                     >
-                      <div className="text-center md:text-left">
+                      <div className="text-start md:text-left">
                         <Text fontSize="lg">Employee</Text>
                         <Text fontWeight="bold" fontSize="lg">
                           {role && role === "admin" ? totalEmployees : 0}
@@ -383,9 +383,9 @@ const Dashboard: React.FC = () => {
                       p={4}
                       borderRadius="md"
                       boxShadow="md"
-                      className="bg-white flex items-center justify-around gap-4 cursor-pointer hover:scale-105 transition-all ease-in"
+                      className="bg-white flex items-center justify-between gap-4 cursor-pointer hover:scale-105 transition-all ease-in"
                     >
-                      <div className="text-center md:text-left">
+                      <div className="text-start md:text-left">
                         <Text fontSize="lg">Customer</Text>
                         <Text fontWeight="bold" fontSize="lg">
                           {role &&
@@ -412,9 +412,9 @@ const Dashboard: React.FC = () => {
                       p={4}
                       borderRadius="md"
                       boxShadow="md"
-                      className="bg-white flex items-center justify-around gap-4 cursor-pointer hover:scale-105 transition-all ease-in"
+                      className="bg-white flex items-center justify-between gap-4 cursor-pointer hover:scale-105 transition-all ease-in"
                     >
-                      <div className="text-center md:text-left">
+                      <div className="text-start md:text-left">
                         <Text fontSize="lg">Sales</Text>
                         <Text fontWeight="bold" fontSize="lg">
                           {role &&

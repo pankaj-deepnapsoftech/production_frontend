@@ -1436,11 +1436,16 @@ const Sales = () => {
       <Modal
         isOpen={invoiceDisclosure.isOpen}
         onClose={invoiceDisclosure.onClose}
-        size={{ base: "md", sm: "md", md: "lg", lg: "xl" }}
         isCentered
       >
         <ModalOverlay />
-        <ModalContent className="rounded-lg  shadow-lg p-4">
+        <ModalContent
+          width={{ base: "90%", }}
+          px={{ base: 4, sm: 6, md: 8 }}
+          py={6}
+          borderRadius="lg"
+          boxShadow="lg"
+        >
           <ModalHeader className="text-lg font-semibold text-gray-800">
             Upload Invoice
           </ModalHeader>
@@ -1465,6 +1470,7 @@ const Sales = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
 
 
       {/* Modal update proforma invoice */}
@@ -1565,12 +1571,15 @@ const Sales = () => {
       <Modal
         isOpen={paymentDisclosure.isOpen}
         onClose={paymentDisclosure.onClose}
-        size={{ base: "md", md: "lg", lg: "xl" }} // smaller on mobile, larger on desktop
         isCentered
         scrollBehavior="inside"
       >
         <ModalOverlay />
-        <ModalContent className="rounded-lg shadow-lg p-4 max-w-full mx-2">
+        <ModalContent width={{ base: "90%" }}
+          px={{ base: 4, sm: 6, md: 8 }}
+          py={6}
+          borderRadius="lg"
+          boxShadow="lg" >
           <ModalHeader className="text-lg font-semibold text-gray-800">
             Payment
           </ModalHeader>

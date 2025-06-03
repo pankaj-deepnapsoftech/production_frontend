@@ -273,12 +273,12 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
 
           <div className="w-[max-content] m-auto my-7">
             <button
-              className="text-sm mt-2 bg-table-color py-1 px-4 text-white border-[1px] border-table-cbg-table-color rounded-3xl disabled:bg-[#b2b2b2] disabled:border-[#b2b2b2] disabled:cursor-not-allowed md:text-lg md:py-1 md:px-4 lg:text-xl lg:py-1 xl:text-base"
+              className="text-sm mt-2 bg-table-color py-1 px-4 text-white border-[1px] border-table-cbg-table-color rounded-3xl disabled:bg-[#b2b2b2] disabled:border-[#b2b2b2] d isabled:cursor-not-allowed md:text-lg md:py-1 md:px-4 lg:text-xl lg:py-1 xl:text-base"
               disabled={!canPreviousPage}
               onClick={previousPage}
             >
-              Prev
-            </button>
+              Prev 
+            </button>   
             <span className="mx-3 text-sm md:text-lg lg:text-xl xl:text-base">
               {pageIndex + 1} of {pageCount}
             </span>

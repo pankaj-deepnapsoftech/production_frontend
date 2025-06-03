@@ -306,29 +306,43 @@ const Customer: React.FC = () => {
 
             {/* Pagination */}
             <div className="w-max mx-auto my-6 flex items-center gap-4 text-sm">
-              <Button
-                size="sm"
-                onClick={() => handlePageChange(currentPage - 1)}
-                isDisabled={currentPage === 1}
-                backgroundColor="gray.600"
-                color="white"
-                _disabled={{ backgroundColor: "gray.300" }}
-              >
-                Prev
-              </Button>
-              <span>
-                Page {currentPage} of {Math.ceil(total / pageSize)}
-              </span>
-              <Button
-                size="sm"
-                onClick={() => handlePageChange(currentPage + 1)}
-                isDisabled={currentPage >= Math.ceil(total / pageSize)}
-                backgroundColor="gray.600"
-                color="white"
-                _disabled={{ backgroundColor: "gray.300" }}
-              >
-                Next
-              </Button>
+              <div className="flex items-center gap-4 mt-4">
+                <Button
+                  borderRadius="20px"
+                  size="sm"
+                  px={4}
+                  py={2}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  isDisabled={currentPage === 1}
+                  bg="#319795"
+                  color="white"
+                 
+                  _disabled={{ bg: "gray.300", cursor: "not-allowed" }}
+                >
+                  Prev
+                </Button>
+
+                <span className="text-sm font-medium">
+                  Page {currentPage} of {Math.ceil(total / pageSize)}
+                </span>
+
+                <Button
+                  borderRadius="20px"
+                  size="sm"
+                  px={4}
+                  py={2}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  isDisabled={currentPage >= Math.ceil(total / pageSize)}
+                  bg="#319795"
+                  color="white"
+                  _hover={{ bg: "table-color", opacity: 0.9 }}
+                  _disabled={{ bg: "gray.300", cursor: "not-allowed" }}
+                >
+                  Next
+                </Button>
+
+              </div>
+
             </div>
           </>
         )}

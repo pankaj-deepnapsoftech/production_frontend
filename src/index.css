@@ -243,3 +243,11 @@ input:focus {
   border-color: #319795; /* Change this to any color you prefer */
   outline: #14b8a6; /* Optional: removes the default focus outline */
 }
+
+
+.custom-select option {
+  background-color: #59eca8;
+  /* your desired bg */
+  color: rgb(0, 0, 0);
+  /* text color */
+}

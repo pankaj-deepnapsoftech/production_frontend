@@ -321,7 +321,7 @@ const IndirectProducts: React.FC = () => {
       <h1 className="text-2xl md:text-3xl font-semibold mb-6">Inventory</h1>
 
       {/* Search + Filters + Actions */}
-      <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-6">
+      <div className="flex flex-col  md:flex-row items-center gap-4 md:gap-6 mb-6">
         {/* Search textarea */}
         <textarea
           rows={1}
@@ -332,11 +332,11 @@ const IndirectProducts: React.FC = () => {
         />
 
         {/* Product/Service Filter */}
-        <FormControl className="w-full md:w-[200px]">
+        <FormControl className="  ">
           <select
             value={productServiceFilter}
             onChange={(e) => setProductServiceFilter(e.target.value)}
-            className="w-full rounded border border-gray-400 py-2 px-3"
+            className=" max-[800px]:w-full rounded border border-gray-400 py-2 px-3"
           >
             <option value="">All Products/Services</option>
             <option value="product">Products</option>
@@ -351,14 +351,8 @@ const IndirectProducts: React.FC = () => {
             value={storeFilter}
             onChange={(d:any) => setStoreFilter(d)}
             classNamePrefix="react-select"
-            styles={{
-              container: (base) => ({
-                ...base,
-                width: '100%',
-                minWidth: '160px',
-                maxWidth: '200px',
-              }),
-            }}
+         
+            
           />
         </FormControl>
 

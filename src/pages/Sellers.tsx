@@ -195,9 +195,10 @@ const Sellers: React.FC = () => {
       </div>
 
       {/* Employees Page */}
-      <div className="w-full flex flex-col md:flex-row gap-4 pb-2">
+      <div className="w-full flex flex-col gap-4 pb-2 md:grid md:grid-cols-5 md:gap-x-4">
+
         {/* Search Input */}
-        <div className="w-full">
+        <div className="col-span-2">
           <textarea
             className="rounded-[10px] w-full px-3 py-2 text-sm focus:outline-[#14b8a6] hover:outline-[#14b8a6] border resize-none border-[#0d9488]"
             rows={1}
@@ -207,13 +208,10 @@ const Sellers: React.FC = () => {
           />
         </div>
 
-        {/* Action Buttons Section */}
-        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-
-          {/* Add Supplier Button */}
+        {/* Add Supplier Button */}
+        <div className="col-span-1">
           <Button
             w="full"
-           
             onClick={openAddSellerDrawerHandler}
             backgroundColor={MainColor}
             color="white"
@@ -222,90 +220,91 @@ const Sellers: React.FC = () => {
           >
             Add New Supplier
           </Button>
+        </div>
 
-          {/* Bulk Upload Section */}
-          <div className="w-full md:w-[200px]">
-            <Button
-              w="full"
-              onClick={() => setShowBulkUploadMenu(true)}
-              backgroundColor={MainColor}
-              color="white"
-              rightIcon={<AiFillFileExcel size={22} />}
-              _hover={{ backgroundColor: "#14b8a6" }}
-              className="rounded-lg"
-            >
-              Bulk Upload
-            </Button>
-
-            {showBulkUploadMenu && (
-              <div className="mt-2 border border-[#a9a9a9] rounded p-2 bg-white shadow-md z-10">
-                <form>
-                  <FormControl>
-                    <FormLabel fontWeight="bold">Choose File (.csv)</FormLabel>
-                    <Input
-                      ref={fileRef}
-                      type="file"
-                      accept=".csv, .xlsx"
-                      borderWidth={1}
-                      borderColor="#a9a9a9"
-                      pt={1}
-                    />
-                  </FormControl>
-
-                  <div className="flex gap-2 mt-2">
-                    <Button
-                      type="submit"
-                      onClick={bulkUploadHandler}
-                      isLoading={bulkUploading}
-                      backgroundColor={MainColor}
-                      color="white"
-                      rightIcon={<AiFillFileExcel size={22} />}
-                    >
-                      Upload
-                    </Button>
-
-                    <Button
-                      type="button"
-                      onClick={() => setShowBulkUploadMenu(false)}
-                      backgroundColor={MainColor}
-                      color="white"
-                      rightIcon={<RxCross2 size={22} />}
-                    >
-                      Close
-                    </Button>
-                  </div>
-
-                  <a href={SampleCSV}>
-                    <Button
-                      w="full"
-                      mt={2}
-                      backgroundColor={MainColor}
-                      color="white"
-                      rightIcon={<AiFillFileExcel size={22} />}
-                    >
-                      Sample CSV
-                    </Button>
-                  </a>
-                </form>
-              </div>
-            )}
-          </div>
-
-          {/* Refresh Button */}
+        {/* Bulk Upload Section */}
+        <div className="col-span-1 relative">
           <Button
             w="full"
-            maxW="100px"
+            onClick={() => setShowBulkUploadMenu(true)}
+            backgroundColor={MainColor}
+            color="white"
+            rightIcon={<AiFillFileExcel size={22} />}
+            _hover={{ backgroundColor: "#14b8a6" }}
+            className="rounded-lg"
+          >
+            Bulk Upload
+          </Button>
+
+          {showBulkUploadMenu && (
+            <div className="absolute mt-2 w-full border border-[#a9a9a9] rounded p-2 bg-white shadow-md z-10">
+              <form>
+                <FormControl>
+                  <FormLabel fontWeight="bold">Choose File (.csv)</FormLabel>
+                  <Input
+                    ref={fileRef}
+                    type="file"
+                    accept=".csv, .xlsx"
+                    borderWidth={1}
+                    borderColor="#a9a9a9"
+                    pt={1}
+                  />
+                </FormControl>
+
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  <Button
+                    type="submit"
+                    onClick={bulkUploadHandler}
+                    isLoading={bulkUploading}
+                    backgroundColor={MainColor}
+                    color="white"
+                    rightIcon={<AiFillFileExcel size={22} />}
+                  >
+                    Upload
+                  </Button>
+
+                  <Button
+                    type="button"
+                    onClick={() => setShowBulkUploadMenu(false)}
+                    backgroundColor={MainColor}
+                    color="white"
+                    rightIcon={<RxCross2 size={22} />}
+                  >
+                    Close
+                  </Button>
+                </div>
+
+                <a href={SampleCSV}>
+                  <Button
+                    w="full"
+                    mt={2}
+                    backgroundColor={MainColor}
+                    color="white"
+                    rightIcon={<AiFillFileExcel size={22} />}
+                  >
+                    Sample CSV
+                  </Button>
+                </a>
+              </form>
+            </div>
+          )}
+        </div>
+
+        {/* Refresh + Page Size Select */}
+        <div className="flex flex-col md:flex-row  md:gap-2 gap-2 w-full">
+          <Button
+            w="full"
             onClick={fetchSellersHandler}
             leftIcon={<MdOutlineRefresh />}
             color="#319795"
             borderColor="#319795"
             variant="outline"
+            borderWidth="1px"
           >
             Refresh
           </Button>
 
-          {/* Page Size Select */}
-          <Select maxW="80px">
+          <Select w="full">
             <option value={10}>10</option>
             <option value={20}>20</option>
             <option value={50}>50</option>
@@ -313,9 +312,9 @@ const Sellers: React.FC = () => {
             <option value={100000}>All</option>
           </Select>
         </div>
-      </div>
 
-   
+
+      </div>
 
       <div>
         <AgentTable
