@@ -268,7 +268,6 @@ const Dashboard: React.FC = () => {
     (userRole) => role.toLowerCase() === userRole
   );
 
-  console.log(shouldRenderTaskOverview);
   */
   if (role === "emp") {
     navigate("/access");

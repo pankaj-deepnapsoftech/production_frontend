@@ -21,7 +21,6 @@ import Select from "react-select"; // Import react-select
 
 const Assign = ({ empData, saleData, onClose }) => {
   const tasks = saleData?.assinedto;
-  console.log("assign", saleData);
 
   const [formData, setFormData] = useState({
     sale_id: saleData?._id,
@@ -140,8 +139,6 @@ const Assign = ({ empData, saleData, onClose }) => {
 
   // Handle delete
   const handleDelete = async (id) => {
-    console.log(id);
-    
     try {
       const response = await axios.delete(
         `${process.env.REACT_APP_BACKEND_URL}assined/delete/${id}`,

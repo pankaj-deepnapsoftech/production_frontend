@@ -14,7 +14,6 @@ import { useCookies } from "react-cookie";
 import { IoMdCheckmarkCircle } from "react-icons/io";
 
 const PaymentModal = ({ sale_id, payment, verify, assign, payfor, onClose }) => {
-  console.log(payfor)
   const [cookies] = useCookies(["access_token"]);
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);

@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import {
-    Select,
     Table,
     TableContainer,
     Tbody,
@@ -146,18 +145,7 @@ const ScrapTable: React.FC<ScrapTableProps> = ({
             )}
             {!isLoadingScraps && scraps.length > 0 && (
                 <div>
-                    <div className="md:flex md:justify-end mt-3  mb-2">
-                        <Select
-                            onChange={(e) => setPageSize(e.target.value)}
-                            width=" "
-                        >
-                            <option value={10}>10</option>
-                            <option value={20}>20</option>
-                            <option value={50}>50</option>
-                            <option value={100}>100</option>
-                            <option value={100000}>All</option>
-                        </Select>
-                    </div>
+                   
                     <TableContainer maxHeight="600px" overflowY="auto">
                         <Table variant="simple" {...getTableProps()}>
                             <Thead className="text-sm font-semibold">

@@ -17,7 +17,6 @@ import { useState } from "react";
 import { useCookies } from "react-cookie";
 
 const UploadorderImage = ({ purchaseData, onClose }) => {
-  console.log('purchase_data', purchaseData)
   const [file, setFile] = useState(null);
   const dropZoneBg = useColorModeValue("gray.100", "gray.700");
   const [cookies] = useCookies();

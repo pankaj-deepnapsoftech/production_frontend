@@ -1,7 +1,6 @@
 import { Box, Text, VStack, Badge, Progress } from "@chakra-ui/react";
 
 const TrackProduction = ({ designProcess, productionProcess, stage }: any) => {
-  console.log('stages first =', designProcess);
   const ColorChange = (color: any) => {
     if (color === "Pending") {
       return "orange";

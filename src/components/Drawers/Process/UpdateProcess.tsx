@@ -188,7 +188,6 @@ const UpdateProcess: React.FC<UpdateProcess> = ({
         throw new Error(response?.message);
       }
       
-      console.log(response);
       toast.success(response?.message);
       closeDrawerHandler();
       fetchProcessHandler();

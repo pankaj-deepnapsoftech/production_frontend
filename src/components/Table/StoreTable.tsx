@@ -11,7 +11,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import moment from "moment";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import { MdDeleteOutline, MdEdit, MdOutlineVisibility } from "react-icons/md";
 import { FcApproval, FcDatabase } from "react-icons/fc";
@@ -42,6 +42,8 @@ interface StoreTableProps {
     updatedAt: string;
   }>;
   isLoadingStores: boolean;
+  pageSize?: number;
+  setPageSize?: (size: number) => void;
   openUpdateStoreDrawerHandler?: (id: string) => void;
   openStoreDetailsDrawerHandler?: (id: string) => void;
   deleteStoreHandler?: (id: string) => void;
@@ -55,6 +57,8 @@ const StoreTable: React.FC<StoreTableProps> = ({
   openStoreDetailsDrawerHandler,
   deleteStoreHandler,
   approveStoreHandler,
+  pageSize,
+  setPageSize,
 }) => {
   const columns: Column<{
     name: string;
@@ -118,9 +122,9 @@ const StoreTable: React.FC<StoreTableProps> = ({
     previousPage,
     canNextPage,
     canPreviousPage,
-    state: { pageIndex, pageSize },
+    state: { pageIndex },
     pageCount,
-    setPageSize,
+    setPageSize: setTablePageSize,
   }: TableInstance<{
     name: string;
     gst_number: string;
@@ -135,11 +139,15 @@ const StoreTable: React.FC<StoreTableProps> = ({
     {
       columns,
       data: stores,
-      initialState: { pageIndex: 0 },
+      initialState: { pageIndex: 0, pageSize },
     },
     useSortBy,
     usePagination
   );
+
+  useEffect(() => {
+    setTablePageSize(pageSize);
+  }, [pageSize, setTablePageSize]);
 
   return (
     <div>

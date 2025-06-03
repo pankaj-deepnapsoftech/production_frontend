@@ -24,7 +24,7 @@ const Employees: React.FC = () => {
   const [employeeId, setEmployeeId] = useState<string | undefined>();
   const [searchKey, setSearchKey] = useState<string | undefined>();
   const [filteredData, setFilteredData] = useState<any>([]);
-
+  const [PageSize, setPageSize] = useState<number>(10);
   const { isUpdateEmployeeDrawerOpened, isEmployeeDetailsDrawerOpened } =
     useSelector((state: any) => state.drawers);
   const dispatch = useDispatch();
@@ -115,6 +115,8 @@ const Employees: React.FC = () => {
     );
   }
 
+
+
   return (
     <div className="p-4">
       {/* Drawers */}
@@ -167,6 +169,8 @@ const Employees: React.FC = () => {
             // onChange={(e) => setPageSize(Number(e.target.value))}
             width={{ base: "full", md: "80px" }}
             className="text-sm  focus:outline-none"
+            onChange={(e) => setPageSize(Number(e.target.value))}
+          
           >
             <option value={10}>10</option>
             <option value={20}>20</option>
@@ -181,6 +185,8 @@ const Employees: React.FC = () => {
       <div className="overflow-x-auto">
         <EmployeeTable
           employees={filteredData}
+          pageSize={PageSize}
+  setPageSize={setPageSize}
           openEmployeeDetailsDrawerHandler={openEmployeeDetailsDrawerHandler}
           openUpdateEmployeeDrawerHandler={openUpdateEmployeeDrawerHandler}
           isLoadingEmployees={isLoadingEmployees}

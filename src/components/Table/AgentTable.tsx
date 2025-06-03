@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Cell,
   Column,
@@ -44,6 +44,8 @@ interface AgentTableProps {
     createdAt: string;
     updatedAt: string;
   }>;
+  pageSize?: number;
+  setPageSize?: (size: number) => void;
   isLoadingAgents: boolean;
   openUpdateAgentDrawerHandler?: (id: string) => void;
   openAgentDetailsDrawerHandler?: (id: string) => void;
@@ -58,6 +60,8 @@ const AgentTable: React.FC<AgentTableProps> = ({
   openAgentDetailsDrawerHandler,
   deleteAgentHandler,
   approveAgentHandler,
+  pageSize,
+  setPageSize,
 }) => {
   const columns = useMemo(
     () => [
@@ -89,9 +93,9 @@ const AgentTable: React.FC<AgentTableProps> = ({
     previousPage,
     canNextPage,
     canPreviousPage,
-    state: { pageIndex, pageSize },
+    state: { pageIndex },
     pageCount,
-    setPageSize,
+    setPageSize: setTablePageSize,
   }: TableInstance<{
     name: string;
     email: string;
@@ -111,11 +115,16 @@ const AgentTable: React.FC<AgentTableProps> = ({
     {
       columns,
       data: agents,
-      initialState: { pageIndex: 0 },
+      initialState: { pageIndex: 0, pageSize },
     },
     useSortBy,
     usePagination
   );
+
+  useEffect(() => {
+    setTablePageSize(pageSize);
+  }, [pageSize, setTablePageSize]);
+
 
   return (
     <div>
@@ -128,18 +137,6 @@ const AgentTable: React.FC<AgentTableProps> = ({
       )}
       {!isLoadingAgents && agents.length > 0 && (
         <div>
-          <div className="flex justify-end mb-2">
-            <Select
-              onChange={(e) => setPageSize(e.target.value)}
-              width="80px"
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-              <option value={100000}>All</option>
-            </Select>
-          </div>
 
           <TableContainer maxHeight="600px" overflowY="auto">
             <Table variant="simple" {...getTableProps()}>

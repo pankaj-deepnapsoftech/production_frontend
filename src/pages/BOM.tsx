@@ -19,6 +19,7 @@ import BomDetails from "../components/Drawers/BOM/BomDetails";
 import UpdateBom from "../components/Drawers/BOM/UpdateBom";
 import { MainColor } from "../constants/constants";
 import { useLocation } from "react-router-dom";
+import Pagination from "./Pagination";
 
 const BOM: React.FC = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
@@ -30,9 +31,8 @@ const BOM: React.FC = () => {
   const [boms, setBoms] = useState<any[]>([]);
   const [filteredBoms, setFilteredBoms] = useState<any[]>([]);
   const location = useLocation();
-
   const [deleteBom] = useDeleteBomMutation();
-
+  const [pages, setPages] = useState(1);
   const {
     isAddBomDrawerOpened,
     isUpdateBomDrawerOpened,
@@ -65,7 +65,7 @@ const BOM: React.FC = () => {
     try {
       setIsLoadingBoms(true);
       const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + "bom/all",
+        `${process.env.REACT_APP_BACKEND_URL}bom/all?page=${pages}`,
         {
           method: "GET",
           headers: {
@@ -99,7 +99,7 @@ const BOM: React.FC = () => {
 
   useEffect(() => {
     fetchBomsHandler();
-  }, []);
+  }, [pages]);
 
   useEffect(() => {
     const searchTxt = searchKey?.toLowerCase();
@@ -211,6 +211,8 @@ const BOM: React.FC = () => {
           openUpdateBomDrawerHandler={openUpdateBomDrawerHandler}
           deleteBomHandler={deleteBomHandler}
         />
+
+        <Pagination page={pages} setPage={setPages} length={filteredBoms.length} />
       </div>
     </div>
   );

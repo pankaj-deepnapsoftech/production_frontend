@@ -36,6 +36,7 @@ const Products: React.FC = () => {
   const [searchKey, setSearchKey] = useState<string | undefined>();
   const [filteredData, setFilteredData] = useState<any>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [PageSize, setPageSize] = useState<number>(10);
   // Bulk upload menu
   const [showBulkUploadMenu, setShowBulkUploadMenu] = useState<boolean>(false);
 
@@ -283,7 +284,6 @@ const Products: React.FC = () => {
       }
   
       const result = await response.json();
-      console.log(result.message);
       toast.success(result.message);
       fetchProductsHandler()
       // Optional: refetch or update table state here
@@ -382,7 +382,7 @@ const Products: React.FC = () => {
         {/* Page size selector */}
         <select
           className="border w-full border-gray-400 rounded  px-2 py-1.5 md:w-[60px]  "
-        // onChange={(e) => setPageSize(e.target.value)}
+          onChange={(e) => setPageSize(Number(e.target.value))}
         >
           <option value="10">10</option>
           <option value="20">20</option>
@@ -483,6 +483,8 @@ const Products: React.FC = () => {
       <ProductTable
         isLoadingProducts={isLoadingProducts}
         products={filteredData}
+        pageSize={PageSize}
+        setPageSize={setPageSize}
         openUpdateProductDrawerHandler={openUpdateProductDrawerHandler}
         openProductDetailsDrawerHandler={openProductDetailsDrawerHandler}
         deleteProductHandler={deleteProductHandler}

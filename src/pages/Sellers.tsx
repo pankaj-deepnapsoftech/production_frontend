@@ -35,7 +35,7 @@ const Sellers: React.FC = () => {
   const [searchKey, setSearchKey] = useState<string | undefined>();
   const [sellers, setSellers] = useState<any[]>([]);
   const [filteredSellers, setFilteredSellers] = useState<any[]>([]);
-
+  const [PageSize, setPageSize] = useState<number>(10);
   const dispatch = useDispatch();
   const {
     isAddSellerDrawerOpened,
@@ -304,7 +304,8 @@ const Sellers: React.FC = () => {
             Refresh
           </Button>
 
-          <Select w="full">
+          <Select onChange={(e) => setPageSize(Number(e.target.value))} w="full">
+            
             <option value={10}>10</option>
             <option value={20}>20</option>
             <option value={50}>50</option>
@@ -318,6 +319,8 @@ const Sellers: React.FC = () => {
 
       <div>
         <AgentTable
+          pageSize={PageSize}
+          setPageSize={setPageSize}
           agents={filteredSellers}
           openUpdateAgentDrawerHandler={openUpdateSellerDrawerHandler}
           openAgentDetailsDrawerHandler={openSellerDetailsDrawerHandler}

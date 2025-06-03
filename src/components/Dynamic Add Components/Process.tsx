@@ -14,7 +14,6 @@ const Process: React.FC<ProcessProps> = ({ inputs, setInputs }) => {
     setInputs((prev: any[]) => [...prev, ""]);
   };
 
-  console.log(".......", inputs);
 
   const deleteInputHandler = (ind: number) => {
     const inputsArr = [...inputs];

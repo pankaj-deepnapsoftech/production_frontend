@@ -53,7 +53,6 @@ const ViewDesign: React.FC<ViewDesignProps> = ({
           headers: { Authorization: `Bearer ${cookies.access_token}` },
         }
       );
-      //console.log("design form",response);
       toast({
         title: response.data.message,
         description: "Response added successfully :) ",

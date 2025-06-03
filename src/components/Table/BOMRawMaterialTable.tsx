@@ -62,7 +62,6 @@ import {
     deleteProductHandler,
     approveProductHandler,
   }) => {
-    console.log(products)
     const columns: Column<{
       name: string;
       product_id: string;
@@ -148,8 +147,6 @@ import {
       ],
       []
     );
-
-    //console.log("Products:", products); // Check if `products` is an array
   
     const inventoryCategoryStyles = {
       indirect: {

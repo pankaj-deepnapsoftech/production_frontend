@@ -37,7 +37,7 @@ const Buyers: React.FC = () => {
   const [isLoadingBuyers, setIsLoadingBuyers] = useState<boolean>(false);
   const [buyers, setBuyers] = useState<any[]>([]);
   const [filteredBuyers, setFilteredBuyers] = useState<any[]>([]);
-
+  const [PageSize, setPageSize] = useState<number>(10);
   const {
     isAddBuyerDrawerOpened,
     isUpdateBuyerDrawerOpened,
@@ -319,6 +319,8 @@ const Buyers: React.FC = () => {
           {/* Page Size Select */}
           <Select
             width={{ base: "100%", md: "100px" }}
+            onChange={(e) => setPageSize(Number(e.target.value))}
+         
             fontSize="14px"
             className="mt-1 md:mt-0"
           >
@@ -333,6 +335,8 @@ const Buyers: React.FC = () => {
 
       <div>
         <AgentTable
+          pageSize={PageSize}
+          setPageSize={setPageSize}
           agents={filteredBuyers}
           openUpdateAgentDrawerHandler={openUpdateBuyerDrawerHandler}
           openAgentDetailsDrawerHandler={openBuyerDetailsDrawerHandler}
