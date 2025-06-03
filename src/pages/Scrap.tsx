@@ -73,22 +73,26 @@ const Scrap: React.FC = () => {
       </div>
 
       {/* Employees Page */}
-      <div className="w-full  md:flex justify-between gap-4">
-        <div className="w-full">
+      <div className="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        {/* Search Input */}
+        <div className="max-[800px]:w-full">
           <textarea
-            className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
+            className="rounded-[10px] w-full px-3 py-2 text-sm border border-[#0d9488] resize-none focus:outline-[#14b8a6] hover:outline-[#14b8a6]"
             rows={1}
             placeholder="Search"
             value={searchKey}
             onChange={(e) => setSearchKey(e.target.value)}
           />
         </div>
-        <div className="flex  justify-between gap-4">
+
+        {/* Refresh Button and Page Size Selector */}
+        <div className="flex w-full md:w-auto flex-col sm:flex-row items-start sm:items-center gap-3">
           <Button
-            fontSize={{ base: "14px", md: "14px" }}
-            paddingX={{ base: "10px", md: "12px" }}
-            paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 100 }}
+            fontSize="14px"
+            px="12px"
+            py="6px"
+            w="full"
+            // sm={{ w: "auto" }}
             onClick={fetchScrapHandler}
             leftIcon={<MdOutlineRefresh />}
             color="#319795"
@@ -97,19 +101,24 @@ const Scrap: React.FC = () => {
           >
             Refresh
           </Button>
+
           <Select
-              // onChange={(e) => setPageSize(e.target.value)}
-              width="80px"
+            width="full"
+            size="md"
+            rounded="5px"
+            variant="outline"
+            borderColor="#319795"
+            marginBottom="10px"
           >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-              <option value={100000}>All</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+            <option value={100000}>All</option>
           </Select>
         </div>
-        
       </div>
+
 
       <div>
         <ScrapTable scraps={filteredData} isLoadingScraps={isLoadingScraps} openScrapDetailsDrawerHandler={()=>{}} />

@@ -152,23 +152,26 @@ const Customer: React.FC = () => {
         {/* Controls Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4">
           {/* Search & Filter */}
-          <div className="w-full md:flex md:gap-4">
+          <div className="w-full flex flex-col md:flex-row gap-3 md:gap-4">
+            {/* Search Input */}
             <Input
-              className="w-full"
               placeholder="Search by customer name"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full"
               _focus={{
                 borderColor: "#0d9488",
                 boxShadow: "0 0 0 1px #14b8a6",
               }}
               transition="all 0.2s"
             />
+
+            {/* Type Filter Select */}
             <Select
-              width={{ base: "100%", md: "150px" }}
               placeholder="Filter by type"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
+              className="w-full md:w-[150px]"
               _hover={{
                 borderColor: "#0d9488",
                 backgroundColor: "white",
@@ -184,6 +187,7 @@ const Customer: React.FC = () => {
               <option value="company">Company</option>
             </Select>
           </div>
+
 
           {/* Buttons Section */}
           <div className="flex flex-col md:flex-row gap-2 md:gap-4 w-full md:w-auto">

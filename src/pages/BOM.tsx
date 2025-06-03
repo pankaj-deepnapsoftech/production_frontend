@@ -163,35 +163,39 @@ const BOM: React.FC = () => {
       </div>
 
       {/* Employees Page */}
-      <div className="w-full  flex justify-between gap-4">
-        <div className="w-full">
+      <div className="w-full flex flex-col md:flex-row justify-between gap-4">
+        {/* Search Box */}
+        <div className="w-full md:w-1/2">
           <textarea
-              className="rounded-[10px] w-full md:flex-1 px-2 py-2 md:px-3 md:py-2 text-sm focus:outline-[#14b8a6] hover:outline:[#14b8a6] border resize-none border-[#0d9488]"
-              rows={1}
-              placeholder="Search"
-              value={searchKey}
-              onChange={(e) => setSearchKey(e.target.value)}
-            />
+            className="rounded-[10px] w-full px-3 py-2 text-sm focus:outline-[#14b8a6] hover:outline-[#14b8a6] border resize-none border-[#0d9488]"
+            rows={1}
+            placeholder="Search"
+            value={searchKey}
+            onChange={(e) => setSearchKey(e.target.value)}
+          />
         </div>
-        <div className="flex  justify-between gap-4">
+
+        {/* Action Buttons */}
+        <div className="w-full md:w-auto flex flex-col sm:flex-row justify-start md:justify-end items-stretch gap-2 md:gap-4">
           <Button
             fontSize={{ base: "14px", md: "14px" }}
             paddingX={{ base: "10px", md: "12px" }}
             paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 200 }}
+            width={{ base: "100%", md: 200 }}
             onClick={openAddBomDrawerHandler}
             color="#ffffff"
-              backgroundColor={MainColor}
-              _hover={{backgroundColor:"#14b8a6"}}
-              className="py-3  text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
+            backgroundColor={MainColor}
+            _hover={{ backgroundColor: "#14b8a6" }}
+            className="py-3 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-600"
           >
             Add New BOM
           </Button>
+
           <Button
             fontSize={{ base: "14px", md: "14px" }}
             paddingX={{ base: "10px", md: "12px" }}
             paddingY={{ base: "0", md: "3px" }}
-            width={{ base: "-webkit-fill-available", md: 100 }}
+            width={{ base: "100%", md: 100 }}
             onClick={fetchBomsHandler}
             leftIcon={<MdOutlineRefresh />}
             color="#319795"
@@ -200,20 +204,21 @@ const BOM: React.FC = () => {
           >
             Refresh
           </Button>
+
           <Select
-              value={limit}
-              onChange={(e) => setLimit(Number(e.target.value))}
-              width={{ base: "100%", sm: "80px" }}
-            >
-              {[10, 20, 50, 100, 100000].map((size) => (
-                <option key={size} value={size}>
-                  {size === 100000 ? "All" : size}
-                </option>
-              ))}
-            </Select>
+            value={limit}
+            onChange={(e) => setLimit(Number(e.target.value))}
+            width={{ base: "100%", sm: "80px" }}
+          >
+            {[10, 20, 50, 100, 100000].map((size) => (
+              <option key={size} value={size}>
+                {size === 100000 ? "All" : size}
+              </option>
+            ))}
+          </Select>
         </div>
-        
       </div>
+
 
       <div>
         <BOMTable

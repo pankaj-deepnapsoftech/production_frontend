@@ -379,7 +379,7 @@ const IndirectProducts: React.FC = () => {
           Refresh
         </Button>
         <select
-          className="border border-gray-400 rounded  px-2 py-1 w-[60px]  "
+          className="border border-gray-400 rounded  px-2 py-1.5 w-full md:w-[60px]  "
           onChange={(e) => setPageSize(Number(e.target.value))}
         >
           <option value="10">10</option>

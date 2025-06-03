@@ -200,7 +200,7 @@ const Sellers: React.FC = () => {
         {/* Search Input */}
         <div className="col-span-2">
           <textarea
-            className="rounded-[10px] w-full px-3 py-2 text-sm focus:outline-[#14b8a6] hover:outline-[#14b8a6] border resize-none border-[#0d9488]"
+            className="rounded-[10px] w-full px-3 py-2 text-sm h-10 border resize-none border-[#0d9488] focus:outline-[#14b8a6] hover:outline-[#14b8a6]"
             rows={1}
             placeholder="Search"
             value={searchKey}
@@ -208,17 +208,19 @@ const Sellers: React.FC = () => {
           />
         </div>
 
-        {/* Add Supplier Button */}
+        {/* Add Buyer Button */}
         <div className="col-span-1">
           <Button
             w="full"
+            h="40px"
+            fontSize="14px"
             onClick={openAddSellerDrawerHandler}
             backgroundColor={MainColor}
             color="white"
             _hover={{ backgroundColor: "#14b8a6" }}
-            className="rounded-lg"
+            className="rounded-lg text-sm"
           >
-            Add New Supplier
+            Add New Buyer
           </Button>
         </div>
 
@@ -226,21 +228,23 @@ const Sellers: React.FC = () => {
         <div className="col-span-1 relative">
           <Button
             w="full"
+            h="40px"
+            fontSize="14px"
             onClick={() => setShowBulkUploadMenu(true)}
             backgroundColor={MainColor}
             color="white"
             rightIcon={<AiFillFileExcel size={22} />}
             _hover={{ backgroundColor: "#14b8a6" }}
-            className="rounded-lg"
+            className="rounded-lg text-sm"
           >
             Bulk Upload
           </Button>
 
           {showBulkUploadMenu && (
-            <div className="absolute mt-2 w-full border border-[#a9a9a9] rounded p-2 bg-white shadow-md z-10">
+            <div className="absolute mt-2 w-full border border-[#a9a9a9] rounded p-4 bg-white shadow-md z-10">
               <form>
                 <FormControl>
-                  <FormLabel fontWeight="bold">Choose File (.csv)</FormLabel>
+                  <FormLabel fontWeight="bold">Choose File (.csv / .xlsx)</FormLabel>
                   <Input
                     ref={fileRef}
                     type="file"
@@ -251,10 +255,9 @@ const Sellers: React.FC = () => {
                   />
                 </FormControl>
 
-                <div className="flex gap-2 mt-2 flex-wrap">
+                <div className="flex flex-wrap gap-2 mt-3">
                   <Button
                     type="submit"
-                    onClick={bulkUploadHandler}
                     isLoading={bulkUploading}
                     backgroundColor={MainColor}
                     color="white"
@@ -274,10 +277,9 @@ const Sellers: React.FC = () => {
                   </Button>
                 </div>
 
-                <a href={SampleCSV}>
+                <a href={SampleCSV} className="block mt-2">
                   <Button
                     w="full"
-                    mt={2}
                     backgroundColor={MainColor}
                     color="white"
                     rightIcon={<AiFillFileExcel size={22} />}
@@ -290,32 +292,37 @@ const Sellers: React.FC = () => {
           )}
         </div>
 
-        {/* Refresh + Page Size Select */}
-        <div className="flex flex-col md:flex-row  md:gap-2 gap-2 w-full">
+        {/* Refresh and Page Size */}
+        <div className="col-span-1 flex flex-col md:flex-row gap-2 w-full">
           <Button
             w="full"
+            h="40px"
+            fontSize="14px"
             onClick={fetchSellersHandler}
             leftIcon={<MdOutlineRefresh />}
             color="#319795"
             borderColor="#319795"
             variant="outline"
-            borderWidth="1px"
+            className="text-sm"
           >
             Refresh
           </Button>
 
-          <Select onChange={(e) => setPageSize(Number(e.target.value))} w="full">
-            
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-            <option value={100000}>All</option>
+          <Select
+            fontSize="14px"
+            className="h-10 text-sm"
+            width="full"
+            onChange={(e) => setPageSize(Number(e.target.value))}
+          >
+            {[10, 20, 50, 100, 100000].map((size) => (
+              <option key={size} value={size}>
+                {size === 100000 ? "All" : size}
+              </option>
+            ))}
           </Select>
         </div>
-
-
       </div>
+
 
       <div>
         <AgentTable

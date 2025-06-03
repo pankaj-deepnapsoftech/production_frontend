@@ -168,7 +168,7 @@ const ScrapTable: React.FC<ScrapTableProps> = ({
                                                         <Th
                                                         className={
                                                             column.Header === "BOM"
-                                                              ? "sticky top-0 left-[-2px] bg-table-color"
+                                                                    ? "sticky top-0 md:left-[-2px] bg-table-color"
                                                               : "bg-table-color"
                                                           }
                                                             textTransform="capitalize"
@@ -214,7 +214,7 @@ const ScrapTable: React.FC<ScrapTableProps> = ({
                                                 return (
                                                     <Td  className={
                                                         cell.column.Header === "BOM"
-                                                          ? "sticky top-0 left-[-2px] bg-[#f9fafc]"
+                                                          ? "sticky top-0 md:left-[-2px] bg-[#f9fafc]"
                                                           : ""
                                                       } fontWeight="500" {...cell.getCellProps()}>
                                                         {cell.column.id !== "createdAt" &&

@@ -120,54 +120,59 @@ const Dispatch = () => {
         <div className="flex text-lg md:text-xl font-semibold items-center gap-y-1 pb-4">
           Completed Products
         </div>
-        <HStack className="flex justify-between items-center mb-2">
-          {/* filters */}
-          <FormControl>
-            <FormLabel fontSize="sm">Payment Status</FormLabel>
+        <div className="flex flex-col md:flex-row  justify-between gap-4 mb-4">
+          {/* Payment Status Filter */}
+          <FormControl className="w-full md:w-auto">
+            <FormLabel fontSize="md">Payment Status</FormLabel>
             <Select
               placeholder="All"
               value={selectedPaymentStatus}
               onChange={(e) => setSelectedPaymentStatus(e.target.value)}
-              size="sm"
+              size="md"
+              className="h-10"
             >
               <option value="Pending">Pending</option>
               <option value="Paied">Paid</option>
             </Select>
           </FormControl>
 
-          <FormControl>
-            <FormLabel fontSize="sm">Product Status</FormLabel>
+          {/* Product Status Filter */}
+          <FormControl className="w-full  md:w-auto">
+            <FormLabel fontSize="m">Product Status</FormLabel>
             <Select
               placeholder="All"
               value={selectedProductStatus}
               onChange={(e) => setSelectedProductStatus(e.target.value)}
-              size="sm"
+              size="md"
+              className="h-10"
             >
               <option value="Dispatch">Dispatch</option>
               <option value="Delivered">Delivered</option>
             </Select>
           </FormControl>
 
-          <HStack className="space-x-2">
+          {/* Refresh Button and Limit Selector */}
+          <div className="flex flex-col sm:flex-row gap-2 w-full items-end md:w-auto ">
             <Button
-              fontSize={{ base: "14px", md: "14px" }}
-              paddingX={{ base: "10px", md: "12px" }}
-              paddingY={{ base: "0", md: "3px" }}
-              width={{ base: "-webkit-fill-available", md: 100 }}
+              fontSize="14px"
+              paddingX="12px"
+              paddingY="2px"
+              height="40px"
+              width={{ base: "100%", sm: "auto" }}
               leftIcon={<MdOutlineRefresh />}
               onClick={fetchData}
               color="#319795"
               borderColor="#319795"
               variant="outline"
-              className="mt-6"
             >
               Refresh
             </Button>
+
             <Select
               value={limit}
               onChange={(e) => setLimit(Number(e.target.value))}
+              className="h-10"
               width={{ base: "100%", sm: "80px" }}
-              className="mt-6"
             >
               {[10, 20, 50, 100, 100000].map((size) => (
                 <option key={size} value={size}>
@@ -175,8 +180,10 @@ const Dispatch = () => {
                 </option>
               ))}
             </Select>
-          </HStack>
-        </HStack>
+          </div>
+        </div>
+
+
       </Box>
 
       {filteredData?.map((acc: any) => (
