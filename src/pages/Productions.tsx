@@ -32,7 +32,7 @@ import Assign from "./Assign";
 import Pagination from "./Pagination";
 import Track from "./Track";
 
-const Productions = () => {
+const   Productions = () => {
   const { isSuper, allowedroutes } = useSelector((state: any) => state.auth);
   const isAllowed = isSuper || allowedroutes.includes("sale");
   const trackDisclosure = useDisclosure();
@@ -300,44 +300,39 @@ const Productions = () => {
                         {new Date(purchase?.createdAt).toLocaleDateString()}
                       </Text>
                     </VStack>
-                    <VStack>
+                    <VStack align="end" spacing={1}>
                       <Badge
-                        colorScheme={
-                          purchase?.Status === "Pending" ? "orange" : "green"
-                        }
+                        colorScheme={purchase?.Status === "Pending" ? "orange" : "green"}
                         fontSize="sm"
                       >
                         Sale Approval: {purchase?.Status}
                       </Badge>
 
-                      {purchase?.Status === "Approved" &&
-                      purchase?.customer_approve ? (
+                      {purchase?.Status === "Approved" && purchase?.customer_approve && (
                         <Badge
                           colorScheme={
                             purchase?.customer_approve === "Approve"
                               ? "green"
                               : purchase?.customer_approve === "Pending"
-                              ? "orange"
-                              : "red"
+                                ? "orange"
+                                : "red"
                           }
                           fontSize="sm"
                         >
                           Design Approval: {purchase?.customer_approve}
                         </Badge>
-                      ) : null}
+                      )}
 
-                      {purchase?.token_status ? (
+                      {purchase?.token_status && (
                         <Badge colorScheme="green" fontSize="sm">
                           Token Amount : Paid
                         </Badge>
-                      ) : null}
+                      )}
 
-                      {purchase?.paymet_status ? (
+                      {purchase?.paymet_status && (
                         <Badge
                           colorScheme={
-                            purchase?.paymet_status === "Pending"
-                              ? "orange"
-                              : "green"
+                            purchase?.paymet_status === "Pending" ? "orange" : "green"
                           }
                           fontSize="sm"
                         >
@@ -346,21 +341,20 @@ const Productions = () => {
                             ? "Paid"
                             : purchase?.paymet_status}
                         </Badge>
-                      ) : null}
+                      )}
 
-                      {purchase?.product_status ? (
+                      {purchase?.product_status && (
                         <Badge
                           colorScheme={
-                            purchase?.product_status === "Dispatch"
-                              ? "orange"
-                              : "green"
+                            purchase?.product_status === "Dispatch" ? "orange" : "green"
                           }
                           fontSize="sm"
                         >
                           Product Status: {purchase?.product_status}
                         </Badge>
-                      ) : null}
+                      )}
                     </VStack>
+
                   </HStack>
 
                   {/* Divider */}
