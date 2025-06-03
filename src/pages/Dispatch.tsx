@@ -48,11 +48,11 @@ const Dispatch = () => {
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState(""); 
   const [selectedProductStatus, setSelectedProductStatus] = useState(""); 
   const [deliveryproofuser, setdeliveryproofuser] = useState(""); 
-  
+  const [limit, setLimit] = useState(10);
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}production-process/accountant-data?page=${pages}`,
+        `${process.env.REACT_APP_BACKEND_URL}production-process/accountant-data?page=${pages}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${cookies?.access_token}`,
@@ -67,7 +67,7 @@ const Dispatch = () => {
 
   useEffect(() => {
     fetchData();
-  }, [pages]);
+  }, [pages, limit]);
 
   const calculateTotal = (price: number, qty: number, gst: number) => {
     const basePrice = price * qty;
@@ -163,6 +163,18 @@ const Dispatch = () => {
             >
               Refresh
             </Button>
+            <Select
+              value={limit}
+              onChange={(e) => setLimit(Number(e.target.value))}
+              width={{ base: "100%", sm: "80px" }}
+              className="mt-6"
+            >
+              {[10, 20, 50, 100, 100000].map((size) => (
+                <option key={size} value={size}>
+                  {size === 100000 ? "All" : size}
+                </option>
+              ))}
+            </Select>
           </HStack>
         </HStack>
       </Box>

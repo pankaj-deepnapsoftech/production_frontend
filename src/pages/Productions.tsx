@@ -51,6 +51,7 @@ const Productions = () => {
   const [productFilter, setProductFilter] = useState("");
   const [filteredPurchases, setFilteredPurchases] = useState<any[]>([]);
   const [selectedBomIndex, setSelectedBomIndex] = useState("");
+  const [limit, setLimit] = useState(10);
 
   const fetchPurchases = async () => {
     try {
@@ -62,7 +63,7 @@ const Productions = () => {
       }
 
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}purchase/getAll?page=${pages}`,
+        `${process.env.REACT_APP_BACKEND_URL}purchase/getAll?page=${pages}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -98,7 +99,7 @@ const Productions = () => {
 
   useEffect(() => {
     fetchPurchases();
-  }, [pages]);
+  }, [pages, limit]);
 
   useEffect(() => {
     let filteredData = purchases.filter((purchase) => {
@@ -199,12 +200,19 @@ const Productions = () => {
             >
               Refresh
             </Button>
+            <Select
+              value={limit}
+              onChange={(e) => setLimit(Number(e.target.value))}
+              width={{ base: "100%", sm: "80px" }}
+            >
+              {[10, 20, 50, 100, 100000].map((size) => (
+                <option key={size} value={size}>
+                  {size === 100000 ? "All" : size}
+                </option>
+              ))}
+            </Select>
           </div>
         </div>
-
-        
-        
-        
 
         {isLoading ? (
           <Box

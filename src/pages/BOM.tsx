@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/react";
+import { Button, Select } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { MdOutlineRefresh } from "react-icons/md";
 import BOMTable from "../components/Table/BOMTable";
@@ -33,6 +33,7 @@ const BOM: React.FC = () => {
   const location = useLocation();
   const [deleteBom] = useDeleteBomMutation();
   const [pages, setPages] = useState(1);
+  const [limit, setLimit] = useState(10);
   const {
     isAddBomDrawerOpened,
     isUpdateBomDrawerOpened,
@@ -65,7 +66,7 @@ const BOM: React.FC = () => {
     try {
       setIsLoadingBoms(true);
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}bom/all?page=${pages}`,
+        `${process.env.REACT_APP_BACKEND_URL}bom/all?page=${pages}&limit=${limit}`,
         {
           method: "GET",
           headers: {
@@ -99,7 +100,7 @@ const BOM: React.FC = () => {
 
   useEffect(() => {
     fetchBomsHandler();
-  }, [pages]);
+  }, [pages, limit]);
 
   useEffect(() => {
     const searchTxt = searchKey?.toLowerCase();
@@ -199,6 +200,17 @@ const BOM: React.FC = () => {
           >
             Refresh
           </Button>
+          <Select
+              value={limit}
+              onChange={(e) => setLimit(Number(e.target.value))}
+              width={{ base: "100%", sm: "80px" }}
+            >
+              {[10, 20, 50, 100, 100000].map((size) => (
+                <option key={size} value={size}>
+                  {size === 100000 ? "All" : size}
+                </option>
+              ))}
+            </Select>
         </div>
         
       </div>
