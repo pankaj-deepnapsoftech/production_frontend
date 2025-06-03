@@ -36,7 +36,6 @@ interface WIPProductTableProps {
 const WIPProductTable: React.FC<WIPProductTableProps> = ({ products, isLoadingProducts }) => {
   // const [rowData] = useState<FileNode[]>(products);
   const rowData = products;
-  console.log('isLoadingProducts', products, isLoadingProducts)
   const columnDefs = useMemo<ColDef[]>(() => [
     { headerName: 'Process', field: 'process'},
     { headerName: 'Material', field: 'goods' },

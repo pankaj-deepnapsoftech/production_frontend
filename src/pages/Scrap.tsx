@@ -1,4 +1,5 @@
 import {
+  Select,
   Button
 } from "@chakra-ui/react";
 import { MdOutlineRefresh } from "react-icons/md";
@@ -96,6 +97,16 @@ const Scrap: React.FC = () => {
           >
             Refresh
           </Button>
+          <Select
+              // onChange={(e) => setPageSize(e.target.value)}
+              width="80px"
+          >
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={100000}>All</option>
+          </Select>
         </div>
         
       </div>

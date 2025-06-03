@@ -7,8 +7,6 @@ import { useCookies } from "react-cookie";
 const TaskOverview = () => {
   const [cookies] = useCookies(["access_token"]);
   const [taskStatus, setTaskStatus] = useState([]);
-
-  console.log(taskStatus);
   
   // Fetch data from the backend API
   const fetchData = async () => {

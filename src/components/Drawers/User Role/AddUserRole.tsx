@@ -63,7 +63,6 @@ const AddUserRole: React.FC<AddUserRoleProps> = ({
         description,
         permissions: modifiedPermissions
       }).unwrap();
-      console.log("role", response);
       
       toast.success(response.message);
       fetchUserRolesHandler();

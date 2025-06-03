@@ -208,7 +208,6 @@ const AddBom: React.FC<AddBomProps> = ({
 
     try {
       const response = await addBom(body).unwrap();
-      console.log(response);
       toast.success(response?.message);
       fetchBomsHandler();
       closeDrawerHandler();
@@ -285,14 +284,11 @@ const AddBom: React.FC<AddBomProps> = ({
         `${process.env.REACT_APP_BACKEND_URL}bom/all`
       );
 
-      console.log("bom.....", response.data)
-      console.log("finished good", finishedGood)
 
       const filteredData = response.data.boms.filter(
         (bom: any) =>
           bom?.finished_good?.item?.name?.toLowerCase()?.trim() === finishedGood?.label?.toLowerCase()?.trim()
       );
-      console.log("same..........",filteredData)
 
       setBomData(filteredData[0]);
     } catch (error: any) {
@@ -309,7 +305,6 @@ const AddBom: React.FC<AddBomProps> = ({
     setProcesses(bomData?.processes.length > 0 ? bomData?.processes : [""]);
   }, [bomData]);
 
-  console.log(processes);
 
   const onFinishedGoodQntyChangeHandler = (qty: number) => {
     setQuantity(qty);

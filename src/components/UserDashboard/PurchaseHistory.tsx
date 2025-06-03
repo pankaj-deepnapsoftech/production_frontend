@@ -161,8 +161,6 @@ const PurchaseHistory = () => {
         }
       );
       setPurchases(response.data?.data);
-      console.log('purchase length =', purchases.length);
-      console.log(response.data.data);
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
@@ -252,7 +250,6 @@ const PurchaseHistory = () => {
   };
 
   const handledeliverystatus = (id: any, approve: any) => {
-    console.log('approve == ', approve)
     setPurchaseId(id);
     setCustomerApprove(approve);
     onDeliverystatusOpen()

@@ -21,7 +21,6 @@ const DispatchOverview = () => {
           },
         }
       );
-      console.log('response.data.data =', response.data.data)
       setDispatchData(response.data.data);
     } catch (error) {
       console.log(error);
@@ -38,7 +37,6 @@ const DispatchOverview = () => {
       let deliveredCount = 0;
 
       dispatchData.forEach((data) => {
-        // console.log("bdhebh", data?.bom?.sale_id[0])
         if (data?.bom?.sale_id[0]?.product_status) {
           if (data?.bom?.sale_id[0]?.product_status === "Dispatch") {
             dispatchCount += 1;

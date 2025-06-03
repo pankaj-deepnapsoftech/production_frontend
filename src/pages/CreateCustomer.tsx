@@ -50,8 +50,6 @@ const CreateCustomer: React.FC = ({ onClose, refresh }) => {
         payload
       );
 
-      console.log(response);
-
       toast({
         title: "Customer Created",
         description: "Customer details have been submitted successfully.",

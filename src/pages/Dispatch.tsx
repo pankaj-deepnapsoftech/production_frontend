@@ -59,9 +59,7 @@ const Dispatch = () => {
           },
         }
       );
-      console.log(response.data?.data);    
       setData(response.data?.data);    
-      console.log('data.length ', data.length)
     } catch (error: any) {
       toast.error(error);
     }

@@ -36,6 +36,7 @@ const Stores: React.FC = () => {
   const [storeId, setStoreId] = useState<string | undefined>(); // Store Id to be updated or deleted
   const [stores, setStores] = useState<any>([]);
   const [filteredStores, setFilteredStores] = useState<any>([]);
+  const [PageSize, setPageSize] = useState<number>(10);
   const {
     isAddStoreDrawerOpened,
     isUpdateStoreDrawerOpened,
@@ -323,7 +324,7 @@ const Stores: React.FC = () => {
     </Button>
 
     <Select
-      // onChange={(e) => setPageSize(e.target.value)}
+      onChange={(e) => setPageSize(Number(e.target.value))}
       className=""
     >
       <option value={10}>10</option>
@@ -340,6 +341,8 @@ const Stores: React.FC = () => {
         <div>
           <StoreTable
             stores={filteredStores}
+            pageSize={PageSize}
+        setPageSize={setPageSize}
             isLoadingStores={isLoadingStores}
             deleteStoreHandler={deleteStoreHandler}
             openStoreDetailsDrawerHandler={openStoreDetailsDrawerHandler}

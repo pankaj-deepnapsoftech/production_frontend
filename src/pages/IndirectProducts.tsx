@@ -36,6 +36,7 @@ const IndirectProducts: React.FC = () => {
   const [searchKey, setSearchKey] = useState<string | undefined>();
   const [filteredData, setFilteredData] = useState<any>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [PageSize, setPageSize] = useState<number>(10);
   // Bulk upload menu
   const [showBulkUploadMenu, setShowBulkUploadMenu] = useState<boolean>(false);
 
@@ -113,7 +114,6 @@ const IndirectProducts: React.FC = () => {
       }
   
       const result = await response.json();
-      console.log(result.message);
       toast.success(result.message);
       fetchProductsHandler()
       // Optional: refetch or update table state here
@@ -384,6 +384,16 @@ const IndirectProducts: React.FC = () => {
         >
           Refresh
         </Button>
+        <select
+          className="border border-gray-400 rounded  px-2 py-1 w-[60px]  "
+          onChange={(e) => setPageSize(Number(e.target.value))}
+        >
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="100000">All</option>
+        </select>
       </div>
 
 
@@ -471,6 +481,8 @@ const IndirectProducts: React.FC = () => {
       <ProductTable
         isLoadingProducts={isLoadingProducts}
         products={filteredData}
+        pageSize={PageSize}
+        setPageSize={setPageSize}
         openUpdateProductDrawerHandler={openUpdateProductDrawerHandler}
         openProductDetailsDrawerHandler={openProductDetailsDrawerHandler}
         deleteProductHandler={deleteProductHandler}

@@ -11,7 +11,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import moment from "moment";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import { MdDeleteOutline, MdEdit, MdOutlineVisibility } from "react-icons/md";
 import { FcApproval, FcDatabase } from "react-icons/fc";
@@ -47,6 +47,8 @@ interface ProductTableProps {
     createdAt: string;
     updatedAt: string;
   }>;
+  pageSize?: number;
+  setPageSize?: (size: number) => void;
   isLoadingProducts: boolean;
   openUpdateProductDrawerHandler?: (id: string) => void;
   openProductDetailsDrawerHandler?: (id: string) => void;
@@ -57,12 +59,15 @@ interface ProductTableProps {
 
 const ProductTable: React.FC<ProductTableProps> = ({
   products,
+  pageSize,
+  setPageSize,
   isLoadingProducts,
   openUpdateProductDrawerHandler,
   openProductDetailsDrawerHandler,
   deleteProductHandler,
   approveProductHandler,
-  deletebulkProductHandler
+  deletebulkProductHandler,
+  
 }) => {
 
   const columns: Column<{
@@ -178,9 +183,9 @@ const ProductTable: React.FC<ProductTableProps> = ({
     previousPage,
     canNextPage,
     canPreviousPage,
-    state: { pageIndex, pageSize },
+    state: { pageIndex },
     pageCount,
-    setPageSize,
+    setPageSize: setTablePageSize,
   }: TableInstance<{
     name: string;
     color:string,
@@ -202,7 +207,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
     {
       columns,
       data: products,
-      initialState: { pageIndex: 0 },
+      initialState: { pageIndex: 0, pageSize },
     },
     useSortBy,
     usePagination
@@ -228,6 +233,11 @@ const ProductTable: React.FC<ProductTableProps> = ({
       setSelectedRows(page.map(row => row.original._id));
     }
   };
+
+  useEffect(() => {
+    setTablePageSize(pageSize);
+  }, [pageSize, setTablePageSize]);
+
 
   return (
     <div>

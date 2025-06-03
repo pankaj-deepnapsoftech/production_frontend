@@ -99,7 +99,6 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    //console.log("formdata:", formData);
     if (isSubmitting) return;
     setIsSubmitting(true);
     try {
@@ -135,8 +134,6 @@ const UpdateSale: React.FC = ({ sale, onClose }) => {
       });
 
       onClose();
-
-      // console.log(response.data);
     } catch (error) {
       toast({
         title: "Error",

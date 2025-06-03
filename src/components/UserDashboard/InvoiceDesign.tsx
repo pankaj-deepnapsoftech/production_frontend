@@ -50,7 +50,6 @@ const InvoiceDesign: React.FC<InvoiceDesignProps> = ({
           headers: { Authorization: `Bearer ${cookies.access_token}` },
         }
       );
-      //console.log("Invoice form",response);
       toast({
         title: response.data.message,
         description: "Response added successfully :) ",

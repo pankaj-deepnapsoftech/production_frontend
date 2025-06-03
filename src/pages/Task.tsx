@@ -95,8 +95,6 @@ const Task = () => {
           },
         }
       );
-
-      console.log(response.data.data)
       const tasks = response.data.data.map((task) => {
         const sale = task?.sale_id?.length ? task.sale_id[0] : null;
         const product = sale?.product_id?.length ? sale.product_id[0] : null;
@@ -189,8 +187,6 @@ const Task = () => {
   });
 
   const handleOpenModal = (task) => {
-    //console.log(task);
-
     setSelectedTask(task);
     setFile(null);
     onOpen();
@@ -300,7 +296,6 @@ const Task = () => {
   };
 
   const handleBOM = (id) => {
-    //console.log(id);
     navigate("/production/bom", { state: { id } });
   };
 
@@ -344,8 +339,6 @@ const Task = () => {
     setSelectedData(purchase);
     onAccountpreviewOpen();
   };
-
-  console.log(halfAmountId)
 
   const handleHalfPayment = async () => {
     const data = {

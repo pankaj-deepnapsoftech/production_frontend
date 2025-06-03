@@ -27,7 +27,7 @@ const UserRole: React.FC = () => {
   const [filteredRoles, setFilteredRoles] = useState<any[]>([]);
   const [isLoadingRoles, setIsLoadingRoles] = useState<boolean>(false);
   const [roleId, setRoleId] = useState<string | undefined>();
-  const [PageSize, setPageSize] = useState<number>(10);;
+  const [PageSize, setPageSize] = useState<number>(10);
   
   const {
     isAddRoleDrawerOpened,
@@ -224,6 +224,7 @@ const UserRole: React.FC = () => {
       <div className="overflow-x-auto">
         <UserRoleTable
           pageSize={PageSize}
+          setPageSize={setPageSize}
           roles={filteredRoles}
           isLoadingRoles={isLoadingRoles}
           deleteRoleHandler={deleteRoleHandler}

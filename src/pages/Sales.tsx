@@ -224,7 +224,6 @@ const Sales = () => {
       });
 
       setPurchases(response.data.data);
-      console.log("djebdh ", purchases.length);
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
@@ -264,7 +263,6 @@ const Sales = () => {
         error.message ||
         "Failed to fetch employees";
       toast.error(errorMessage);
-      //console.log(error);
     }
   };
 

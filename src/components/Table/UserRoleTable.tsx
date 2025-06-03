@@ -11,7 +11,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import moment from "moment";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import { MdDeleteOutline, MdEdit, MdOutlineVisibility } from "react-icons/md";
 import { FcApproval, FcDatabase } from "react-icons/fc";
@@ -30,13 +30,14 @@ import Loading from "../../ui/Loading";
 import { MainColor } from "../../constants/constants";
 
 interface UserRoleTableProps {
-  pageSize: number;
   roles: Array<{
     role: string,
     description: string,
     createdAt: string,
     updatedAt: string
   }>;
+  pageSize?: number;
+  setPageSize?: (size: number) => void;
   isLoadingRoles: boolean;
   openUpdateRoleDrawerHandler?: (id: string) => void;
   openRoleDetailsDrawerHandler?: (id: string) => void;
@@ -53,13 +54,14 @@ const roleColors: { [key: string]: string } = {
 };
 
 const UserRoleTable: React.FC<UserRoleTableProps> = ({
-  pageSize,
   roles,
   isLoadingRoles,
   openUpdateRoleDrawerHandler,
   openRoleDetailsDrawerHandler,
   deleteRoleHandler,
   approveRoleHandler,
+  pageSize,
+  setPageSize,
 }) => {
   const columns: Column<{
     role: string,
@@ -100,6 +102,7 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
     canPreviousPage,
     state: { pageIndex },
     pageCount,
+    setPageSize: setTablePageSize,
   }: TableInstance<{
     role: string,
     description: string,
@@ -109,12 +112,16 @@ const UserRoleTable: React.FC<UserRoleTableProps> = ({
     {
       columns,
       data: roles,
-      initialState: { pageIndex: 0, pageSize: pageSize, },
+      initialState: { pageIndex: 0, pageSize },
       manualPagination: false,
     },
     useSortBy,
     usePagination
   );
+
+  useEffect(() => {
+    setTablePageSize(pageSize);
+  }, [pageSize, setTablePageSize]);
 
   return (
     <div>

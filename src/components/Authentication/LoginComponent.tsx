@@ -37,7 +37,6 @@ const LoginComponent: React.FC<LoginComponentProps> = ({
   const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
 
   const loginHandler = async (e: React.FormEvent) => {
-    console.log(email, password)
     e.preventDefault();
     try {
       setIsLoginLoading(true);

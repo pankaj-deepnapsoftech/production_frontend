@@ -6,7 +6,6 @@ interface ProductionProcessProps {
 }
 
 const ProductionProcess: React.FC<ProductionProcessProps> = ({ inputs, setInputs }) => {
-  console.log("this is only for testing",inputs);
 
   const onStartChangeHandler = (isChecked: boolean, ind: number) => {
     const updatedInputs = [...inputs];

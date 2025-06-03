@@ -104,7 +104,6 @@ const CreateSale: React.FC = ({ onClose, refresh }) => {
     if (formData.performaInvoice) {
       formDataToSend.append("performaInvoice", formData.performaInvoice);
     }
-    console.log("productFile = ", formData.productFile)
     if (formData.productFile) {
       formDataToSend.append("productFile", formData.productFile);
     }

@@ -58,8 +58,6 @@ import {
           }
         );
   
-        console.log(response);
-  
         Toast({
           title: "Success",
           description: "File Uploaded Successfully :) ",
